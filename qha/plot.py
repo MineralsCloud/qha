@@ -205,6 +205,4 @@ class QHAPlot:
         fig_name = self.results_folder + 'FVT_PVT'
 
         fig_name_pdf = fig_name + '.pdf'
-        fig_name_svg = fig_name + '.svg'
         fig.savefig(fig_name_pdf, format='pdf', dpi=300, bbox_inches='tight')
-        fig.savefig(fig_name_svg, format='svg', dpi=300, bbox_inches='tight')

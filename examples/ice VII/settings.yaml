@@ -25,5 +25,5 @@ calculate:
   - 'Bs'
 
 energy_unit: 'au' # 'ev' or 'au'
-
+plot_calculation: True
 results_folder : './results/'
