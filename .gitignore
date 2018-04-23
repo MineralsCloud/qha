@@ -544,5 +544,5 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/git,vim,macos,linux,latex,emacs,python,windows,notepadpp,intellij+all,visualstudiocode
 # User settings
-qha/.*/output*
-qha/.*/results/*
+**/output*
+**/results/*
