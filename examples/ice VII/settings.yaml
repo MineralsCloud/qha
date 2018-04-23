@@ -1,0 +1,29 @@
+NT: 401
+DT : 1
+DT_SAMPLE: 10
+P_MIN: 0
+NTV: 71
+DELTA_P: 1
+DELTA_P_SAMPLE: 10
+input: 'input_conf' # input name with configuration number
+multi_config: True
+config_degeneracy: 'config_degeneracy.txt'
+
+# calculation and plotting results
+calculate:
+  - 'F' #
+  - 'G' # Gibbs free energy
+  - 'U'
+  - 'H'
+  - 'V'
+  - 'alpha'
+  - 'gamma'
+  - 'Cp'
+  - 'Cv'
+  - 'Bt'
+  - 'Btp'
+  - 'Bs'
+
+energy_unit: 'au' # 'ev' or 'au'
+
+results_folder : './results/'

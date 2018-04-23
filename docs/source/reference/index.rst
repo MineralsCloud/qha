@@ -1,0 +1,6 @@
+Reference Manual
+================
+
+.. toctree::
+
+    type
