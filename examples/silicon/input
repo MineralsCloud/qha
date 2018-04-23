@@ -1,7 +1,7 @@
 # Si calculated by Quantum ESPRESSO
 # The file contains frequencies and wieght factors at the END
 Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)
-11	16	6	 1
+11	16	6	 2
 
 P=	-93.46	V=	320.5259	E=	-15.72569834
 0.000000	0.000000	0.000000
