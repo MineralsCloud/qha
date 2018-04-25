@@ -8,7 +8,7 @@ import qha.multi_configurations.different_vdos as diff_vdos
 import qha.multi_configurations.same_vdos as same_vdos
 import qha.tools
 from qha.grid_interpolation import RefineGrid
-from qha.output import save_to_output
+from qha.out import save_to_output
 from qha.readers import read_input
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
