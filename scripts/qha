@@ -4,7 +4,7 @@ import os
 import time
 
 from qha.calculator import QHACalculator, QHASameVdosCalculator, QHAMultiConfigCalculator
-from qha.output import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.plot import QHAPlot
 from qha.settings import from_yaml
 
