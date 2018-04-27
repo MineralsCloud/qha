@@ -23,7 +23,9 @@ setup(name='qha',
           'seaborn',
       ],
       packages=[
-          'qha'
+          'qha',
+          'qha.multi_configurations',
+          'qha.readers',
       ],
       scripts=[
           'scripts/qha',
