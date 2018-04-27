@@ -22,6 +22,9 @@ setup(name='qha',
           'matplotlib',
           'seaborn',
       ],
+      packages=[
+          'qha'
+      ],
       scripts=[
           'scripts/qha',
           'scripts/qha-convert'
