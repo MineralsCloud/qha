@@ -2,7 +2,7 @@
 
 import sys
 
-if sys.version_info < (3, 5):
+if sys.version_info < (3, 5):  # In case of user who does not have ``pip`` above version 9.0.0
     raise EnvironmentError('Please use Python version higher than 3.5!')
 
 __author__ = {'Tian Qin': 'qinxx197@umn.edu', 'Qi Zhang': 'qz2280@columbia.edu'}
