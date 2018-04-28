@@ -60,8 +60,8 @@ def main():
 
     T = calc.temperature_array
     DESIRED_PRESSURES_GPa = calc.desired_pressures_gpa
-    DELTA_P_SAMPLE = getattr(calc, 'DELTA_P_SAMPLE')
-    DELTA_P = getattr(calc, 'DELTA_P')
+    DELTA_P_SAMPLE = calc.settings['DELTA_P_SAMPLE']
+    DELTA_P = calc.settings['DELTA_P']
 
     T_SAMPLE = calc.temperature_sample_array
     P_SAMPLE_GPa = calc.pressure_sample_array
@@ -99,9 +99,9 @@ def main():
 
     plotter.fv_pv()
 
-    for idx in getattr(calc, 'calculate'):
+    for idx in calc.settings['calculate']:
         if idx in ['F', 'G', 'H', 'U']:
-            attr_name = calculation_option[idx] + '_' + getattr(calc, 'energy_unit')
+            attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']
             file_dir = results_folder + attr_name + '.txt'
             save_x_tp(getattr(calc, attr_name), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir)
             user_settings.update({idx: file_dir})
