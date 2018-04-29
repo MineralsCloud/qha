@@ -373,11 +373,9 @@ class DifferentPhDOSCalculator(Calculator):
         return self._volumes[0]
 
     def read_input(self):
-        essentials = pd.read_csv(self.settings['config_degeneracy'], sep='\s+', dtype={'config': str})
-        essentials.set_index('config', inplace=True)
-        self._degeneracies = essentials['degeneracy'].tolist()
+        self._degeneracies = tuple(self.settings['input'].values())
+        input_data_files = tuple(self.settings['input'].keys())
 
-        input_data_files = list(map(lambda d: self.settings['input'] + '{0}'.format(d), essentials.index.tolist()))
         formula_unit_numbers = []
         volumes = []
         static_energies = []
