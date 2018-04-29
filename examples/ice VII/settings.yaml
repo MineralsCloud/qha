@@ -72,5 +72,5 @@ calculate:
     - Btp
     - Bs
 energy_unit: au
-plot_calculation: true
-results_folder: ./results/
+plot_results: true
+output_directory: ./results/
