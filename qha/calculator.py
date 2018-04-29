@@ -35,7 +35,6 @@ class Calculator:
         runtime_settings = dict()
 
         allowed_keys = ('multi_config_same_vdos', 'multi_config', 'input', 'volume_energies',
-                        'config_degeneracy',
                         'calculate', 'static_only', 'energy_unit',
                         'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
@@ -342,10 +341,9 @@ class SamePhDOSCalculator(Calculator):
 
     def read_energy_degeneracy(self):
         volume_energies = pd.read_csv(self.settings['volume_energies'], sep='\s+', index_col='volume')
-        degeneracies = pd.read_csv(self.settings['config_degeneracy'], sep='\s+', index_col='config')
+        self._degeneracies = tuple(self.settings['input'].values())
 
         self._volume_energy = volume_energies
-        self._degeneracies = degeneracies['degeneracy'].tolist()
 
     @LazyProperty
     def vib_ry(self):
