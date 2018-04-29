@@ -39,13 +39,20 @@ def main():
 
     save_to_output(user_settings['qha_output'], make_starting_string())
 
-    if len(user_settings['input']) > 1:  # Then it will be multi-configuration calculation.
+    user_input = user_settings['input']
+
+    if isinstance(user_input, str):
+        calc = Calculator(user_settings)
+        print("You have single-configuration calculation assumed.")
+    elif isinstance(user_input, dict):  # Then it will be multi-configuration calculation.
         if user_settings['multi_config_same_vdos']:
             calc = SamePhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with the same phonon DOS assumed.")
         else:
             calc = DifferentPhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with different phonon DOS assumed.")
     else:
-        calc = Calculator(user_settings)
+        raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
 
     save_to_output(user_settings['qha_output'], make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
                                                              calc.desired_pressures_gpa[0],
