@@ -16,7 +16,7 @@ def main():
     file_settings = 'settings.yaml'
     settings = from_yaml(file_settings)
 
-    for key in ('multi_config_same_vdos', 'multi_config', 'different_vdos', 'input', 'volume_energies',
+    for key in ('multi_config_same_vdos', 'different_vdos', 'input', 'volume_energies',
                 'calculate', 'static_only', 'energy_unit',
                 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
