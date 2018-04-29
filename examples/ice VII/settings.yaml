@@ -1,29 +1,78 @@
 NT: 401
-DT : 1
+DT: 1
 DT_SAMPLE: 10
 P_MIN: 0
 NTV: 71
 DELTA_P: 1
 DELTA_P_SAMPLE: 10
-input: 'input_conf' # input name with configuration number
-multi_config: True
-config_degeneracy: 'config_degeneracy.txt'
-
-# calculation and plotting results
+multi_config: true
+config_degeneracy: config_degeneracy.txt
+input:
+    input_conf01: 6
+    input_conf02: 96
+    input_conf03: 96
+    input_conf04: 96
+    input_conf05: 384
+    input_conf06: 96
+    input_conf07: 48
+    input_conf08: 24
+    input_conf09: 96
+    input_conf10: 96
+    input_conf11: 6
+    input_conf12: 96
+    input_conf13: 384
+    input_conf14: 384
+    input_conf15: 192
+    input_conf16: 48
+    input_conf17: 192
+    input_conf18: 192
+    input_conf19: 384
+    input_conf20: 192
+    input_conf21: 192
+    input_conf22: 384
+    input_conf23: 48
+    input_conf24: 192
+    input_conf25: 384
+    input_conf26: 192
+    input_conf27: 384
+    input_conf28: 96
+    input_conf29: 96
+    input_conf30: 384
+    input_conf31: 384
+    input_conf32: 192
+    input_conf33: 384
+    input_conf34: 192
+    input_conf35: 96
+    input_conf36: 48
+    input_conf37: 48
+    input_conf38: 24
+    input_conf39: 192
+    input_conf40: 96
+    input_conf41: 384
+    input_conf42: 96
+    input_conf43: 192
+    input_conf44: 24
+    input_conf45: 24
+    input_conf46: 96
+    input_conf47: 24
+    input_conf48: 12
+    input_conf49: 48
+    input_conf50: 48
+    input_conf51: 24
+    input_conf52: 12
 calculate:
-  - 'F' #
-  - 'G' # Gibbs free energy
-  - 'U'
-  - 'H'
-  - 'V'
-  - 'alpha'
-  - 'gamma'
-  - 'Cp'
-  - 'Cv'
-  - 'Bt'
-  - 'Btp'
-  - 'Bs'
-
-energy_unit: 'au' # 'ev' or 'au'
-plot_calculation: True
-results_folder : './results/'
+    - F
+    - G
+    - U
+    - H
+    - V
+    - alpha
+    - gamma
+    - Cp
+    - Cv
+    - Bt
+    - Btp
+    - Bs
+energy_unit: au
+plot_calculation: true
+results_folder: ./results/
