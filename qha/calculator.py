@@ -31,8 +31,8 @@ from qha.v2p import v2p
 
 
 class Calculator:
-    def __init__(self, user_settings):
-        settings_at_runtime = dict()
+    def __init__(self, user_settings: Dict[str, Any]):
+        runtime_settings = dict()
 
         allowed_keys = ('multi_config_same_vdos', 'multi_config', 'input', 'volume_energies',
                         'config_degeneracy',
@@ -44,11 +44,11 @@ class Calculator:
 
         for key in allowed_keys:
             try:
-                settings_at_runtime.update({key: user_settings[key]})
+                runtime_settings.update({key: user_settings[key]})
             except KeyError:
                 continue  # If a key is not set in user settings, use the default.
 
-        self._settings = settings_at_runtime
+        self._settings = runtime_settings
 
         self._formula_unit_number = None
         self._volumes = None
@@ -146,14 +146,14 @@ class Calculator:
 
     @LazyProperty
     def vib_ry(self):
-        q_weights, static_energies, frequencies, static_only = self.q_weights, self.static_energies, self.frequencies, \
-                                                               self.settings['static_only']
+        # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
+        args = self.q_weights, self.static_energies, self.frequencies, self.settings['static_only']
 
-        v: Vector = np.empty((self.temperature_array.size, self.volumes.size))
+        mat = np.empty((self.temperature_array.size, self.volumes.size))
         for i, t in enumerate(self.temperature_array):
-            v[i] = free_energy(t, q_weights, static_energies, frequencies, static_only)
+            mat[i] = free_energy(t, *(arg for arg in args))
 
-        return v
+        return mat
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
@@ -358,84 +358,72 @@ class SamePhDOSCalculator(Calculator):
 
 
 class DifferentPhDOSCalculator(Calculator):
-    def __init__(self, user_settings):
+    def __init__(self, user_settings: Dict[str, Any]):
         super().__init__(user_settings)
 
-        self.degeneracy = None
-        self.config_file_name = None
+        self._degeneracies = None
 
-    def read_essential_data(self):
+    @property
+    def degeneracies(self):
+        return self._degeneracies
+
+    @property
+    def volumes(self):
+        # TODO: This is a bad style, they should be consistent
+        return self._volumes[0]
+
+    def read_input(self):
         essentials = pd.read_csv(self.settings['config_degeneracy'], sep='\s+', dtype={'config': str})
         essentials.set_index('config', inplace=True)
-        config_file_name = list(map(lambda d: self.settings['input'] + '{0}'.format(d), essentials.index.tolist()))
+        self._degeneracies = essentials['degeneracy'].tolist()
 
-        self.degeneracy = essentials['degeneracy'].tolist()
-        self.config_file_name = config_file_name
-
-    @LazyProperty
-    def get_essential_data_config(self):
-        nm = []
+        input_data_files = list(map(lambda d: self.settings['input'] + '{0}'.format(d), essentials.index.tolist()))
+        formula_unit_numbers = []
         volumes = []
         static_energies = []
-        freq = []
-        weights = []
+        frequencies = []
+        q_weights = []
 
-        for inp in self.config_file_name:
+        for inp in input_data_files:
             nm_tmp, volumes_tmp, static_energies_tmp, freq_tmp, weights_tmp = read_input(inp)
-            if not qha.tools.is_monotonic_decreasing(volumes):
-                save_to_output(self.settings['qha_output'], "Check the input file to make sure the volume decreases")
-                raise ValueError("Check the input file to make sure the volume decreases")
 
-            nm.append(nm_tmp)
+            if not qha.tools.is_monotonic_decreasing(volumes_tmp):
+                # TODO: Clean this sentence
+                save_to_output(self.settings['qha_output'], "Check the input file to make sure the volume decreases")
+                raise ValueError("Check the input file to make sure the volumes are monotonic decreasing!")
+
+            formula_unit_numbers.append(nm_tmp)
             volumes.append(volumes_tmp)
             static_energies.append(static_energies_tmp)
-            freq.append(freq_tmp)
-            weights.append(weights_tmp)
+            frequencies.append(freq_tmp)
+            q_weights.append(weights_tmp)
 
-        nm = np.array(nm)
+        formula_unit_numbers = np.array(formula_unit_numbers)
         volumes = np.array(volumes)
         static_energies = np.array(static_energies)
-        freq = np.array(freq)
-        weights = np.array(weights)
+        frequencies = np.array(frequencies)
+        q_weights = np.array(q_weights)
 
-        return nm, volumes, static_energies, freq, weights
+        if not len(set(formula_unit_numbers)) == 1:
+            raise RuntimeError("All the formula unit number in all inputs should be the same!")
 
-    @LazyProperty
-    def nm_configs(self):
-        return self.get_essential_data_config[0]
+        if len(volumes.shape) == 1:
+            raise RuntimeError("All configurations should have same number of volumes!")
 
-    @LazyProperty
-    def volumes_configs(self):
-        return self.get_essential_data_config[1]
-
-    @LazyProperty
-    def static_energies_configs(self):
-        return self.get_essential_data_config[2]
-
-    @LazyProperty
-    def freq_configs(self):
-        return self.get_essential_data_config[3]
-
-    @LazyProperty
-    def weights_configs(self):
-        return self.get_essential_data_config[4]
-
-    @LazyProperty
-    def nm(self):
-        return self.nm_configs[0]
-
-    @LazyProperty
-    def volumes(self):
-        return self.volumes_configs[0]
+        self._formula_unit_number = formula_unit_numbers[0]  # Choose any of them since they are all the same
+        self._volumes = volumes
+        self._static_energies = static_energies
+        self._frequencies = frequencies
+        self._q_weights = q_weights
 
     @LazyProperty
     def vib_ry(self):
-        static_only = self.settings['static_only']
+        # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
+        args = self.static_energies, self.degeneracies, self.q_weights, self.frequencies, self._volumes, \
+               self.settings['static_only']
 
-        v = np.empty(self.temperature_array.shape)
+        mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            v[i] = different_vdos.PartitionFunction(t, self.static_energies_configs, self.degeneracy,
-                                                    self.weights_configs, self.freq_configs, self.volumes_configs,
-                                                    static_only).derive_free_energy
+            mat[i] = different_vdos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
 
-        return v
+        return mat
