@@ -5,7 +5,6 @@ P_MIN: 0
 NTV: 71
 DELTA_P: 1
 DELTA_P_SAMPLE: 10
-multi_config: true
 input:
     input_conf01: 6
     input_conf02: 96

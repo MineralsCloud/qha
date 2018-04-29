@@ -34,7 +34,7 @@ class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
         runtime_settings = dict()
 
-        allowed_keys = ('multi_config_same_vdos', 'multi_config', 'input', 'volume_energies',
+        allowed_keys = ('multi_config_same_vdos', 'input', 'volume_energies',
                         'calculate', 'static_only', 'energy_unit',
                         'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
