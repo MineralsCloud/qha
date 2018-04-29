@@ -39,7 +39,7 @@ class Calculator:
                         'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                         'calculate', 'volume_ratio', 'order', 'p_min_modifier',
-                        'T4FV', 'results_folder', 'plot_calculation', 'show_more_output', 'qha_output')
+                        'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
 
         for key in allowed_keys:
             try:
@@ -190,7 +190,7 @@ class Calculator:
     def desired_pressure_status(self) -> None:
         d = self.settings
 
-        if d['show_more_output']:
+        if d['high_verbosity']:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
                 self.p_tv_gpa[:, 0].max(), self.p_tv_gpa[:, -1].min()))
 
