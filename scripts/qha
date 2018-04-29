@@ -3,7 +3,7 @@
 import os
 import time
 
-from qha.calculator import QHACalculator, QHASameVdosCalculator, QHAMultiConfigCalculator
+from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.plot import QHAPlot
 from qha.settings import from_yaml
@@ -16,13 +16,13 @@ def main():
     file_settings = 'settings.yaml'
     settings = from_yaml(file_settings)
 
-    for key in ['multi_config_same_vdos', 'multi_config', 'different_vdos', 'input', 'volume_energies',
+    for key in ('multi_config_same_vdos', 'multi_config', 'different_vdos', 'input', 'volume_energies',
                 'config_degeneracy',
                 'calculate', 'static_only', 'energy_unit',
                 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                 'calculate', 'volume_ratio', 'order', 'p_min_modifier',
-                'T4FV', 'results_folder', 'plot_calculation', 'show_more_output']:
+                'T4FV', 'results_folder', 'plot_calculation', 'show_more_output'):
         try:
             user_settings.update({key: settings[key]})
         except KeyError:
@@ -41,15 +41,19 @@ def main():
     save_to_output(user_settings['qha_output'], make_starting_string())
 
     if user_settings['multi_config_same_vdos']:
-        calc = QHASameVdosCalculator(user_settings)
+        calc = SamePhDOSCalculator(user_settings)
     elif user_settings['multi_config']:
-        calc = QHAMultiConfigCalculator(user_settings)
+        calc = DifferentPhDOSCalculator(user_settings)
     else:
-        calc = QHACalculator(user_settings)
+        calc = Calculator(user_settings)
 
     save_to_output(user_settings['qha_output'], make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
                                                              calc.desired_pressures_gpa[0],
                                                              calc.desired_pressures_gpa[-1]))
+
+    calc.read_input()
+    calc.refine_grid()
+
     if user_settings['show_more_output']:
         save_to_output(user_settings['qha_output'],
                        'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
