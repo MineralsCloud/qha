@@ -39,10 +39,11 @@ def main():
 
     save_to_output(user_settings['qha_output'], make_starting_string())
 
-    if user_settings['multi_config_same_vdos']:
-        calc = SamePhDOSCalculator(user_settings)
-    elif user_settings['multi_config']:
-        calc = DifferentPhDOSCalculator(user_settings)
+    if len(user_settings['input']) > 1:  # Then it will be multi-configuration calculation.
+        if user_settings['multi_config_same_vdos']:
+            calc = SamePhDOSCalculator(user_settings)
+        else:
+            calc = DifferentPhDOSCalculator(user_settings)
     else:
         calc = Calculator(user_settings)
 
