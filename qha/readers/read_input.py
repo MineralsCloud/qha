@@ -35,6 +35,7 @@ def read_input(inp: str):
     volume_number = None
     q_point_number = None
     mode_number = None
+    formula_unit_number = None
     offset = 0
 
     # Now we start reading some metadata.
@@ -47,7 +48,7 @@ def read_input(inp: str):
         if match is None:
             continue
         else:
-            volume_number, q_point_number, mode_number, nm = strings_to_integers(match.groups())
+            volume_number, q_point_number, mode_number, formula_unit_number = strings_to_integers(match.groups())
             break
 
     # If the metadata is not found, check the *inp*!
@@ -108,4 +109,4 @@ def read_input(inp: str):
     if i != volume_number:
         raise ValueError('There is something wrong when reading!')
 
-    return nm, volumes, static_energies, frequencies, q_weights
+    return formula_unit_number, volumes, static_energies, frequencies, q_weights
