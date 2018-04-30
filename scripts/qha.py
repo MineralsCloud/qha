@@ -3,7 +3,7 @@
 import os
 import time
 
-from qha.calculator import QHACalculator, QHASameVdosCalculator, QHAMultiConfigCalculator
+from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.plot import QHAPlot
 from qha.settings import from_yaml
@@ -16,22 +16,21 @@ def main():
     file_settings = 'settings.yaml'
     settings = from_yaml(file_settings)
 
-    for key in ['multi_config_same_vdos', 'multi_config', 'different_vdos', 'input', 'volume_energies',
-                'config_degeneracy',
+    for key in ('same_phonon_dos', 'input', 'volume_energies',
                 'calculate', 'static_only', 'energy_unit',
                 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                 'calculate', 'volume_ratio', 'order', 'p_min_modifier',
-                'T4FV', 'results_folder', 'plot_calculation', 'show_more_output']:
+                'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
         try:
             user_settings.update({key: settings[key]})
         except KeyError:
             continue
 
-    if not os.path.exists(user_settings['results_folder']):
-        os.makedirs(user_settings['results_folder'])
+    if not os.path.exists(user_settings['output_directory']):
+        os.makedirs(user_settings['output_directory'])
 
-    user_settings.update({'qha_output': os.path.join(user_settings['results_folder'], 'output.txt')})
+    user_settings.update({'qha_output': os.path.join(user_settings['output_directory'], 'output.txt')})
 
     try:
         os.remove(user_settings['qha_output'])
@@ -40,17 +39,29 @@ def main():
 
     save_to_output(user_settings['qha_output'], make_starting_string())
 
-    if user_settings['multi_config_same_vdos']:
-        calc = QHASameVdosCalculator(user_settings)
-    elif user_settings['multi_config']:
-        calc = QHAMultiConfigCalculator(user_settings)
+    user_input = user_settings['input']
+
+    if isinstance(user_input, str):
+        calc = Calculator(user_settings)
+        print("You have single-configuration calculation assumed.")
+    elif isinstance(user_input, dict):  # Then it will be multi-configuration calculation.
+        if user_settings['same_phonon_dos']:
+            calc = SamePhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with the same phonon DOS assumed.")
+        else:
+            calc = DifferentPhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with different phonon DOS assumed.")
     else:
-        calc = QHACalculator(user_settings)
+        raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
 
     save_to_output(user_settings['qha_output'], make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
                                                              calc.desired_pressures_gpa[0],
                                                              calc.desired_pressures_gpa[-1]))
-    if user_settings['show_more_output']:
+
+    calc.read_input()
+    calc.refine_grid()
+
+    if user_settings['high_verbosity']:
         save_to_output(user_settings['qha_output'],
                        'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
 
@@ -60,15 +71,15 @@ def main():
 
     T = calc.temperature_array
     DESIRED_PRESSURES_GPa = calc.desired_pressures_gpa
-    DELTA_P_SAMPLE = getattr(calc, 'DELTA_P_SAMPLE')
-    DELTA_P = getattr(calc, 'DELTA_P')
+    DELTA_P_SAMPLE = calc.settings['DELTA_P_SAMPLE']
+    DELTA_P = calc.settings['DELTA_P']
 
     T_SAMPLE = calc.temperature_sample_array
     P_SAMPLE_GPa = calc.pressure_sample_array
 
     user_settings.update({'DESIRED_PRESSURES_GPa': DESIRED_PRESSURES_GPa})
 
-    results_folder = user_settings['results_folder']
+    results_folder = user_settings['output_directory']
 
     calculation_option = {'F': 'f_tp',
                           'G': 'g_tp',
@@ -99,9 +110,9 @@ def main():
 
     plotter.fv_pv()
 
-    for idx in getattr(calc, 'calculate'):
+    for idx in calc.settings['calculate']:
         if idx in ['F', 'G', 'H', 'U']:
-            attr_name = calculation_option[idx] + '_' + getattr(calc, 'energy_unit')
+            attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']
             file_dir = results_folder + attr_name + '.txt'
             save_x_tp(getattr(calc, attr_name), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir)
             user_settings.update({idx: file_dir})
@@ -128,7 +139,3 @@ def main():
     end_time_total = time.time()
     time_elapsed = end_time_total - start_time_total
     save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))
-
-
-if __name__ == '__main__':
-    main()

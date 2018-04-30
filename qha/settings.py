@@ -25,20 +25,18 @@ DEFAULT_SETTING: Dict[str, Any] = {
     'energy_unit': 'ry',
     'length_unit': 'angstrom',
     'order': 3,  # BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.
-    'p_min_modifier':1.0,
+    'p_min_modifier': 1.0,
     'target': 'parallel',
     'DT_SAMPLE': 10,
     'DELTA_P': 0.1,
     'DELTA_P_SAMPLE': 1,
     'static_only': False,
-    'multi_config_same_vdos': False,
-    'multi_config': False,
+    'same_phonon_dos': False,
     # output setting
-    'results_folder': './results/',
+    'output_directory': './results/',
     'T4FV': ['0', '300'],
-    'plot_calculation': False,
-    'show_more_output': False
-
+    'plot_results': False,
+    'high_verbosity': False
 }
 
 
@@ -47,8 +45,8 @@ class Settings(collections.ChainMap):
         super().__init__(*user_settings, DEFAULT_SETTING)
 
     def to_yaml_file(self, filename: str):
-        if not filename.endswith('.json'):
-            filename += '.json'
+        if not filename.endswith('.yaml'):
+            filename += '.yaml'
         with open(filename, 'w') as f:
             yaml.dump(self.maps, f)
 
