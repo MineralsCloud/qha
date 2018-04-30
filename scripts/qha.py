@@ -45,7 +45,7 @@ def main():
         calc = Calculator(user_settings)
         print("You have single-configuration calculation assumed.")
     elif isinstance(user_input, dict):  # Then it will be multi-configuration calculation.
-        if user_settings['multi_config_same_vdos']:
+        if user_settings['same_phonon_dos']:
             calc = SamePhDOSCalculator(user_settings)
             print("You have multi-configuration calculation with the same phonon DOS assumed.")
         else:
