@@ -8,7 +8,8 @@ from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, 
 from qha.plot import QHAPlot
 from qha.settings import from_yaml
 
-if __name__ == '__main__':
+
+def main():
     start_time_total = time.time()
     user_settings = {}  # save necessary info for plotting later
 
@@ -127,3 +128,7 @@ if __name__ == '__main__':
     end_time_total = time.time()
     time_elapsed = end_time_total - start_time_total
     save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))
+
+
+if __name__ == '__main__':
+    main()
