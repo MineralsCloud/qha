@@ -45,8 +45,8 @@ class Settings(collections.ChainMap):
         super().__init__(*user_settings, DEFAULT_SETTING)
 
     def to_yaml_file(self, filename: str):
-        if not filename.endswith('.json'):
-            filename += '.json'
+        if not filename.endswith('.yaml'):
+            filename += '.yaml'
         with open(filename, 'w') as f:
             yaml.dump(self.maps, f)
 
