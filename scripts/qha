@@ -132,7 +132,3 @@ def main():
     end_time_total = time.time()
     time_elapsed = end_time_total - start_time_total
     save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))
-
-
-if __name__ == '__main__':
-    main()
