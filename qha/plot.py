@@ -11,8 +11,8 @@ class QHAPlot:
     def __init__(self, user_settings):
         # self.folder = 'results/'
         self.user_settings = user_settings
-        self.results_folder = self.user_settings['results_folder']
-        self.plot_flag = self.user_settings['plot_calculation']
+        self.results_folder = self.user_settings['output_directory']
+        self.plot_flag = self.user_settings['plot_results']
         # self.color_cycle = cycle(['b','r','g','y','k'])
 
     def plot2file(self, plot_what):
