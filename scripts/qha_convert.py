@@ -18,7 +18,3 @@ fn_kwt = namespace.kpt  # 'q_weights.dat'
 
 def main():
     Converter(fn_flist, fn_pve, fn_kwt).write_to_input()
-
-
-if __name__ == '__main__':
-    main()
