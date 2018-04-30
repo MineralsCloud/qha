@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-import qha.multi_configurations.same_vdos as same_vdos
+import qha.multi_configurations.same_phonon_dos as same_vdos
 import qha.single_configuration as single_configuration
 from qha.readers import read_input
 

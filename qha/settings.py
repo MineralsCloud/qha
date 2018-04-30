@@ -31,7 +31,7 @@ DEFAULT_SETTING: Dict[str, Any] = {
     'DELTA_P': 0.1,
     'DELTA_P_SAMPLE': 1,
     'static_only': False,
-    'multi_config_same_vdos': False,
+    'same_phonon_dos': False,
     # output setting
     'output_directory': './results/',
     'T4FV': ['0', '300'],
