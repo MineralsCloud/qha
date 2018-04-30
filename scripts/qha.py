@@ -16,21 +16,21 @@ def main():
     file_settings = 'settings.yaml'
     settings = from_yaml(file_settings)
 
-    for key in ('multi_config_same_vdos', 'different_vdos', 'input', 'volume_energies',
+    for key in ('same_phonon_dos', 'input', 'volume_energies',
                 'calculate', 'static_only', 'energy_unit',
                 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                 'calculate', 'volume_ratio', 'order', 'p_min_modifier',
-                'T4FV', 'results_folder', 'plot_calculation', 'show_more_output'):
+                'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
         try:
             user_settings.update({key: settings[key]})
         except KeyError:
             continue
 
-    if not os.path.exists(user_settings['results_folder']):
-        os.makedirs(user_settings['results_folder'])
+    if not os.path.exists(user_settings['output_directory']):
+        os.makedirs(user_settings['output_directory'])
 
-    user_settings.update({'qha_output': os.path.join(user_settings['results_folder'], 'output.txt')})
+    user_settings.update({'qha_output': os.path.join(user_settings['output_directory'], 'output.txt')})
 
     try:
         os.remove(user_settings['qha_output'])
@@ -45,7 +45,7 @@ def main():
         calc = Calculator(user_settings)
         print("You have single-configuration calculation assumed.")
     elif isinstance(user_input, dict):  # Then it will be multi-configuration calculation.
-        if user_settings['multi_config_same_vdos']:
+        if user_settings['same_phonon_dos']:
             calc = SamePhDOSCalculator(user_settings)
             print("You have multi-configuration calculation with the same phonon DOS assumed.")
         else:
@@ -61,7 +61,7 @@ def main():
     calc.read_input()
     calc.refine_grid()
 
-    if user_settings['show_more_output']:
+    if user_settings['high_verbosity']:
         save_to_output(user_settings['qha_output'],
                        'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
 
@@ -79,7 +79,7 @@ def main():
 
     user_settings.update({'DESIRED_PRESSURES_GPa': DESIRED_PRESSURES_GPa})
 
-    results_folder = user_settings['results_folder']
+    results_folder = user_settings['output_directory']
 
     calculation_option = {'F': 'f_tp',
                           'G': 'g_tp',

@@ -6,7 +6,7 @@ DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
 input: input
 P_MIN: 0
-show_more_output: true
+high_verbosity: true
 calculate:
     - F
     - G
@@ -20,5 +20,5 @@ calculate:
     - Bt
     - Bs
 energy_unit: ev
-plot_calculation: true
-results_folder: ./results/
+plot_results: true
+output_directory: ./results/

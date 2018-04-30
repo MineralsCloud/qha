@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 from lazy_property import LazyProperty
 
-import qha.multi_configurations.different_vdos as different_vdos
-import qha.multi_configurations.same_vdos as same_vdos
+import qha.multi_configurations.different_phonon_dos as different_phonon_dos
+import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 import qha.tools
 from qha.grid_interpolation import RefineGrid
 from qha.out import save_to_output
@@ -34,12 +34,12 @@ class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
         runtime_settings = dict()
 
-        allowed_keys = ('multi_config_same_vdos', 'input', 'volume_energies',
+        allowed_keys = ('same_phonon_dos', 'input', 'volume_energies',
                         'calculate', 'static_only', 'energy_unit',
                         'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                         'calculate', 'volume_ratio', 'order', 'p_min_modifier',
-                        'T4FV', 'results_folder', 'plot_calculation', 'show_more_output', 'qha_output')
+                        'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
 
         for key in allowed_keys:
             try:
@@ -190,7 +190,7 @@ class Calculator:
     def desired_pressure_status(self) -> None:
         d = self.settings
 
-        if d['show_more_output']:
+        if d['high_verbosity']:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
                 self.p_tv_gpa[:, 0].max(), self.p_tv_gpa[:, -1].min()))
 
@@ -350,8 +350,8 @@ class SamePhDOSCalculator(Calculator):
         v = np.empty(self.temperature_array.shape)
 
         for i, t in enumerate(self.temperature_array):
-            v[i] = same_vdos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies, self.q_weights,
-                                        self.frequencies).total
+            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies, self.q_weights,
+                                              self.frequencies).total
         return v
 
 
@@ -420,6 +420,6 @@ class DifferentPhDOSCalculator(Calculator):
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            mat[i] = different_vdos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
 
         return mat
