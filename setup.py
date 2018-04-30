@@ -41,7 +41,7 @@ setup(name='qha',
       ],
       entry_points={
           'console_scripts': [
-              'qha=scripts/qha:main',
-              'qha-convert=scripts/qha-convert:main'
+              'qha=scripts.qha:main',
+              'qha-convert=scripts.qha-convert:main'
           ],
       })
