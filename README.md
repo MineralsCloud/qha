@@ -19,7 +19,7 @@ volume ($V(T, P)$), bulk modulus ($B(T, P)$), enthalpy ($H(T, P)$), Helmholtz fr
 
 ## Where to get it
 
-The source code is currently hosted on [Bitbucket](https://bitbucket.org/singularitti/qha).
+The source code is currently hosted on [GitHub](https://github.com/MineralsCloud/qha).
 
 Binary installers for the latest released version are available at the Python package index and on conda.
 
