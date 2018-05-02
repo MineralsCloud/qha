@@ -2,12 +2,14 @@
 
 import argparse
 
+import qha
 from qha.readers.make_input import QEInputMaker
 
 parser = argparse.ArgumentParser()
 parser.add_argument('inp_file_list')
 parser.add_argument('inp_static')
 parser.add_argument('inp_q_points')
+parser.add_argument('-v', '--version', action='version', version="current qha version: {0}".format(qha.__version__))
 
 namespace = parser.parse_args()
 
