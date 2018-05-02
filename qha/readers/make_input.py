@@ -61,7 +61,7 @@ class QEInputMaker:
         energies = []
 
         with open(self._inp_static, 'r') as f:
-            print("emtpy lines or lines starting with '#' will be ignored!")
+            print("Reading static data: emtpy lines or lines starting with '#' will be ignored!")
 
             for line in f:
                 if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
@@ -89,7 +89,7 @@ class QEInputMaker:
         q_weights = []
 
         with open(self._inp_q_points, 'r') as f:
-            print("emtpy lines or lines starting with '#' will be ignored!")
+            print("Reading q-points file: emtpy lines or lines starting with '#' will be ignored!")
 
             regex = re.compile(r"(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
 
@@ -177,7 +177,7 @@ class QEInputMaker:
         """
         frequencies_for_all_files = []
 
-        if not self.q_coordinates or not self.q_weights:  # If any of them is ``None``
+        if any(_ is None for _ in (self.q_coordinates, self.q_weights)):  # If any of them is ``None``
             self.read_q_points()  # Fill these 2 properties
 
         for i in range(len(self._frequency_files)):
@@ -191,7 +191,7 @@ class QEInputMaker:
 
         self.frequencies = np.array(frequencies_for_all_files)  # Shape: (# volumes, # q-points, # bands on each point)
 
-    def write_to_file(self, outfile='input.txt'):
+    def write_to_file(self, outfile='input'):
         path = pathlib.Path(outfile)
         if path.is_file():
             path.rename(outfile + '_backup')
@@ -199,10 +199,10 @@ class QEInputMaker:
         with open(outfile, 'w') as f:
             f.write("# {0}\n".format(self.comment))
             f.write('# The file contains frequencies and weights at the END!\n')
-            f.write('Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)')
-
-            f.write("{0} {1} {2} {3}\n".format(len(self.volumes), len(self.q_weights),
-                                               self.frequencies.shape[-1], self.formula_unit_number))
+            f.write('Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n\n')
+            # TODO: Possible bug introduced in formatting
+            f.write("{0} {1} {2} {3}\n\n".format(len(self.volumes), len(self.q_weights),
+                                                 self.frequencies.shape[-1], self.formula_unit_number))
 
             for i in range(len(self.volumes)):
                 f.write("P= {0} V= {1} E= {2}\n".format(self.pressures[i], self.volumes[i], self.static_energies[i]))
@@ -213,6 +213,6 @@ class QEInputMaker:
                     for k in range(self.frequencies.shape[-1]):
                         f.write("{0}\n".format(self.frequencies[i, j, k]))
 
-            f.write('weight\n')
+            f.write('\nweight\n')
             for j in range(len(self.q_weights)):
                 f.write("{0} {1} {2} {3}\n".format(*self.q_coordinates[j], self.q_weights[j]))
