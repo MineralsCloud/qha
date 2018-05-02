@@ -15,6 +15,5 @@ __version__ = '1.0.4'
 try:
     from .tools import *
     from .eos import *
-    from .bmf import *
 except ImportError:
     raise
