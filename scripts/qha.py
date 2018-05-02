@@ -11,7 +11,7 @@ from qha.plot import QHAPlot
 from qha.settings import from_yaml
 
 parser = argparse.ArgumentParser()
-parser.add_argument('settings')
+parser.add_argument('-s', '--settings', default='settings.yaml')
 parser.add_argument('-v', '--version', action='version', version="current qha version: {0}".format(qha.__version__))
 namespace = parser.parse_args()
 
@@ -20,10 +20,7 @@ def main():
     start_time_total = time.time()
     user_settings = {}  # save necessary info for plotting later
 
-    if not namespace.settings:
-        file_settings = namespace.settings
-    else:
-        file_settings = 'settings.yaml'
+    file_settings = namespace.settings
 
     settings = from_yaml(file_settings)
 
