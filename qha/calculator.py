@@ -202,7 +202,7 @@ class Calculator:
                            
                            DESIRED PRESSURE is too high (NTV is too large)!
                            QHA results might not be right!
-                           Please reduce the NTV accordingly, for example, try to set NTV < %4d.
+                           Please reduce the NTV accordingly, for example, try to set NTV < {:4d}.
                            """.format(ntv_max)))
 
             raise ValueError("DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!")

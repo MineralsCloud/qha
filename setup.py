@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='qha',
-      version='1.0.1',
+      version='1.0.4',
       description='A powerful tool for quasi-harmonic approximation',
       author='Tian Qin, Qi Zhang',
       author_email='qinxx197@umn.edu, qz2280@columbia.edu',

@@ -32,9 +32,9 @@ def read_input(inp: str):
     text_stream = TextStream(pathlib.Path(inp))
     gen: Iterator[str] = text_stream.generator_telling_position()
 
-    volume_number = None
-    q_point_number = None
-    mode_number = None
+    volumes_amount = None
+    q_points_amount = None
+    modes_per_q_point_amount = None
     formula_unit_number = None
     offset = 0
 
@@ -48,18 +48,19 @@ def read_input(inp: str):
         if match is None:
             continue
         else:
-            volume_number, q_point_number, mode_number, formula_unit_number = strings_to_integers(match.groups())
+            volumes_amount, q_points_amount, modes_per_q_point_amount, formula_unit_number = strings_to_integers(
+                match.groups())
             break
 
     # If the metadata is not found, check the *inp*!
-    if any(_ is None for _ in (volume_number, q_point_number, mode_number)):
+    if any(_ is None for _ in (volumes_amount, q_points_amount, modes_per_q_point_amount)):
         raise ValueError("At least one of the desired values 'nv', 'nq', 'np' is not found in file {0}!".format(inp))
 
     # Generate containers for storing the following data.
-    volumes = np.empty(volume_number, dtype=float)
-    static_energies = np.empty(volume_number, dtype=float)
-    frequencies = np.empty((volume_number, q_point_number, mode_number), dtype=float)
-    q_weights = np.empty(q_point_number, dtype=float)
+    volumes = np.empty(volumes_amount, dtype=float)
+    static_energies = np.empty(volumes_amount, dtype=float)
+    frequencies = np.empty((volumes_amount, q_points_amount, modes_per_q_point_amount), dtype=float)
+    q_weights = np.empty(q_points_amount, dtype=float)
 
     # We start a new iterator from where we stopped.
     gen = text_stream.generator_starts_from(offset)
@@ -86,7 +87,7 @@ def read_input(inp: str):
 
         sp = line.split()
         if len(sp) == 3:
-            for k in range(mode_number):  # Note `k` is the index of mode, like `j`, not count like `i`.
+            for k in range(modes_per_q_point_amount):  # Note `k` is the index of mode, like `j`, not count like `i`.
                 line = next(gen)
                 frequencies[i - 1, j, k] = line
 
@@ -106,7 +107,7 @@ def read_input(inp: str):
         q_weights[j] = line.split()[-1]
         j += 1
 
-    if i != volume_number:
-        raise ValueError('There is something wrong when reading!')
+    if i != volumes_amount:
+        raise ValueError('The number of volumes detected is not equal to what specified in head! Check your file!')
 
     return formula_unit_number, volumes, static_energies, frequencies, q_weights

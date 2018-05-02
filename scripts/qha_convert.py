@@ -2,19 +2,26 @@
 
 import argparse
 
-from qha.readers.matdyn2input import Converter
+import qha
+from qha.readers.make_input import QEInputMaker
 
 parser = argparse.ArgumentParser()
-parser.add_argument('filename')
-parser.add_argument('pve')
-parser.add_argument('kpt')
+parser.add_argument('inp_file_list')
+parser.add_argument('inp_static')
+parser.add_argument('inp_q_points')
+parser.add_argument('-v', '--version', action='version', version="current qha version: {0}".format(qha.__version__))
 
 namespace = parser.parse_args()
 
-fn_flist = namespace.filename
-fn_pve = namespace.pve  # 'PVE'
-fn_kwt = namespace.kpt  # 'q_weights.dat'
+inp_file_list = namespace.inp_file_list
+inp_static = namespace.inp_static
+inp_q_points = namespace.inp_q_points
 
 
 def main():
-    Converter(fn_flist, fn_pve, fn_kwt).write_to_input()
+    converter = QEInputMaker(inp_file_list, inp_static, inp_q_points)
+    converter.read_file_list()
+    converter.read_static()
+    converter.read_q_points()
+    converter.read_frequency_files()
+    converter.write_to_file()
