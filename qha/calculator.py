@@ -55,7 +55,7 @@ class Calculator:
         self._frequencies = None
         self._q_weights = None
 
-        self._finer_volumes_au = None
+        self._finer_volumes_bohr3 = None
         self._f_tv_ry = None
         self._v_ratio = None
 
@@ -90,8 +90,8 @@ class Calculator:
         return self._q_weights
 
     @property
-    def finer_volumes_au(self):
-        return self._finer_volumes_au
+    def finer_volumes_bohr3(self):
+        return self._finer_volumes_bohr3
 
     @property
     def f_tv_ry(self):
@@ -138,10 +138,10 @@ class Calculator:
         r = RefineGrid(p_min - p_min_modifier, ntv, option=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_au, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
-                                                                                  ratio=d['volume_ratio'])
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
+                                                                                     ratio=d['volume_ratio'])
         else:
-            self._finer_volumes_au, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
 
     @LazyProperty
     def vib_ry(self):
@@ -156,7 +156,7 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_au, self.f_tv_ry, self.p_tv_au)
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au)
 
     @LazyProperty
     def temperature_sample_array(self):
@@ -177,7 +177,7 @@ class Calculator:
 
     @LazyProperty
     def finer_volumes_ang3(self):
-        return b3_to_a3(self.finer_volumes_au)
+        return b3_to_a3(self.finer_volumes_bohr3)
 
     @LazyProperty
     def vib_ev(self):
@@ -209,7 +209,7 @@ class Calculator:
 
     @LazyProperty
     def p_tv_au(self):
-        return pressure_tv(self.finer_volumes_au, self.f_tv_ry)
+        return pressure_tv(self.finer_volumes_bohr3, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
@@ -265,7 +265,7 @@ class Calculator:
 
     @LazyProperty
     def bt_tv_au(self):
-        return isothermal_bulk_modulus(self.finer_volumes_au, self.p_tv_au)
+        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv_au)
 
     @LazyProperty
     def bt_tp_au(self):
@@ -280,16 +280,16 @@ class Calculator:
         return bulk_modulus_derivative(self.desired_pressures, self.bt_tp_au)
 
     @LazyProperty
-    def v_tp_au(self):
-        return volume_tp(self.finer_volumes_au, self.desired_pressures, self.p_tv_au)
+    def v_tp_bohr3(self):
+        return volume_tp(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
 
     @LazyProperty
     def v_tp_ang3(self):
-        return b3_to_a3(self.v_tp_au)
+        return b3_to_a3(self.v_tp_bohr3)
 
     @LazyProperty
     def alpha_tp(self):
-        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_au)
+        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_bohr3)
 
     @LazyProperty
     def cv_tv_au(self):
@@ -305,7 +305,7 @@ class Calculator:
 
     @LazyProperty
     def gamma_tp(self):
-        return gruneisen_parameter(self.v_tp_au, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
+        return gruneisen_parameter(self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
 
     @LazyProperty
     def bs_tp_au(self):
