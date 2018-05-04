@@ -300,7 +300,7 @@ class Calculator:
         return v2p(self.cv_tv_au, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
-    def cv_tp_jmol(self):
+    def cv_tp_jmolk(self):
         return ry_to_j_mol(self.cv_tp_au) / self.formula_unit_number
 
     @LazyProperty
@@ -320,8 +320,8 @@ class Calculator:
         return pressure_specific_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
     @LazyProperty
-    def cp_tp_jmol(self):
-        return pressure_specific_heat_capacity(self.cv_tp_jmol, self.alpha_tp, self.gamma_tp, self.temperature_array)
+    def cp_tp_jmolk(self):
+        return pressure_specific_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
 
 class SamePhDOSCalculator(Calculator):
