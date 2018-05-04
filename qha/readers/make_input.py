@@ -91,7 +91,7 @@ class QEInputMaker:
         with open(self._inp_q_points, 'r') as f:
             print("Reading q-points file: emtpy lines or lines starting with '#' will be ignored!")
 
-            regex = re.compile(r"(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
+            regex = re.compile(r"\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
 
             for line in f:
                 if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
@@ -104,10 +104,11 @@ class QEInputMaker:
                 else:
                     g = match.groups()
                     q_coordinates.append(g[0:3])
-                    q_weights.append(g[3])
+                    q_weights.append(g[3])  # TODO: Check possible bug, what if the regex match fails
 
-        self.q_coordinates = np.array(q_coordinates)  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
-        self.q_weights = np.array(q_weights)
+        self.q_coordinates = np.array(q_coordinates,
+                                      dtype=float)  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
+        self.q_weights = np.array(q_weights, dtype=float)
 
     @staticmethod
     def read_frequency_file(inp: str) -> Tuple[Vector, Matrix]:
@@ -183,7 +184,9 @@ class QEInputMaker:
         for i in range(len(self._frequency_files)):
             q_coordinates, frequencies = self.read_frequency_file(self._frequency_files[i])
 
-            if not np.array_equal(q_coordinates, self.q_coordinates):
+            # Here I use `allclose` rather than `array_equal` since they may have very little
+            # differences even they are supposed to be the same, because of the digits QE gave.
+            if not np.allclose(q_coordinates, self.q_coordinates):
                 warnings.warn("The q-points' coordinates are different from what specified in the q-point file!",
                               stacklevel=2)
 
@@ -194,7 +197,8 @@ class QEInputMaker:
     def write_to_file(self, outfile='input'):
         path = pathlib.Path(outfile)
         if path.is_file():
-            path.rename(outfile + '_backup')
+            print("Old '{0}' file found, I will backup it before continue.".format(outfile))
+            path.rename(outfile + '.backup')
 
         with open(outfile, 'w') as f:
             f.write("# {0}\n".format(self.comment))
@@ -205,14 +209,15 @@ class QEInputMaker:
                                                  self.frequencies.shape[-1], self.formula_unit_number))
 
             for i in range(len(self.volumes)):
-                f.write("P= {0} V= {1} E= {2}\n".format(self.pressures[i], self.volumes[i], self.static_energies[i]))
+                f.write("P={0:20.10f} V={1:20.10f} E={2:20.10f}\n".format(self.pressures[i], self.volumes[i],
+                                                                          self.static_energies[i]))
 
                 for j in range(len(self.q_weights)):
-                    f.write("{0} {1} {2}\n".format(*self.q_coordinates[j]))
+                    f.write("{0:12.8f} {1:12.8f} {2:12.8f}\n".format(*self.q_coordinates[j]))
 
                     for k in range(self.frequencies.shape[-1]):
-                        f.write("{0}\n".format(self.frequencies[i, j, k]))
+                        f.write("{0:20.10f}\n".format(self.frequencies[i, j, k]))
 
             f.write('\nweight\n')
             for j in range(len(self.q_weights)):
-                f.write("{0} {1} {2} {3}\n".format(*self.q_coordinates[j], self.q_weights[j]))
+                f.write("{0:12.8f} {1:12.8f} {2:12.8f} {3:12.8f}\n".format(*self.q_coordinates[j], self.q_weights[j]))
