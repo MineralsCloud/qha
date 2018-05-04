@@ -7,9 +7,9 @@ This tutorial is suitable for outputs from Quantum ESPRESSO.
 Three files are needed to run this script to generate input file for `qha` script:
 
 1. `filelist.yaml` file
-  * the descrption of the system in `comment` key: a string,
+  * the description of the system in `comment` key: a string,
   * the number of formula unit in `formula_unit_number` key: an integer,
-  * A YAML list of files containing frequenices `*.freq` in `frequency_files` key: a YAML list of strings.
+  * A YAML list of files containing frequencies `*.freq` in `frequency_files` key: a YAML list of strings.
 
   If you have trouble writing YAML, please refer to its syntax [here](http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html).
 
@@ -25,5 +25,5 @@ After preparing those three files, just run
 $ qha-convert filelist.yaml static q_points
 ```
 
-and if there was already an input, it will be backuped. The names of these three files can be arbitray but currently the order of `qha-convert` cannot be changed.
+and if there was already an input, it will be backuped. The names of these three files can be arbitrary but currently the order of `qha-convert` cannot be changed.
 
