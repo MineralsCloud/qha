@@ -6,8 +6,8 @@ from qha.v2p import v2p, v2p_new
 
 class TestV2P(unittest.TestCase):
     def setUp(self):
-        self.gtp = np.loadtxt('./data/si/g_tp_au.txt')
-        self.gtv = np.loadtxt('./data/si/g_tv_au.txt')
+        self.gtp = np.loadtxt('./data/si/g_tp_ry.txt')
+        self.gtv = np.loadtxt('./data/si/g_tv_ry.txt')
         self.ptv = np.loadtxt('./data/si/p_tv_au.txt')
         self.DESIRED_PRESSURES = np.loadtxt('./data/si/DESIRED_PRESSURES.txt')
         self.gtp_new = v2p_new(self.gtv, self.ptv, self.DESIRED_PRESSURES)

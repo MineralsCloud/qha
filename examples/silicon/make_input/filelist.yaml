@@ -1,0 +1,14 @@
+comment: Si calculated by Quantum ESPRESSO
+formula_unit_number: 2
+frequency_files:
+    - V+5.freq
+    - V+4.freq
+    - V+3.freq
+    - V+2.freq
+    - V+1.freq
+    - V0.freq
+    - V-1.freq
+    - V-2.freq
+    - V-3.freq
+    - V-4.freq
+    - V-5.freq
