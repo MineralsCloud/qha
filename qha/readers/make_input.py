@@ -203,7 +203,7 @@ class QEInputMaker:
         with open(outfile, 'w') as f:
             f.write("# {0}\n".format(self.comment))
             f.write('# The file contains frequencies and weights at the END!\n')
-            f.write('Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n\n')
+            f.write('Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n')
             # TODO: Possible bug introduced in formatting
             f.write("{0} {1} {2} {3}\n\n".format(len(self.volumes), len(self.q_weights),
                                                  self.frequencies.shape[-1], self.formula_unit_number))
