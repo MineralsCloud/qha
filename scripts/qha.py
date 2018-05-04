@@ -94,8 +94,8 @@ def main():
                           'H': 'h_tp',
                           'U': 'u_tp',
                           'V': 'v_tp',
-                          'Cv': 'cv_tp_jmol',
-                          'Cp': 'cp_tp_jmol',
+                          'Cv': 'cv_tp_jmolk',
+                          'Cp': 'cp_tp_jmolk',
                           'Bt': 'bt_tp_gpa',
                           'Btp': 'btp_tp',
                           'Bs': 'bs_tp_gpa',
@@ -127,12 +127,12 @@ def main():
             plotter.plot2file(idx)
 
         if idx == 'V':
-            v_au = calculation_option[idx] + '_' + 'au'
-            file_dir_au = results_folder + v_au + '.txt'
+            v_bohr3 = calculation_option[idx] + '_' + 'bohr3'
+            file_dir_au = results_folder + v_bohr3 + '.txt'
             v_ang3 = calculation_option[idx] + '_' + 'ang3'
             file_dir_ang3 = results_folder + v_ang3 + '.txt'
 
-            save_x_tp(getattr(calc, v_au), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir_au)
+            save_x_tp(getattr(calc, v_bohr3), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir_au)
             save_x_tp(getattr(calc, v_ang3), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir_ang3)
             user_settings.update({idx: file_dir_ang3})
 
