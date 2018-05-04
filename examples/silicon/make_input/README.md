@@ -1,5 +1,7 @@
 # Example to run `qha-convert`
 
+This tutorial is suitable for outputs from Quantum ESPRESSO.
+
 ## Necessary files
 
 Three files are needed to run this script to generate input file for `qha` script:
