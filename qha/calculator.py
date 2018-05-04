@@ -56,7 +56,7 @@ class Calculator:
         self._q_weights = None
 
         self._finer_volumes_au = None
-        self._f_tv_au = None
+        self._f_tv_ry = None
         self._v_ratio = None
 
     @property
@@ -94,8 +94,8 @@ class Calculator:
         return self._finer_volumes_au
 
     @property
-    def f_tv_au(self):
-        return self._f_tv_au
+    def f_tv_ry(self):
+        return self._f_tv_ry
 
     @property
     def v_ratio(self) -> Optional[float]:
@@ -138,10 +138,10 @@ class Calculator:
         r = RefineGrid(p_min - p_min_modifier, ntv, option=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_au, self._f_tv_au, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
+            self._finer_volumes_au, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
                                                                                   ratio=d['volume_ratio'])
         else:
-            self._finer_volumes_au, self._f_tv_au, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
+            self._finer_volumes_au, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
 
     @LazyProperty
     def vib_ry(self):
@@ -156,7 +156,7 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_au, self.f_tv_au, self.p_tv_au)
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_au, self.f_tv_ry, self.p_tv_au)
 
     @LazyProperty
     def temperature_sample_array(self):
@@ -209,59 +209,59 @@ class Calculator:
 
     @LazyProperty
     def p_tv_au(self):
-        return pressure_tv(self.finer_volumes_au, self.f_tv_au)
+        return pressure_tv(self.finer_volumes_au, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
-        return ry_to_ev(self.f_tv_au)
+        return ry_to_ev(self.f_tv_ry)
 
     @LazyProperty
     def p_tv_gpa(self):
         return ry_b3_to_gpa(self.p_tv_au)
 
     @LazyProperty
-    def f_tp_au(self):
-        return v2p(self.f_tv_au, self.p_tv_au, self.desired_pressures)
+    def f_tp_ry(self):
+        return v2p(self.f_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def f_tp_ev(self):
-        return ry_to_ev(self.f_tp_au)
+        return ry_to_ev(self.f_tp_ry)
 
     @LazyProperty
-    def u_tv_au(self):
+    def u_tv_ry(self):
         return self.thermodynamic_potentials['U']
 
     @LazyProperty
-    def u_tp_au(self):
-        return v2p(self.u_tv_au, self.p_tv_au, self.desired_pressures)
+    def u_tp_ry(self):
+        return v2p(self.u_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def u_tp_ev(self):
-        return ry_to_ev(self.u_tp_au)
+        return ry_to_ev(self.u_tp_ry)
 
     @LazyProperty
-    def h_tv_au(self):
+    def h_tv_ry(self):
         return self.thermodynamic_potentials['H']
 
     @LazyProperty
-    def h_tp_au(self):
-        return v2p(self.h_tv_au, self.p_tv_au, self.desired_pressures)
+    def h_tp_ry(self):
+        return v2p(self.h_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def h_tp_ev(self):
-        return ry_to_ev(self.h_tp_au)
+        return ry_to_ev(self.h_tp_ry)
 
     @LazyProperty
-    def g_tv_au(self):
+    def g_tv_ry(self):
         return self.thermodynamic_potentials['G']
 
     @LazyProperty
-    def g_tp_au(self):
-        return v2p(self.g_tv_au, self.p_tv_au, self.desired_pressures)
+    def g_tp_ry(self):
+        return v2p(self.g_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def g_tp_ev(self):
-        return ry_to_ev(self.g_tp_au)
+        return ry_to_ev(self.g_tp_ry)
 
     @LazyProperty
     def bt_tv_au(self):
@@ -293,7 +293,7 @@ class Calculator:
 
     @LazyProperty
     def cv_tv_au(self):
-        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_au)
+        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_ry)
 
     @LazyProperty
     def cv_tp_au(self):
