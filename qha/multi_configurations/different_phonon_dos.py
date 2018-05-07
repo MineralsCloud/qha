@@ -103,14 +103,9 @@ class PartitionFunction:
 
         num_configs, ntv = self.helmholtz_fitted.shape
         funp = np.empty((num_configs, len(v_desired)))
-        f_confv_large = np.empty((num_configs, ntv + 2))
-        f_confv_large[:, 1:-1] = f_confv
-        f_confv_large[:, 0] = f_confv[:, 3]
-        f_confv_large[:, -1] = f_confv[:, -4]
-        volume_confv_large = np.empty((num_configs, ntv + 2))
-        volume_confv_large[:, 1:-1] = volume_confv
-        volume_confv_large[:, 0] = volume_confv[:, 3]
-        volume_confv_large[:, -1] = volume_confv[:, -4]
+        f_confv_large = np.concatenate((f_confv[:, 3].reshape(-1, 1), f_confv, f_confv[:, -4].reshape(-1, 1)), axis=1)
+        volume_confv_large = np.concatenate(
+            (volume_confv[:, 3].reshape(-1, 1), volume_confv, volume_confv[:, -4].reshape(-1, 1)), axis=1)
 
         for i in range(num_configs):
             rs = np.zeros(len(v_desired))
@@ -118,14 +113,14 @@ class PartitionFunction:
             rs = self.__ntv - 1 - rs
             for j in range(len(v_desired)):
                 np_k = int(rs[j])
-                x1 = volume_confv_large[i, np_k]
-                x2 = volume_confv_large[i, np_k + 1]
-                x3 = volume_confv_large[i, np_k + 2]
-                x4 = volume_confv_large[i, np_k + 3]
-                f1 = f_confv_large[i, np_k]
-                f2 = f_confv_large[i, np_k + 1]
-                f3 = f_confv_large[i, np_k + 2]
-                f4 = f_confv_large[i, np_k + 3]
+                x1 = volume_confv_large[i, np_k - 1]
+                x2 = volume_confv_large[i, np_k]
+                x3 = volume_confv_large[i, np_k + 1]
+                x4 = volume_confv_large[i, np_k + 2]
+                f1 = f_confv_large[i, np_k - 1]
+                f2 = f_confv_large[i, np_k]
+                f3 = f_confv_large[i, np_k + 1]
+                f4 = f_confv_large[i, np_k + 2]
                 funp[i, j] = _lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
         return funp
 
