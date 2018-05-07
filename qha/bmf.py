@@ -144,3 +144,16 @@ def bmf(fvib, V, xo_grid, v_grid, ntv, nt, order):
         f_i = bmf_energy(x, fvib[i], nv, xo_grid, v_grid, ntv, order)
         f_v_t[i] = f_i
     return f_v_t
+
+
+def birchmurnaghan_energy(free_energies, eulerian_strain, strains, order: Optional[int] = 3):
+    fitted_parameters = np.polyfit(eulerian_strain, free_energies, order)
+    fitted_function = np.poly1d(fitted_parameters)
+    return fitted_function(strains)
+
+
+def birchmurnaghan(free_energies, eulerian_strain, strains, order: Optional[int] = 3):
+    f_v_t = np.empty((free_energies.shape[0], strains.shape[0]))
+    for i in range(free_energies.shape[0]):
+        f_v_t[i] = birchmurnaghan_energy(free_energies[i], eulerian_strain, strains, order)
+    return f_v_t
