@@ -16,11 +16,10 @@ from scipy.constants import Boltzmann
 from scipy.special import logsumexp
 
 import qha.settings
+import qha.tools as tools
 from qha.bmf import bmf_energy
 from qha.grid_interpolation import interpolate_volumes, calc_eulerian_strain
 from qha.single_configuration import free_energy
-from qha.tools import _lagrange4
-from qha.tools import vectorized_find_nearest
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -110,7 +109,7 @@ class PartitionFunction:
         v_desired_amount = len(v_desired)
         for i in range(num_configs):
             rs = np.zeros(v_desired_amount)
-            vectorized_find_nearest(np.sort(volume_confv_large[i]), v_desired, rs)
+            tools.vectorized_find_nearest(np.sort(volume_confv_large[i]), v_desired, rs)
             rs = self.__ntv - 1 - rs
 
             for j in range(v_desired_amount):
@@ -118,7 +117,7 @@ class PartitionFunction:
                 x1, x2, x3, x4 = volume_confv_large[i, k - 1:k + 3]
                 f1, f2, f3, f4 = f_confv_large[i, k - 1:k + 3]
 
-                result[i, j] = _lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
+                result[i, j] = tools._lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
         return result
 
     @LazyProperty
