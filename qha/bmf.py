@@ -109,20 +109,20 @@ def bmf_energy(x, y, nv: int, xo, v, ntv, order: Optional[int] = 3):
 
     if order == 5:
         Fn = (u1 * v2 - u2 * v1) / (u1 * u3 - u2 ** 2)
+        E = (v1 - Fn * u2) / u1
 
     if order == 4:
         Fn = 0.0
-    F = 0.0
-    E = (v1 - F * u2) / u1
+        E = (v1 - Fn * u2) / u1
 
     if order == 3:
         Fn = 0.0
         E = 0.0
 
-    D = (b1 - E * a2 - F * a3) / a1
-    C = (q1 - D * p2 - E * p3 - F * p4) / p1
-    B = (s1 - C * r2 - D * r3 - E * r4 - F * r5) / r1
-    A = (y1 - B * x1 - C * x2 - D * x3 - E * x4 - F * x5) / nv
+    D = (b1 - E * a2 - Fn * a3) / a1
+    C = (q1 - D * p2 - E * p3 - Fn * p4) / p1
+    B = (s1 - C * r2 - D * r3 - E * r4 - Fn * r5) / r1
+    A = (y1 - B * x1 - C * x2 - D * x3 - E * x4 - Fn * x5) / nv
 
     """ Use fitting parameters to get energy """
     # Helmholtz free energy: F[T][V]
