@@ -17,8 +17,7 @@ import numpy as np
 import pandas as pd
 from lazy_property import LazyProperty
 
-import qha.multi_configurations.different_phonon_dos as different_phonon_dos
-import qha.multi_configurations.same_phonon_dos as same_phonon_dos
+import qha.multi_configurations as multi_configurations
 import qha.tools
 from qha.grid_interpolation import RefineGrid
 from qha.out import save_to_output
@@ -350,8 +349,8 @@ class SamePhDOSCalculator(Calculator):
         v = np.empty(self.temperature_array.shape)
 
         for i, t in enumerate(self.temperature_array):
-            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies, self.q_weights,
-                                              self.frequencies).total
+            v[i] = multi_configurations.same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies,
+                                                                   self.q_weights, self.frequencies).total
         return v
 
 
@@ -420,6 +419,7 @@ class DifferentPhDOSCalculator(Calculator):
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = multi_configurations.different_phonon_dos.PartitionFunction(t, *(arg for arg in
+                                                                                      args)).derive_free_energy
 
         return mat
