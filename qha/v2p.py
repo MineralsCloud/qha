@@ -30,27 +30,21 @@ def v2p(funv: Matrix, p_tv: Matrix, p_vector: Vector) -> Matrix:
     """
     nt, nv = funv.shape
     funp = np.empty((nt, nv))
-    funv_large = np.empty((nt, nv + 2))
-    funv_large[:, 1:-1] = funv
-    funv_large[:, 0] = funv[:, 3]
-    funv_large[:, -1] = funv[:, -4]
-    p_large = np.empty((nt, nv + 2))
-    p_large[:, 1:-1] = p_tv
-    p_large[:, 0] = p_tv[:, 3]
-    p_large[:, -1] = p_tv[:, -4]
+    funv_large = np.concatenate((funv[:, 3].reshape(-1, 1), funv, funv[:, -4].reshape(-1, 1)), axis=1)
+    p_large = np.concatenate((p_tv[:, 3].reshape(-1, 1), p_tv, p_tv[:, -4].reshape(-1, 1)), axis=1)
 
     for i in range(nt):
         rs = np.zeros(len(p_vector))
         vectorized_find_nearest(p_large[i], p_vector, rs)
         for j in range(nv):
             np_k = int(rs[j])
-            x1 = p_large[i, np_k]
-            x2 = p_large[i, np_k + 1]
-            x3 = p_large[i, np_k + 2]
-            x4 = p_large[i, np_k + 3]
-            f1 = funv_large[i, np_k]
-            f2 = funv_large[i, np_k + 1]
-            f3 = funv_large[i, np_k + 2]
-            f4 = funv_large[i, np_k + 3]
+            x1 = p_large[i, np_k - 1]
+            x2 = p_large[i, np_k]
+            x3 = p_large[i, np_k + 1]
+            x4 = p_large[i, np_k + 2]
+            f1 = funv_large[i, np_k - 1]
+            f2 = funv_large[i, np_k]
+            f3 = funv_large[i, np_k + 1]
+            f4 = funv_large[i, np_k + 2]
             funp[i, j] = _lagrange4(p_vector[j], x1, x2, x3, x4, f1, f2, f3, f4)
     return funp
