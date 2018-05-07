@@ -16,7 +16,7 @@ import numpy as np
 from numba import vectorize, float64, jit, int64
 from numba.types import UniTuple
 
-from qha.bmf import bmf, bmf_energy
+from qha.bmf import bmf, bmf_energy, birchmurnaghan_energy, birchmurnaghan
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -84,7 +84,9 @@ class RefineGrid:
         """
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, initial_ratio)
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
-        f_vt = bmf_energy(eulerian_strain, free_energies, len(volumes), strains, finer_volumes, self.ntv, self.option)
+        # f_vt = bmf_energy(eulerian_strain, free_energies, len(volumes), strains, finer_volumes, self.ntv, self.option)
+        f_vt = birchmurnaghan_energy(free_energies, eulerian_strain, strains, self.option)
+        # print(f_vt - f_vt_new)
         p_vt = -np.gradient(f_vt) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.p_desire)
         # find the index of the first pressure value that slightly smaller than p_desire
@@ -115,6 +117,8 @@ class RefineGrid:
         nt = free_energies.shape[0]
 
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, new_ratio)
-        f_vt = bmf(free_energies, volumes, strains, finer_volumes, self.ntv, nt, self.option)
-
+        eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
+        # f_vt = bmf(free_energies, volumes, strains, finer_volumes, self.ntv, nt, self.option)
+        f_vt = birchmurnaghan(free_energies, eulerian_strain, strains, self.option)
+        # print(abs(f_vt_new-f_vt).max())
         return finer_volumes, f_vt, new_ratio
