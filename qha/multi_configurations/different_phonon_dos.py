@@ -102,27 +102,24 @@ class PartitionFunction:
         v_desired = self.volumes[0]
 
         num_configs, ntv = self.helmholtz_fitted.shape
-        funp = np.empty((num_configs, len(v_desired)))
-        f_confv_large = np.concatenate((f_confv[:, 3].reshape(-1, 1), f_confv, f_confv[:, -4].reshape(-1, 1)), axis=1)
-        volume_confv_large = np.concatenate(
-            (volume_confv[:, 3].reshape(-1, 1), volume_confv, volume_confv[:, -4].reshape(-1, 1)), axis=1)
+        result = np.empty((num_configs, len(v_desired)))
+        f_confv_large = np.hstack((f_confv[:, 3].reshape(-1, 1), f_confv, f_confv[:, -4].reshape(-1, 1)))
+        volume_confv_large = np.hstack(
+            (volume_confv[:, 3].reshape(-1, 1), volume_confv, volume_confv[:, -4].reshape(-1, 1)))
 
+        v_desired_amount = len(v_desired)
         for i in range(num_configs):
-            rs = np.zeros(len(v_desired))
+            rs = np.zeros(v_desired_amount)
             vectorized_find_nearest(np.sort(volume_confv_large[i]), v_desired, rs)
             rs = self.__ntv - 1 - rs
-            for j in range(len(v_desired)):
-                np_k = int(rs[j])
-                x1 = volume_confv_large[i, np_k - 1]
-                x2 = volume_confv_large[i, np_k]
-                x3 = volume_confv_large[i, np_k + 1]
-                x4 = volume_confv_large[i, np_k + 2]
-                f1 = f_confv_large[i, np_k - 1]
-                f2 = f_confv_large[i, np_k]
-                f3 = f_confv_large[i, np_k + 1]
-                f4 = f_confv_large[i, np_k + 2]
-                funp[i, j] = _lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
-        return funp
+
+            for j in range(v_desired_amount):
+                k = int(rs[j])
+                x1, x2, x3, x4 = volume_confv_large[i, k - 1:k + 3]
+                f1, f2, f3, f4 = f_confv_large[i, k - 1:k + 3]
+
+                result[i, j] = _lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
+        return result
 
     @LazyProperty
     def partition_from_helmholtz(self):
