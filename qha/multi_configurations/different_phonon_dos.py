@@ -16,7 +16,7 @@ from scipy.constants import Boltzmann
 from scipy.special import logsumexp
 
 import qha.settings
-from qha.bmf import bmf_energy
+from qha.bmf import bmf
 from qha.grid_interpolation import calc_eulerian_strain
 from qha.single_configuration import free_energy
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
@@ -79,10 +79,7 @@ class PartitionFunction:
             # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
             eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
             strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
-            helmholtz_fitted[i, :] = bmf_energy(eulerian_strain, self.helmoholtz_configs[i], len(self.volumes[i]),
-                                                strains,
-                                                self.volumes[i],
-                                                num_volumes)
+            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains)
         return helmholtz_fitted
 
     @LazyProperty
