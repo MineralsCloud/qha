@@ -76,11 +76,10 @@ class RefineGrid:
     def approaching_to_best_ratio(self, volumes: Vector, free_energies: Vector, initial_ratio: float) -> float:
         """
         Trying to find the best volume grids based on an a very large volume grids.
-
-        :param volumes:
-        :param free_energies:
-        :param initial_ratio:
-        :return:
+        :param volumes: Volumes of these calculations were perform (sparse).
+        :param free_energies: Free energies at the highest temperature (sparse).
+        :param initial_ratio: Initial ratio, a guess value, which can be set to a very large number.
+        :return: The suitable `ratio` for further calculation.
         """
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, initial_ratio)
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
@@ -97,11 +96,10 @@ class RefineGrid:
         """
         Get the appropriate volume grid for interpolation.
         Avoid to use a too large volume grid to obtain data, which might lose accuracy.
-
-        :param free_energies: calculated Helmholtz Free Energies for different volumes
-        :param volumes: on which volumes these calculations were perform.
-        :param ratio:  this ratio is used to get a larger volume grid
-        :return:
+        :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).
+        :param volumes: olumes of these calculations were perform (sparse).
+        :param ratio:  This ratio is used to get a larger volume grid
+        :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation
         """
         if ratio is not None:
             new_ratio: float = ratio
