@@ -16,9 +16,8 @@ from scipy.constants import Boltzmann
 from scipy.special import logsumexp
 
 import qha.settings
-import qha.tools as tools
 from qha.bmf import bmf_energy
-from qha.grid_interpolation import interpolate_volumes, calc_eulerian_strain
+from qha.grid_interpolation import calc_eulerian_strain
 from qha.single_configuration import free_energy
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
@@ -69,56 +68,6 @@ class PartitionFunction:
                          self.static_only) for i in
              range(num_configs)]
         return np.array(f)
-
-    @LazyProperty
-    def helmholtz_at_dense_v(self):
-        num_configs, _ = self.volumes.shape
-        # Make the volumes of config 1 as a reference volume
-        # The helmoholtz energies of other configs will recalibrate to these certain volumes.
-        helmholtz_fitted = np.empty((num_configs, self.__ntv))
-        finer_volumes = np.empty((num_configs, self.__ntv))
-        for i in range(num_configs):
-            strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
-            eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
-            helmholtz_fitted[i, :] = bmf_energy(eulerian_strain, self.helmoholtz_configs[i], len(self.volumes[i]),
-                                                strains,
-                                                finer_volumes,
-                                                self.__ntv)
-        return finer_volumes, helmholtz_fitted
-
-    @LazyProperty
-    def finer_volumes(self):
-        return self.helmholtz_at_dense_v[0]
-
-    @LazyProperty
-    def helmholtz_fitted(self):
-        return self.helmholtz_at_dense_v[1]
-
-    @LazyProperty
-    def helmholtz_fitted_vref(self):
-        f_confv = self.helmholtz_fitted
-        volume_confv = self.finer_volumes
-        v_desired = self.volumes[0]
-
-        num_configs, ntv = self.helmholtz_fitted.shape
-        result = np.empty((num_configs, len(v_desired)))
-        f_confv_large = np.hstack((f_confv[:, 3].reshape(-1, 1), f_confv, f_confv[:, -4].reshape(-1, 1)))
-        volume_confv_large = np.hstack(
-            (volume_confv[:, 3].reshape(-1, 1), volume_confv, volume_confv[:, -4].reshape(-1, 1)))
-
-        v_desired_amount = len(v_desired)
-        for i in range(num_configs):
-            rs = np.zeros(v_desired_amount)
-            tools.vectorized_find_nearest(np.sort(volume_confv_large[i]), v_desired, rs)
-            rs = self.__ntv - 1 - rs
-
-            for j in range(v_desired_amount):
-                k = int(rs[j])
-                x1, x2, x3, x4 = volume_confv_large[i, k - 1:k + 3]
-                f1, f2, f3, f4 = f_confv_large[i, k - 1:k + 3]
-
-                result[i, j] = tools._lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
-        return result
 
     @LazyProperty
     def helmholtz_at_ref_v(self):
