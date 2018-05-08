@@ -121,6 +121,22 @@ class PartitionFunction:
         return result
 
     @LazyProperty
+    def helmholtz_at_ref_v(self):
+        num_configs, num_volumes = self.volumes.shape
+        # Make the volumes of config 1 as a reference volume
+        # The helmoholtz energies of other configs will recalibrate to these certain volumes.
+        helmholtz_fitted = np.empty(self.volumes.shape)
+        for i in range(num_configs):
+            # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
+            eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
+            strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
+            helmholtz_fitted[i, :] = bmf_energy(eulerian_strain, self.helmoholtz_configs[i], len(self.volumes[i]),
+                                                strains,
+                                                self.volumes[i],
+                                                num_volumes)
+        return helmholtz_fitted
+
+    @LazyProperty
     def partition_from_helmholtz(self):
         try:
             import bigfloat
@@ -130,7 +146,7 @@ class PartitionFunction:
 
         with bigfloat.precision(self.precision):
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
-                             logsumexp(-self.helmholtz_fitted_vref.T / (K * self.temperature), axis=1,
+                             logsumexp(-self.helmholtz_at_ref_v.T / (K * self.temperature), axis=1,
                                        b=self.degeneracies)])
 
     @LazyProperty
