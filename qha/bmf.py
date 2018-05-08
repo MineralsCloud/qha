@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-:mod: bmf
+:mod: bmf_all_t
 ================================
 
-.. module bmf
+.. module bmf_all_t
    :platform: Unix, Windows, Mac, Linux
    :synopsis:
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
@@ -14,7 +14,18 @@ from typing import Optional
 import numpy as np
 
 
-def bmf_energy(x, y, nv: int, xo, v, ntv, order: Optional[int] = 3):
+def bmf(x, y, f, order: Optional[int] = 3):
+    """
+    Fit the Birch Murnaghan EOS:
+    y = A + B * x + C * x ** 2.0 + D * x ** 3.0 + E * x ** 4.0 + Fn * x ** 5.0
+    :param x: Eulerian strain of calculated volumes (sparse)
+    :param y: Free energy of these calculated volumes (sparse)
+    :param f: Eulerian strain at a greater dense vector
+    :param order: orders to fit Birch Murnaghan EOS
+    :return: Free energy at a denser strain vector (denser volumes vector)
+    """
+    nv = len(x)
+    ntv = len(f)
     # Initializations of different sums involved in fitting.
     x1 = 0
     x2 = 0
@@ -126,21 +137,28 @@ def bmf_energy(x, y, nv: int, xo, v, ntv, order: Optional[int] = 3):
 
     """ Use fitting parameters to get energy """
     # Helmholtz free energy: F[T][V]
-    fb = []
+    free_energy_f = []
     for jn in range(ntv):
-        fb.append(A + B * xo[jn] + C * xo[jn] ** 2.0 + D * xo[jn] ** 3.0 + E * xo[jn] ** 4.0 + Fn * xo[jn] ** 5.0)
+        free_energy_f.append(A + B * f[jn] + C * f[jn] ** 2.0 + D * f[jn] ** 3.0 + E * f[jn] ** 4.0 + Fn * f[jn] ** 5.0)
 
-    fb = np.array(fb)
-    return fb
+    free_energy_f = np.array(free_energy_f)
+    return free_energy_f
 
 
-def bmf(fvib, V, xo_grid, v_grid, ntv, nt, order):
-    """calculate the F(T,V),P(T,V), Bulk Modules:B(T,V)"""
-    x = 0.5 * ((V[0] / V) ** (2 / 3) - 1)
-    nv = len(V)
+def bmf_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
+    """
+    Calculate the F(T,V) for given strain
+    :param eulerian_strain: Eulerian strain of calculated volumes (sparse)
+    :param free_energy: Free energy of these calculated volumes (sparse)
+    :param strain: Eulerian strain at a greater dense vector
+    :param order: orders to fit Birch Murnaghan EOS
+    :return: Free energy at a dense (T, V) grid.
+    """
+    nt, _ = free_energy.shape
+    ntv = len(strain)
     f_v_t = np.empty((nt, ntv))  # initialize the F(T,V) array
 
     for i in range(nt):
-        f_i = bmf_energy(x, fvib[i], nv, xo_grid, v_grid, ntv, order)
+        f_i = bmf(eulerian_strain, free_energy[i], strain, order)
         f_v_t[i] = f_i
     return f_v_t
