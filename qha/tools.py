@@ -225,3 +225,7 @@ def is_monotonic_increasing(array: Vector) -> bool:
     """
     dx = np.diff(array)
     return np.all(dx >= 0)
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
