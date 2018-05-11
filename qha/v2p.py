@@ -20,37 +20,30 @@ from qha.type_aliases import Matrix, Vector
 __all__ = ['v2p']
 
 
-def v2p(funv: Matrix, p_tv: Matrix, p_vector: Vector) -> Matrix:
+def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Matrix:
     """
-    Obtain funp(T,P) given funv(T,V) and P(T,V)
-    :param funv: property on (T,V) grid
-    :param p_tv: pressure on (T,V) grid
-    :param p_vector: desired pressure vector
-    :return: property on (T,P) grid
-    """
-    nt, nv = funv.shape
-    funp = np.empty((nt, nv))
-    funv_large = np.empty((nt, nv + 2))
-    funv_large[:, 1:-1] = funv
-    funv_large[:, 0] = funv[:, 3]
-    funv_large[:, -1] = funv[:, -4]
-    p_large = np.empty((nt, nv + 2))
-    p_large[:, 1:-1] = p_tv
-    p_large[:, 0] = p_tv[:, 3]
-    p_large[:, -1] = p_tv[:, -4]
+    Obtain :math:`f(T, P)` given :math:`f(T, V)` and :math:`P(T, V)`. Do a fourth-order Lagrangian interpolation.
 
-    for i in range(nt):
-        rs = np.zeros(len(p_vector))
-        vectorized_find_nearest(p_large[i], p_vector, rs)
-        for j in range(nv):
-            np_k = int(rs[j])
-            x1 = p_large[i, np_k]
-            x2 = p_large[i, np_k + 1]
-            x3 = p_large[i, np_k + 2]
-            x4 = p_large[i, np_k + 3]
-            f1 = funv_large[i, np_k]
-            f2 = funv_large[i, np_k + 1]
-            f3 = funv_large[i, np_k + 2]
-            f4 = funv_large[i, np_k + 3]
-            funp[i, j] = _lagrange4(p_vector[j], x1, x2, x3, x4, f1, f2, f3, f4)
-    return funp
+    :param func_of_t_v: Any function :math:`f` on :math:`(T, V)` grid, it is of shape (# temperature, # volumes).
+    :param p_of_t_v: Pressures on :math:`(T, V)` grid.
+    :param desired_pressures: A vector of pressures which user wants to apply.
+    :return: The interpolated function :math:`f` on :math:`(T, P)` grid.
+    """
+    t_amount, v_amount = func_of_t_v.shape
+    result = np.empty((t_amount, v_amount))
+
+    extended_f = np.hstack((func_of_t_v[:, 3].reshape(-1, 1), func_of_t_v, func_of_t_v[:, -4].reshape(-1, 1)))
+    extended_p = np.hstack((p_of_t_v[:, 3].reshape(-1, 1), p_of_t_v, p_of_t_v[:, -4].reshape(-1, 1)))
+
+    desired_pressures_amount = len(desired_pressures)
+    for i in range(t_amount):
+        rs = np.zeros(desired_pressures_amount)
+        vectorized_find_nearest(extended_p[i], desired_pressures, rs)
+
+        for j in range(v_amount):
+            k = int(rs[j])
+            x1, x2, x3, x4 = extended_p[i, k - 1:k + 3]
+            f1, f2, f3, f4 = extended_f[i, k - 1:k + 3]
+
+            result[i, j] = _lagrange4(desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4)
+    return result

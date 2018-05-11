@@ -16,11 +16,9 @@ from scipy.constants import Boltzmann
 from scipy.special import logsumexp
 
 import qha.settings
-from qha.bmf import bmf_energy
-from qha.grid_interpolation import interpolate_volumes, calc_eulerian_strain
+from qha.bmf import bmf
+from qha.grid_interpolation import calc_eulerian_strain
 from qha.single_configuration import free_energy
-from qha.tools import _lagrange4
-from qha.tools import vectorized_find_nearest
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -72,62 +70,17 @@ class PartitionFunction:
         return np.array(f)
 
     @LazyProperty
-    def helmholtz_at_dense_v(self):
-        num_configs, _ = self.volumes.shape
+    def helmholtz_at_ref_v(self):
+        num_configs, num_volumes = self.volumes.shape
         # Make the volumes of config 1 as a reference volume
         # The helmoholtz energies of other configs will recalibrate to these certain volumes.
-        helmholtz_fitted = np.empty((num_configs, self.__ntv))
-        finer_volumes = np.empty((num_configs, self.__ntv))
+        helmholtz_fitted = np.empty(self.volumes.shape)
         for i in range(num_configs):
-            strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
+            # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
             eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
-            helmholtz_fitted[i, :] = bmf_energy(eulerian_strain, self.helmoholtz_configs[i], len(self.volumes[i]),
-                                                strains,
-                                                finer_volumes,
-                                                self.__ntv)
-        return finer_volumes, helmholtz_fitted
-
-    @LazyProperty
-    def finer_volumes(self):
-        return self.helmholtz_at_dense_v[0]
-
-    @LazyProperty
-    def helmholtz_fitted(self):
-        return self.helmholtz_at_dense_v[1]
-
-    @LazyProperty
-    def helmholtz_fitted_vref(self):
-        f_confv = self.helmholtz_fitted
-        volume_confv = self.finer_volumes
-        v_desired = self.volumes[0]
-
-        num_configs, ntv = self.helmholtz_fitted.shape
-        funp = np.empty((num_configs, len(v_desired)))
-        f_confv_large = np.empty((num_configs, ntv + 2))
-        f_confv_large[:, 1:-1] = f_confv
-        f_confv_large[:, 0] = f_confv[:, 3]
-        f_confv_large[:, -1] = f_confv[:, -4]
-        volume_confv_large = np.empty((num_configs, ntv + 2))
-        volume_confv_large[:, 1:-1] = volume_confv
-        volume_confv_large[:, 0] = volume_confv[:, 3]
-        volume_confv_large[:, -1] = volume_confv[:, -4]
-
-        for i in range(num_configs):
-            rs = np.zeros(len(v_desired))
-            vectorized_find_nearest(np.sort(volume_confv_large[i]), v_desired, rs)
-            rs = self.__ntv - 1 - rs
-            for j in range(len(v_desired)):
-                np_k = int(rs[j])
-                x1 = volume_confv_large[i, np_k]
-                x2 = volume_confv_large[i, np_k + 1]
-                x3 = volume_confv_large[i, np_k + 2]
-                x4 = volume_confv_large[i, np_k + 3]
-                f1 = f_confv_large[i, np_k]
-                f2 = f_confv_large[i, np_k + 1]
-                f3 = f_confv_large[i, np_k + 2]
-                f4 = f_confv_large[i, np_k + 3]
-                funp[i, j] = _lagrange4(v_desired[j], x1, x2, x3, x4, f1, f2, f3, f4)
-        return funp
+            strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
+            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains)
+        return helmholtz_fitted
 
     @LazyProperty
     def partition_from_helmholtz(self):
@@ -139,7 +92,7 @@ class PartitionFunction:
 
         with bigfloat.precision(self.precision):
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
-                             logsumexp(-self.helmholtz_fitted_vref.T / (K * self.temperature), axis=1,
+                             logsumexp(-self.helmholtz_at_ref_v.T / (K * self.temperature), axis=1,
                                        b=self.degeneracies)])
 
     @LazyProperty

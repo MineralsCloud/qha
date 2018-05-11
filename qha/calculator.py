@@ -350,8 +350,8 @@ class SamePhDOSCalculator(Calculator):
         v = np.empty(self.temperature_array.shape)
 
         for i, t in enumerate(self.temperature_array):
-            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies, self.q_weights,
-                                              self.frequencies).total
+            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies,
+                                              self.q_weights, self.frequencies).total
         return v
 
 
