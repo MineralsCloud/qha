@@ -162,3 +162,41 @@ def bmf_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
         f_i = bmf(eulerian_strain, free_energy[i], strain, order)
         f_v_t[i] = f_i
     return f_v_t
+
+
+def bfm(x, y, f, order: Optional[int] = 3):
+    """
+    Equation of calculate the coefficients are from :
+    http: // mathworld.wolfram.com / LeastSquaresFittingPolynomial.html
+
+    :param x: Eulerian strain of calculated volumes (sparse)
+    :param y: Free energy of these calculated volumes (sparse)
+    :param f: Eulerian strain at a greater dense vector
+    :param order: orders to fit Birch Murnaghan EOS
+    :return: Free energy at a denser strain vector (denser volumes vector)
+    """
+    order = order + 1  # definition of order is different from numpy.vander()
+    X = np.vander(x, order, increasing=True)
+    X_T = X.T
+    coef = np.dot(np.dot(np.linalg.inv(np.dot(X_T, X)), X_T), y)
+    fitted_y = np.dot(np.vander(f, order, increasing=True), coef)
+    return coef, fitted_y
+
+
+def bfm_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
+    """
+    Calculate the F(T,V) for given strain
+    :param eulerian_strain: Eulerian strain of calculated volumes (sparse)
+    :param free_energy: Free energy of these calculated volumes (sparse)
+    :param strain: Eulerian strain at a greater dense vector
+    :param order: orders to fit Birch Murnaghan EOS
+    :return: Free energy at a dense (T, V) grid.
+    """
+    nt, _ = free_energy.shape
+    ntv = len(strain)
+    f_v_t = np.empty((nt, ntv))  # initialize the F(T,V) array
+
+    for i in range(nt):
+        _, f_i = bfm(eulerian_strain, free_energy[i], strain, order)
+        f_v_t[i] = f_i
+    return f_v_t
