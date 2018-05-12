@@ -66,6 +66,14 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     Third-order Lagrange interpolation, referenced from
     `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
+    .. doctest::
+
+        >>> xs = [0, 1, 3]
+        >>> ys = [2, 4, 5]
+        >>> f = lagrange3(xs, ys)
+        >>> f(2.5)
+        5.125
+
     :param xs:
     :param ys:
     :return:
@@ -225,3 +233,9 @@ def is_monotonic_increasing(array: Vector) -> bool:
     """
     dx = np.diff(array)
     return np.all(dx >= 0)
+
+
+if __name__ == '__main__':
+    import doctest
+
+    doctest.testmod()
