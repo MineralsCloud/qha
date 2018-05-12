@@ -2,14 +2,17 @@
 # Created at Mar 15, 2018, by Qi Zhang
 
 import unittest
+import pathlib
 
 from qha.readers.read_matdyn import read_matdyn
 
 
 class TestReadMatdyn(unittest.TestCase):
     def setUp(self):
-        self.files = ['data/hcp_Fe_56/P0_Fe56.freq', 'data/hcp_Fe_56/P50_Fe56.freq', 'data/hcp_Fe_56/P100_Fe56.freq']
+        self.dir = pathlib.Path('../../examples')
 
     def test_make_freq_array(self):
-        freq = read_matdyn(self.files)
-        self.assertEqual(freq.shape, (3, 484, 6))
+        file_path = [self.dir / 'silicon/make_input/V0.freq', self.dir / 'silicon/make_input/V+1.freq']
+        print(file_path)
+        freq = read_matdyn(file_path)
+        self.assertEqual(freq.shape, (2, 16, 6))
