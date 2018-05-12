@@ -16,7 +16,6 @@ class TestReadInput(unittest.TestCase):
     def test_read_si_input(self):
         file_path = self.dir / 'silicon/input'
         nm, volumes, static_energies, frequencies, q_weights = read_input(file_path)
-        # print(volumes)
         self.assertEqual(nm, 2)
         np.testing.assert_array_equal(volumes,
                                       [320.5259, 311.4549, 302.5568, 293.8297, 285.2721, 276.8823, 268.6586, 260.5994,
