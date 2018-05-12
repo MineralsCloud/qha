@@ -978,7 +978,7 @@ class TestReadInput(unittest.TestCase):
 
         print(fitted_energies - self.energies_ice_4rd)
         print(abs(fitted_energies - self.energies_ice_4rd).max())
-        # np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_4rd)
+        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_4rd)
 
     def test_bfm_ice_5rd(self):
         coef, fitted_energies = bfm(self.strain_ice, self.energy_ice, self.strains_ice_5rd, order=5)
@@ -987,4 +987,4 @@ class TestReadInput(unittest.TestCase):
 
         print(fitted_energies - self.energies_ice_5rd)
         print(abs(fitted_energies - self.energies_ice_5rd).max())
-        # np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_5rd)
+        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_5rd)
