@@ -5,7 +5,7 @@ P_MIN: 0
 NTV: 701
 DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
-order: 4
+order: 3
 input:
     input_conf01: 6
     input_conf02: 96
