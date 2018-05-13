@@ -23,22 +23,22 @@ class TestOverallRun(unittest.TestCase):
                 if f.find('_tp') > 0:
                     yield f
 
-    def compare_results(self, path_results_fixed, path_results_new):
-        fixed, new = [dict()] * 2
-        for f, g in self.listdir_nohidden(path_results_fixed), self.listdir_nohidden(path_results_new):
-            fixed.update({f: pd.read_csv(str(path_results_fixed) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
-            new.update({g: pd.read_csv(str(path_results_new) + '/' + g, sep='\s+', index_col='T(K)\P(GPa)')})
+    def compare_results(self, path_results_benchmark, path_results_new):
+        d = dict()
+        for f in self.listdir_nohidden(path_results_benchmark):
+            d.update({f: pd.read_csv(str(path_results_benchmark) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
-        if set(fixed.keys()) != set(new.keys()):
-            raise KeyError("The files in fixed and new directories do not have same names thus cannot be compared!")
+        d0 = dict()
+        for f in self.listdir_nohidden(path_results_new):
+            d0.update({f: pd.read_csv(str(path_results_new) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
-        for k, v in fixed.items():
-            print(k + ':', np.max(np.abs(v.as_matrix() - new[k].as_matrix())))
+        for k, v in d.items():
+            print(k + ':', np.max(np.abs(v.as_matrix() - d0[k].as_matrix())))
 
     def prepare_results_new(self, path_results_new, path_results, path_run_command):
         os.makedirs(path_results_new, exist_ok=False)
         subprocess.run(self.command, shell=True, cwd=path_run_command)
-        command = "mv *.txt" + self.new_results_directory
+        command = "mv *.txt " + self.new_results_directory
         subprocess.run(command, shell=True, cwd=path_results)
 
     def test_silicon(self, test_directory='silicon'):
