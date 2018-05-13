@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 
-import pathlib
+import timeit
 import unittest
 
 import numpy as np
-from qha.bmf import bfm
+
+from qha.bmf import polynomial_least_square_fitting, bmf
 
 
-class TestReadInput(unittest.TestCase):
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+
+    return wrapped
+
+
+class TestPolyFit(unittest.TestCase):
     def setUp(self):
         self.strain_si = np.array(
             [0.0, 0.009661675909781398, 0.019605984554178613, 0.029844335129548982, 0.04038824145370046,
@@ -363,9 +371,9 @@ class TestReadInput(unittest.TestCase):
              -547.3508222016641, -547.3404652070287, -547.3300853475085, -547.3196826020946, -547.309256949778,
              -547.2988083695501])
 
-        self.coef_ice_4rd = np.array(
+        self.coef_ice_4th = np.array(
             [-550.2045201199261, 0.531953552602775, 10.20854916109849, 10.326224973982852, -0.37281673570466767])
-        self.strains_ice_4rd = np.array(
+        self.strains_ice_4th = np.array(
             [-0.06523181614702978, -0.06452061382208298, -0.06380941149713618, -0.06309820917218936,
              -0.06238700684724257, -0.06167580452229576, -0.06096460219734896, -0.060253399872402164,
              -0.05954219754745536, -0.05883099522250856, -0.05811979289756176, -0.05740859057261495,
@@ -513,7 +521,7 @@ class TestReadInput(unittest.TestCase):
              0.42549778806626365, 0.42620899039121035, 0.42692019271615717, 0.427631395041104, 0.4283425973660508,
              0.4290537996909976, 0.4297650020159444, 0.4304762043408912, 0.431187406665838, 0.4318986089907848,
              0.4326098113157316])
-        self.energies_ice_4rd = np.array(
+        self.energies_ice_4th = np.array(
             [-550.1986541411823, -550.1991248398583, -550.1995872427914, -550.200041327487, -550.2004870714533,
              -550.2009244521996, -550.2013534472385, -550.2017740340846, -550.2021861902547, -550.2025898932679,
              -550.2029851206456, -550.2033718499117, -550.2037500585919, -550.2041197242148, -550.204480824311,
@@ -656,10 +664,10 @@ class TestReadInput(unittest.TestCase):
              -547.2940553262601, -547.283463102917, -547.2728475021578, -547.2622085030783, -547.2515460847775,
              -547.2408602263564])
 
-        self.coef_ice_5rd = np.array(
+        self.coef_ice_5th = np.array(
             [-550.2045207785089, 0.5321097979814458, 10.204118066999182, 10.368118784428054, -0.5309809996559962,
              0.2063958416531133])
-        self.strains_ice_5rd = np.array(
+        self.strains_ice_5th = np.array(
             [-0.06523181614702978, -0.06452061382208298, -0.06380941149713618, -0.06309820917218936,
              -0.06238700684724257, -0.06167580452229576, -0.06096460219734896, -0.060253399872402164,
              -0.05954219754745536, -0.05883099522250856, -0.05811979289756176, -0.05740859057261495,
@@ -807,7 +815,7 @@ class TestReadInput(unittest.TestCase):
              0.42549778806626365, 0.42620899039121035, 0.42692019271615717, 0.427631395041104, 0.4283425973660508,
              0.4290537996909976, 0.4297650020159444, 0.4304762043408912, 0.431187406665838, 0.4318986089907848,
              0.4326098113157316])
-        self.energies_ice_5rd = np.array(
+        self.energies_ice_5th = np.array(
             [-550.1986985833075, -550.1991682498725, -550.1996296379378, -550.2000827248127, -550.2005274878096,
              -550.2009639042449, -550.2013919514385, -550.2018116067144, -550.2022228473996, -550.2026256508253,
              -550.2030199943257, -550.2034058552393, -550.203783210908, -550.204152038677, -550.2045123158956,
@@ -951,40 +959,67 @@ class TestReadInput(unittest.TestCase):
              -547.2406431097754])
 
     def test_bfm_si_3rd(self):
-        coef, fitted_energies = bfm(self.strain_si, self.energy_si, self.strains_si, order=3)
+        coef, fitted_energies = polynomial_least_square_fitting(self.strain_si, self.energy_si, self.strains_si,
+                                                                order=3)
 
-        print(coef - self.coef_si_3rd)
+        print("si coeff difference:\n{0}".format(coef - self.coef_si_3rd))
         np.testing.assert_array_almost_equal(coef, self.coef_si_3rd)
 
-        print(fitted_energies - self.energies_si_3rd)
-        print(abs(fitted_energies - self.energies_si_3rd).max())
+        print("si fitted result diff:\n{0}".format(fitted_energies - self.energies_si_3rd))
+        print("si max diff:\n{0}".format(abs(fitted_energies - self.energies_si_3rd).max()))
         np.testing.assert_array_almost_equal(fitted_energies, self.energies_si_3rd)
 
-    def test_bfm_ice_3rd(self):
-        coef, fitted_energies = bfm(self.strain_ice, self.energy_ice, self.strains_ice_3rd, order=3)
+        wrapped1 = wrapper(polynomial_least_square_fitting, self.strain_si, self.energy_si, self.strains_si, order=3)
+        wrapped2 = wrapper(bmf, self.strain_si, self.energy_si, self.strains_si, order=3)
+        print("si 3rd time {0}".format(timeit.timeit(wrapped1, number=1000) - timeit.timeit(wrapped2, number=1000)))
 
-        print(coef - self.coef_ice_3rd)
+    def test_bfm_ice_3rd(self):
+        coef, fitted_energies = polynomial_least_square_fitting(self.strain_ice, self.energy_ice, self.strains_ice_3rd,
+                                                                order=3)
+
+        print("ice coeff diff 3rd:\n{0}".format(coef - self.coef_ice_3rd))
         np.testing.assert_array_almost_equal(coef, self.coef_ice_3rd)
 
-        print(fitted_energies - self.energies_ice_3rd)
-        print(abs(fitted_energies - self.energies_ice_3rd).max())
+        print("ice fitted diff 3rd:\n{0}".format(fitted_energies - self.energies_ice_3rd))
+        print("ice max diff 3rd:\n{0}".format(abs(fitted_energies - self.energies_ice_3rd).max()))
         np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_3rd)
 
-    def test_bfm_ice_4rd(self):
-        coef, fitted_energies = bfm(self.strain_ice, self.energy_ice, self.strains_ice_4rd, order=4)
+        wrapped1 = wrapper(polynomial_least_square_fitting, self.strain_ice, self.energy_ice, self.strains_ice_3rd,
+                           order=3)
+        wrapped2 = wrapper(bmf, self.strain_ice, self.energy_ice, self.strains_ice_3rd, order=3)
+        print("ice 3rd time {0}".format(timeit.timeit(wrapped1, number=1000) - timeit.timeit(wrapped2, number=1000)))
 
-        print(coef - self.coef_ice_4rd)
-        np.testing.assert_array_almost_equal(coef, self.coef_ice_4rd)
+    def test_bfm_ice_4th(self):
+        coef, fitted_energies = polynomial_least_square_fitting(self.strain_ice, self.energy_ice, self.strains_ice_4th,
+                                                                order=4)
 
-        print(fitted_energies - self.energies_ice_4rd)
-        print(abs(fitted_energies - self.energies_ice_4rd).max())
-        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_4rd)
+        print("ice coeff diff 4th:\n{0}".format(coef - self.coef_ice_4th))
+        np.testing.assert_array_almost_equal(coef, self.coef_ice_4th)
 
-    def test_bfm_ice_5rd(self):
-        coef, fitted_energies = bfm(self.strain_ice, self.energy_ice, self.strains_ice_5rd, order=5)
-        print(coef - self.coef_ice_5rd)
-        # np.testing.assert_array_almost_equal(coef, self.coef_ice_5rd)
+        print("ice fitted diff 4th:\n{0}".format(fitted_energies - self.energies_ice_4th))
+        print("ice max diff 4th:\n{0}".format(abs(fitted_energies - self.energies_ice_4th).max()))
+        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_4th)
 
-        print(fitted_energies - self.energies_ice_5rd)
-        print(abs(fitted_energies - self.energies_ice_5rd).max())
-        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_5rd)
+        wrapped1 = wrapper(polynomial_least_square_fitting, self.strain_ice, self.energy_ice, self.strains_ice_4th,
+                           order=4)
+        wrapped2 = wrapper(bmf, self.strain_ice, self.energy_ice, self.strains_ice_4th, order=4)
+        print("ice 4th time {0}".format(timeit.timeit(wrapped1, number=1000) - timeit.timeit(wrapped2, number=1000)))
+
+    def test_bfm_ice_5th(self):
+        coef, fitted_energies = polynomial_least_square_fitting(self.strain_ice, self.energy_ice, self.strains_ice_5th,
+                                                                order=5)
+        print("ice coeff diff 5th:\n{0}".format(coef - self.coef_ice_5th))
+        np.testing.assert_array_almost_equal(coef, self.coef_ice_5th, decimal=5)
+
+        print("ice fitted diff 5th:\n{0}".format(fitted_energies - self.energies_ice_5th))
+        print("ice max diff 5th:\n{0}".format(abs(fitted_energies - self.energies_ice_5th).max()))
+        np.testing.assert_array_almost_equal(fitted_energies, self.energies_ice_5th)
+
+        wrapped1 = wrapper(polynomial_least_square_fitting, self.strain_ice, self.energy_ice, self.strains_ice_5th,
+                           order=5)
+        wrapped2 = wrapper(bmf, self.strain_ice, self.energy_ice, self.strains_ice_5th, order=5)
+        print("ice 5th time {0}".format(timeit.timeit(wrapped1, number=1000) - timeit.timeit(wrapped2, number=1000)))
+
+
+if __name__ == '__main__':
+    unittest.main()

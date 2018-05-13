@@ -12,6 +12,7 @@
 from typing import Optional
 
 import numpy as np
+from numpy.linalg import inv
 
 
 def bmf(x, y, f, order: Optional[int] = 3):
@@ -164,10 +165,10 @@ def bmf_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
     return f_v_t
 
 
-def bfm(x, y, f, order: Optional[int] = 3):
+def polynomial_least_square_fitting(x, y, f, order: Optional[int] = 3):
     """
-    Equation of calculate the coefficients are from :
-    http: // mathworld.wolfram.com / LeastSquaresFittingPolynomial.html
+    Equation of calculate the coefficients are from
+    `Wolfram Mathworld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_.
 
     :param x: Eulerian strain of calculated volumes (sparse)
     :param y: Free energy of these calculated volumes (sparse)
@@ -175,12 +176,12 @@ def bfm(x, y, f, order: Optional[int] = 3):
     :param order: orders to fit Birch Murnaghan EOS
     :return: Free energy at a denser strain vector (denser volumes vector)
     """
-    order = order + 1  # definition of order is different from numpy.vander()
+    order += 1  # The definition of order here is one more ``numpy.vander``.
     X = np.vander(x, order, increasing=True)
     X_T = X.T
-    coef = np.dot(np.dot(np.linalg.inv(np.dot(X_T, X)), X_T), y)
-    fitted_y = np.dot(np.vander(f, order, increasing=True), coef)
-    return coef, fitted_y
+    c = inv(X_T @ X) @ X_T @ y
+    new_y = np.vander(f, order, increasing=True) @ c
+    return c, new_y
 
 
 def bfm_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
@@ -197,6 +198,6 @@ def bfm_all_t(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
     f_v_t = np.empty((nt, ntv))  # initialize the F(T,V) array
 
     for i in range(nt):
-        _, f_i = bfm(eulerian_strain, free_energy[i], strain, order)
+        _, f_i = polynomial_least_square_fitting(eulerian_strain, free_energy[i], strain, order)
         f_v_t[i] = f_i
     return f_v_t
