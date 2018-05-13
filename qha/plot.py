@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
+"""
+:mod:`` --
+========================================
+
+.. module
+   :platform: Unix, Windows, Mac, Linux
+   :synopsis:
+.. moduleauthor:: Tian Qin <qinxx197@umn.edu>
+.. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
+"""
+
 # TODO change legend ...
 # TODO Add P(V,T), plot with F(V,T), add P_desired
 
 import matplotlib.pylab as plt
-import seaborn as sns
 import pandas as pd
+import seaborn as sns
+
+# ===================== What can be exported? =====================
+__all__ = ['Plotter']
 
 
-class QHAPlot:
+class Plotter:
     def __init__(self, user_settings):
         # self.folder = 'results/'
         self.user_settings = user_settings
@@ -70,7 +84,6 @@ class QHAPlot:
         fig = ax.get_figure()
         fig_name_pdf = fig_name + '.pdf'
         fig.savefig(fig_name_pdf, format='pdf', dpi=300, bbox_inches='tight')
-
 
     def plot_thermal_expansion(self):
         self.f_alpha = self.user_settings['alpha']

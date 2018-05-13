@@ -10,6 +10,8 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+from typing import Optional
+
 import numpy as np
 from lazy_property import LazyProperty
 from scipy.constants import Boltzmann
@@ -33,8 +35,9 @@ K = {
 
 
 class PartitionFunction:
-    def __init__(self, temperature: Scalar, static_energies: Matrix, degeneracies: Vector, q_weights: Matrix,
-                 frequencies: Array4D, volumes: Matrix, static_only: bool, precision: int = 500):
+    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
+                 volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
+                 precision: Optional[int] = 500, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be greater equal than 0!')
         if not np.all(np.greater_equal(
@@ -59,7 +62,7 @@ class PartitionFunction:
         self.volumes = volumes
         self.static_only = static_only
         self.precision = int(precision)
-        self.__ntv = 400
+        self.order = int(order)
 
     @LazyProperty
     def helmoholtz_configs(self):
@@ -79,7 +82,7 @@ class PartitionFunction:
             # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
             eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
             strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
-            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains) # TODO add 'order' here
+            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains, order=self.order)
         return helmholtz_fitted
 
     @LazyProperty
