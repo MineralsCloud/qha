@@ -79,7 +79,7 @@ class PartitionFunction:
             # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
             eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
             strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
-            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains)
+            helmholtz_fitted[i, :] = bmf(eulerian_strain, self.helmoholtz_configs[i], strains) # TODO add 'order' here
         return helmholtz_fitted
 
     @LazyProperty
