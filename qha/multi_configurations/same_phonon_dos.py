@@ -9,6 +9,8 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+from typing import Optional
+
 import numpy as np
 from lazy_property import LazyProperty
 from scipy.constants import Boltzmann
@@ -30,8 +32,8 @@ K = {
 
 
 class PartitionFunction:
-    def __init__(self, temperature: Scalar, static_energies: Matrix, degeneracies: Vector, q_weights: Vector,
-                 frequencies: Array3D, precision: int = 500):
+    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
+                 frequencies: Array3D, precision: Optional[int] = 500):
 
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
@@ -88,7 +90,7 @@ class PartitionFunction:
 
 
 class FreeEnergy:
-    def __init__(self, temperature: Scalar, static_energies: Matrix, degeneracies: Vector, q_weights: Vector,
+    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
                  frequencies: Array3D):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')

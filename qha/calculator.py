@@ -353,8 +353,8 @@ class SamePhDOSCalculator(Calculator):
         v = np.empty(self.temperature_array.shape)
 
         for i, t in enumerate(self.temperature_array):
-            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies,
-                                              self.q_weights, self.frequencies).total
+            v[i] = same_phonon_dos.FreeEnergy(t, self.degeneracies, self.q_weights, self.volume_energy.as_matrix(),
+                                              self.frequencies).total
         return v
 
 
@@ -418,7 +418,7 @@ class DifferentPhDOSCalculator(Calculator):
     @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.static_energies, self.degeneracies, self.q_weights, self.frequencies, self._volumes, \
+        args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
                self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
