@@ -9,82 +9,67 @@ import numpy as np
 import pandas as pd
 
 
-class TestReadInput(unittest.TestCase):
+class TestOverallRun(unittest.TestCase):
     def setUp(self):
-        self.dir = pathlib.Path('../../examples')
-        self.run = 'qha-run'
-        self.benchmark = 'results.benchmark'
-        self.new_results_folder = 'results.bfm3'
+        self.root_directory = pathlib.Path('../../examples')
+        self.command = 'qha-run'
+        self.fixed_directory = 'results.benchmark'
+        self.new_results_directory = 'results.bfm3'
 
     @staticmethod
-    def listdir_nohidden(txtpath):
-        for f in os.listdir(txtpath):
+    def listdir_nohidden(txt_path):
+        for f in os.listdir(txt_path):
             if not f.startswith('.'):
                 if f.find('_tp') > 0:
                     yield f
 
-    def comparsion(self, path_results_benchmark, path_results_new):
-        d = dict()
-        for f in self.listdir_nohidden(path_results_benchmark):
-            d.update({f: pd.read_csv(str(path_results_benchmark) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+    def compare_results(self, path_results_fixed, path_results_new):
+        fixed, new = [dict()] * 2
+        for f, g in self.listdir_nohidden(path_results_fixed), self.listdir_nohidden(path_results_new):
+            fixed.update({f: pd.read_csv(str(path_results_fixed) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+            new.update({g: pd.read_csv(str(path_results_new) + '/' + g, sep='\s+', index_col='T(K)\P(GPa)')})
 
-        d0 = dict()
-        for f in self.listdir_nohidden(path_results_new):
-            d0.update({f: pd.read_csv(str(path_results_new) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+        if set(fixed.keys()) != set(new.keys()):
+            raise KeyError("The files in fixed and new directories do not have same names thus cannot be compared!")
 
-        for k, v in d.items():
-            print(k + ':', np.max(np.abs(v.as_matrix() - d0[k].as_matrix())))
-
-    def prepare_benchmark(self, path_results_benchmark):
-        if not os.path.exists(path_results_benchmark):
-            print(
-                "{} has not been found, please generate the files for the benchmark, `mv *.txt results.benchmark` ".format(
-                    self.benchmark))
-            os.makedirs(path_results_benchmark)
-            exit(1)
-        else:
-            print("make sure that the files in {} is correct".format(self.benchmark))
+        for k, v in fixed.items():
+            print(k + ':', np.max(np.abs(v.as_matrix() - new[k].as_matrix())))
 
     def prepare_results_new(self, path_results_new, path_results, path_run_command):
-        if not os.path.exists(path_results_new):
-            os.makedirs(path_results_new)
-            subprocess.run("qha-run", shell=True, cwd=path_run_command)
-            com = "mv *.txt " + self.new_results_folder
-            subprocess.run(com, shell=True, cwd=path_results)
-        else:
-            print("{} has been found, change a new name for the new_results_folder".format(self.new_results_folder))
-            # exit(2)
+        os.makedirs(path_results_new, exist_ok=False)
+        subprocess.run(self.command, shell=True, cwd=path_run_command)
+        command = "mv *.txt" + self.new_results_directory
+        subprocess.run(command, shell=True, cwd=path_results)
 
-    def test_silicon(self, foldername='silicon'):
+    def test_silicon(self, test_directory='silicon'):
         print("testing the examples/silicon")
 
-        path_run_command = self.dir / foldername
+        path_run_command = self.root_directory / test_directory
         path_results = path_run_command / 'results'
-        path_results_benchmark = path_results / self.benchmark
-        path_results_new = path_results / self.new_results_folder
+        path_results_fixed = path_results / self.fixed_directory
+        path_results_new = path_results / self.new_results_directory
 
-        self.prepare_benchmark(path_results_benchmark)
         self.prepare_results_new(path_results_new, path_results, path_run_command)
 
-        self.comparsion(path_results_benchmark, path_results_new)
+        self.compare_results(path_results_fixed, path_results_new)
 
-    def test_ice(self, foldername='ice VII'):
+    def test_ice(self, test_directory='ice VII'):
         print("testing the examples/ice VII")
-        path_run_command = self.dir / foldername
-        path_results = path_run_command / 'results'
-        path_results_benchmark = path_results / self.benchmark
-        path_results_new = path_results / self.new_results_folder
 
-        self.prepare_benchmark(path_results_benchmark)
+        path_run_command = self.root_directory / test_directory
+        path_results = path_run_command / 'results'
+        path_results_benchmark = path_results / self.fixed_directory
+        path_results_new = path_results / self.new_results_directory
+
         self.prepare_results_new(path_results_new, path_results, path_run_command)
 
-        self.comparsion(path_results_benchmark, path_results_new)
+        self.compare_results(path_results_benchmark, path_results_new)
 
         print("testing the examples/ice VII, 4th order")
-        self.comparsion(path_results / 'results.bmf4', path_results / 'results.bfm4')
+        self.compare_results(path_results / 'results.bmf4', path_results / 'results.bfm4')
 
         print("testing the examples/ice VII, 5th order")
-        self.comparsion(path_results / 'results.bmf5', path_results / 'results.bfm5')
+        self.compare_results(path_results / 'results.bmf5', path_results / 'results.bfm5')
 
 
 if __name__ == '__main__':
