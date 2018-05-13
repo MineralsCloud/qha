@@ -12,7 +12,7 @@
 
 import pathlib
 import re
-from typing import Iterator
+from typing import Iterator, Union
 
 import numpy as np
 from scientific_string import strings_to_integers
@@ -22,7 +22,7 @@ from text_stream import TextStream
 __all__ = ['read_input']
 
 
-def read_input(inp: str):
+def read_input(inp: Union[str, pathlib.PurePath]):
     """
     Can be a string directing to a file, or the file's content directly.
 
