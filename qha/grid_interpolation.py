@@ -97,8 +97,8 @@ class RefineGrid:
         Get the appropriate volume grid for interpolation.
         Avoid to use a too large volume grid to obtain data, which might lose accuracy.
         :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).
-        :param volumes: olumes of these calculations were perform (sparse).
-        :param ratio:  This ratio is used to get a larger volume grid
+        :param volumes: Volumes of these calculations were perform (sparse).
+        :param ratio: This ratio is used to get a larger volume grid
         :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation
         """
         if ratio is not None:

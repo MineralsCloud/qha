@@ -7,7 +7,7 @@ import time
 import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
-from qha.plot import QHAPlot
+from qha.plot import Plotter
 from qha.settings import from_yaml
 
 parser = argparse.ArgumentParser()
@@ -75,7 +75,7 @@ def main():
 
     calc.desired_pressure_status()
 
-    plotter = QHAPlot(user_settings)
+    plotter = Plotter(user_settings)
 
     T = calc.temperature_array
     DESIRED_PRESSURES_GPa = calc.desired_pressures_gpa

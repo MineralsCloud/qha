@@ -29,6 +29,9 @@ from qha.type_aliases import Vector
 from qha.unit_conversion import gpa_to_ry_b3, ry_b3_to_gpa, b3_to_a3, ry_to_j_mol, ry_to_ev
 from qha.v2p import v2p
 
+# ===================== What can be exported? =====================
+__all__ = ['Calculator', 'SamePhDOSCalculator', 'DifferentPhDOSCalculator']
+
 
 class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
