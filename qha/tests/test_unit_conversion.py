@@ -73,3 +73,7 @@ class TestUnitConversion(unittest.TestCase):
         for ufunc in all_ufuncs:
             self.assertEqual(ufunc(vector).size, 50)
             self.assertEqual(ufunc(grid).shape, (3, 3))
+
+
+if __name__ == '__main__':
+    unittest.main()

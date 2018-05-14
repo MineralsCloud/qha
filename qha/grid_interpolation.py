@@ -16,7 +16,7 @@ import numpy as np
 from numba import vectorize, float64, jit, int64
 from numba.types import UniTuple
 
-from qha.bmf import bmf_all_t, bmf
+from qha.fitting import polynomial_least_square_fitting, birch_murnaghan_finite_strain_fitting
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -83,7 +83,7 @@ class RefineGrid:
         """
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, initial_ratio)
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
-        f_v_tmax = bmf(eulerian_strain, free_energies, strains, self.option)
+        _, f_v_tmax = polynomial_least_square_fitting(eulerian_strain, free_energies, strains, self.option)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.p_desire)
         # find the index of the first pressure value that slightly smaller than p_desire
@@ -97,8 +97,8 @@ class RefineGrid:
         Get the appropriate volume grid for interpolation.
         Avoid to use a too large volume grid to obtain data, which might lose accuracy.
         :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).
-        :param volumes: olumes of these calculations were perform (sparse).
-        :param ratio:  This ratio is used to get a larger volume grid
+        :param volumes: Volumes of these calculations were perform (sparse).
+        :param ratio: This ratio is used to get a larger volume grid
         :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation
         """
         if ratio is not None:
@@ -112,6 +112,5 @@ class RefineGrid:
 
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, new_ratio)
-        f_tv = bmf_all_t(eulerian_strain, free_energies, strains, self.option)
-
-        return finer_volumes, f_tv, new_ratio
+        f_tv_bfm = birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energies, strains, self.option)
+        return finer_volumes, f_tv_bfm, new_ratio
