@@ -16,7 +16,7 @@ import numpy as np
 from numba import vectorize, float64, jit, int64
 from numba.types import UniTuple
 
-from qha.bmf import bmf_all_t, bmf, polynomial_least_square_fitting, bfm_all_t
+from qha.bmf import polynomial_least_square_fitting, bfm_all_t
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
