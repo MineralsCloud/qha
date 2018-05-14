@@ -16,7 +16,7 @@ import numpy as np
 from numba import vectorize, float64, jit, int64
 from numba.types import UniTuple
 
-from qha.bmf import bmf_all_t, bmf, polynomial_least_square_fitting, bfm_all_t
+from qha.fitting import polynomial_least_square_fitting, polynomial_least_square_fitting_at_all_temperature
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -83,7 +83,7 @@ class RefineGrid:
         """
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, initial_ratio)
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
-        f_v_tmax = bmf(eulerian_strain, free_energies, strains, self.option)
+        _, f_v_tmax = polynomial_least_square_fitting(eulerian_strain, free_energies, strains, self.option)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.p_desire)
         # find the index of the first pressure value that slightly smaller than p_desire
@@ -113,6 +113,7 @@ class RefineGrid:
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, new_ratio)
         # f_tv = bmf_all_t(eulerian_strain, free_energies, strains, self.option)
-        f_tv_bfm = bfm_all_t(eulerian_strain, free_energies, strains, self.option)
+        f_tv_bfm = polynomial_least_square_fitting_at_all_temperature(eulerian_strain, free_energies, strains,
+                                                                      self.option)
         return finer_volumes, f_tv_bfm, new_ratio
         # return finer_volumes, f_tv, new_ratio
