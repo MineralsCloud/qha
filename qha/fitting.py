@@ -30,7 +30,7 @@ def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
     :return: Free energy at a denser strain vector (denser volumes vector)
     """
     order += 1  # The order needed is 1 more than ``numpy.vander`` default value.
-    X = np.vander(x, order, increasing=True)
+    X = np.vander(x, order, increasing=True)  # This will make a Vandermonde matrix that will be used in BM fitting.
     X_T = X.T
     a = inv(X_T @ X) @ X_T @ y
     new_y = np.vander(new_x, order, increasing=True) @ a
