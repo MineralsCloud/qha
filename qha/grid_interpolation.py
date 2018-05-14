@@ -16,7 +16,7 @@ import numpy as np
 from numba import vectorize, float64, jit, int64
 from numba.types import UniTuple
 
-from qha.bmf import polynomial_least_square_fitting, bfm_all_t
+from qha.bmf import polynomial_least_square_fitting, polynomial_least_square_fitting_at_all_temperature
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -113,6 +113,6 @@ class RefineGrid:
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, new_ratio)
         # f_tv = bmf_all_t(eulerian_strain, free_energies, strains, self.option)
-        f_tv_bfm = bfm_all_t(eulerian_strain, free_energies, strains, self.option)
+        f_tv_bfm = polynomial_least_square_fitting_at_all_temperature(eulerian_strain, free_energies, strains, self.option)
         return finer_volumes, f_tv_bfm, new_ratio
         # return finer_volumes, f_tv, new_ratio
