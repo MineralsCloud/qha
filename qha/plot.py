@@ -10,9 +10,6 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-# TODO change legend ...
-# TODO Add P(V,T), plot with F(V,T), add P_desired
-
 import matplotlib.pylab as plt
 import pandas as pd
 import seaborn as sns

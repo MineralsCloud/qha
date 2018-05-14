@@ -83,7 +83,7 @@ class RefineGrid:
         """
         strains, finer_volumes = interpolate_volumes(volumes, self.ntv, initial_ratio)
         eulerian_strain = calc_eulerian_strain(volumes[0], volumes)
-        f_v_tmax = bmf(eulerian_strain, free_energies, strains, self.option)
+        _, f_v_tmax = polynomial_least_square_fitting(eulerian_strain, free_energies, strains, self.option)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.p_desire)
         # find the index of the first pressure value that slightly smaller than p_desire
