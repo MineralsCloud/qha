@@ -15,7 +15,7 @@ import numpy as np
 from numpy.linalg import inv
 
 # ===================== What can be exported? =====================
-__all__ = ['polynomial_least_square_fitting', 'polynomial_least_square_fitting_at_all_temperature']
+__all__ = ['polynomial_least_square_fitting', 'birch_murnaghan_finite_strain_fitting']
 
 
 def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
@@ -37,7 +37,7 @@ def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
     return a, new_y
 
 
-def polynomial_least_square_fitting_at_all_temperature(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
+def birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
     """
     Calculate the F(T,V) for given strain.
 
