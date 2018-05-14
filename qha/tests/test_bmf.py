@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-from qha.bmf import polynomial_least_square_fitting, bmf
+from qha.fitting import polynomial_least_square_fitting, bmf
 
 
 def wrapper(func, *args, **kwargs):
