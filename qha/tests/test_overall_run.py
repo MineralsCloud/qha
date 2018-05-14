@@ -61,9 +61,12 @@ class TestOverallRun(unittest.TestCase):
         path_results_benchmark = path_results / self.fixed_directory
         path_results_new = path_results / self.new_results_directory
 
-        self.prepare_results_new(path_results_new, path_results, path_run_command)
+        # self.prepare_results_new(path_results_new, path_results, path_run_command)
+        #
+        # self.compare_results(path_results_benchmark, path_results_new)
 
-        self.compare_results(path_results_benchmark, path_results_new)
+        print("testing the examples/ice VII, 3rd order")
+        self.compare_results(path_results / 'results.bmf3', path_results / 'results.bfm3')
 
         print("testing the examples/ice VII, 4th order")
         self.compare_results(path_results / 'results.bmf4', path_results / 'results.bfm4')
