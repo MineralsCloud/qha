@@ -74,6 +74,28 @@ class TestOverallRun(unittest.TestCase):
         print("testing the examples/ice VII, 5th order")
         self.compare_results(path_results / 'results.bmf5', path_results / 'results.bfm5')
 
+    def test_samevdos(self, test_directory='results/same_vdos_example_ol'):
+        # print("testing the results/same_vdos_example_ol diff vdos new and old")
+        # path_run_command = self.root_directory / test_directory
+        # path_results = path_run_command / 'results'
+        # self.compare_results(path_results / 'results.diff_vdos', path_results / 'results.diff_vdos.old')
+        #
+        # print("testing the results/same_vdos_example_ol same vdos new and old")
+        # path_run_command = self.root_directory / test_directory
+        # path_results = path_run_command / 'results'
+        # self.compare_results(path_results / 'results.same_vdos', path_results / 'results.same_vdos.old')
+
+        # print("testing the results/same_vdos_example_ol same vdos and diff vdos")
+        # path_run_command = self.root_directory / test_directory
+        # path_results = path_run_command / 'results'
+        # self.compare_results(path_results / 'results.same_vdos', path_results / 'results.diff_vdos')
+
+        print("testing the results/same_vdos_example_ol same vdos and static")
+        path_run_command = self.root_directory / test_directory
+        path_results = path_run_command / 'results'
+        self.compare_results(path_results / 'results.same_vdos', path_results / 'results.same_vdos_new')
+
+
 
 if __name__ == '__main__':
     unittest.main()

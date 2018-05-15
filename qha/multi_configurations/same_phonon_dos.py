@@ -91,7 +91,7 @@ class PartitionFunction:
 
 class FreeEnergy:
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 frequencies: Array3D):
+                 frequencies: Array3D, static_only: Optional[bool] = False):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,
@@ -111,6 +111,7 @@ class FreeEnergy:
         self.q_weights = np.array(q_weights)
 
         self._scaled_q_weights = self.q_weights / np.sum(q_weights)
+        self.static_only = static_only
 
     @LazyProperty
     def static_part(self) -> Vector:
@@ -126,3 +127,10 @@ class FreeEnergy:
     @LazyProperty
     def total(self) -> Vector:
         return self.static_part + self.harmonic_part
+
+    @LazyProperty
+    def derive_free_energy(self):
+        if self.static_only:
+            return self.static_part
+
+        return self.total
