@@ -18,7 +18,7 @@ from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
-from qha.tools import energies_at_ref_volume_set
+from qha.tools import calibrate_energy_on_reference
 from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -117,22 +117,11 @@ class FreeEnergy:
 
     @LazyProperty
     def static_energy_at_ref_v(self):
-        return energies_at_ref_volume_set(self.volumes, self.static_energies, self.order)
+        return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
 
     @LazyProperty
     def static_part(self) -> Vector:
-        '''
-        In order to use use the logsumexp(), the inside_exp here needs to be in this form:
-
-        Exp_conf1_V1 Exp_conf2_V1 Exp_conf3_V1 ...
-        Exp_conf1_V2 Exp_conf2_V2 Exp_conf3_V2 ...
-        Exp_conf1_V3 Exp_conf2_V2 Exp_conf3_V3 ...
-
-        ...
-        :return:
-        '''
         kt: float = K * self.temperature  # k_B T
-        # inside_exp: Matrix = -self.static_energies.T / kt  # exp( E_n(V) / k_B / T )
         inside_exp: Matrix = -self.static_energy_at_ref_v.T / kt  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 

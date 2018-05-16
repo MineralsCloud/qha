@@ -19,7 +19,7 @@ from scipy.special import logsumexp
 
 import qha.settings
 from qha.single_configuration import free_energy
-from qha.tools import energies_at_ref_volume_set
+from qha.tools import calibrate_energy_on_reference
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -73,7 +73,7 @@ class PartitionFunction:
 
     @LazyProperty
     def helmholtz_at_ref_v(self):
-        return energies_at_ref_volume_set(self.volumes, self.helmoholtz_configs, self.order)
+        return calibrate_energy_on_reference(self.volumes, self.helmoholtz_configs, self.order)
 
     @LazyProperty
     def partition_from_helmholtz(self):
