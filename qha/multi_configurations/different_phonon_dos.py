@@ -18,9 +18,8 @@ from scipy.constants import Boltzmann
 from scipy.special import logsumexp
 
 import qha.settings
-from qha.fitting import polynomial_least_square_fitting
-from qha.grid_interpolation import calc_eulerian_strain
 from qha.single_configuration import free_energy
+from qha.tools import energies_at_ref_volume_set
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -74,17 +73,7 @@ class PartitionFunction:
 
     @LazyProperty
     def helmholtz_at_ref_v(self):
-        num_configs, num_volumes = self.volumes.shape
-        # Make the volumes of config 1 as a reference volume
-        # The helmoholtz energies of other configs will recalibrate to these certain volumes.
-        helmholtz_fitted = np.empty(self.volumes.shape)
-        for i in range(num_configs):
-            # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
-            eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
-            strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
-            _, helmholtz_fitted[i, :] = polynomial_least_square_fitting(eulerian_strain, self.helmoholtz_configs[i],
-                                                                        strains, order=self.order)
-        return helmholtz_fitted
+        return energies_at_ref_volume_set(self.volumes, self.helmoholtz_configs, self.order)
 
     @LazyProperty
     def partition_from_helmholtz(self):

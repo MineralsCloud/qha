@@ -10,16 +10,19 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 from numba import jit, guvectorize, float64, int64
 
-from qha.type_aliases import Vector, Scalar
+from qha.type_aliases import Vector, Scalar, Matrix
+
+from qha.grid_interpolation import calc_eulerian_strain
+from qha.fitting import polynomial_least_square_fitting
 
 # ===================== What can be exported? =====================
 __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 'is_monotonic_decreasing',
-           'is_monotonic_increasing', 'arange']
+           'is_monotonic_increasing', 'arange', 'energies_at_ref_volume_set']
 
 
 @jit(nopython=True)
@@ -234,6 +237,20 @@ def is_monotonic_increasing(array: Vector) -> bool:
     dx = np.diff(array)
     return np.all(dx >= 0)
 
+
+
+def energies_at_ref_volume_set(volume_sets: Matrix, energies_at_different_volume_set: Matrix, order: Optional[int] = 3):
+    num_configs, num_volumes = volume_sets.shape
+    # Make the volumes of config 1 as a reference volume
+    # The energies of other configs will recalibrate to these certain volumes.
+    energies_at_ref_volume = np.empty(volume_sets.shape)
+    for i in range(num_configs):
+        eulerian_strain = calc_eulerian_strain(volume_sets[i][0], volume_sets[i])
+        strains = calc_eulerian_strain(volume_sets[i][0], volume_sets[0])
+        _, energies_at_ref_volume[i, :] = polynomial_least_square_fitting(eulerian_strain,
+                                                                              energies_at_different_volume_set[i],
+                                                                              strains, order=order)
+    return energies_at_ref_volume
 
 if __name__ == '__main__':
     import doctest

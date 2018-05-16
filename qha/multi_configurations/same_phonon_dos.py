@@ -18,9 +18,7 @@ from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
-from qha.fitting import polynomial_least_square_fitting
-from qha.grid_interpolation import calc_eulerian_strain
-
+from qha.tools import energies_at_ref_volume_set
 from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -119,17 +117,7 @@ class FreeEnergy:
 
     @LazyProperty
     def static_energy_at_ref_v(self):
-        num_configs, num_volumes = self.volumes.shape
-        # Make the volumes of config 1 as a reference volume
-        # The helmoholtz energies of other configs will recalibrate to these certain volumes.
-        static_energy_fitted = np.empty(self.volumes.shape)
-        for i in range(num_configs):
-            # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
-            eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
-            strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
-            _, static_energy_fitted[i, :] = polynomial_least_square_fitting(eulerian_strain, self.static_energies[i],
-                                                                        strains, order=self.order)
-        return static_energy_fitted
+        return energies_at_ref_volume_set(self.volumes, self.static_energies, self.order)
 
     @LazyProperty
     def static_part(self) -> Vector:

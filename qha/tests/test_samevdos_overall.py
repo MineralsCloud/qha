@@ -14,7 +14,7 @@ class TestOverallRun(unittest.TestCase):
         self.root_directory = pathlib.Path('../../examples')
         self.command = 'qha-run'
         self.fixed_directory = 'results.benchmark'
-        self.new_results_directory = 'results.bfm3'
+        self.new_results_directory = 'results.same_vdos_new01'
 
     @staticmethod
     def listdir_nohidden(txt_path):
@@ -41,38 +41,18 @@ class TestOverallRun(unittest.TestCase):
         command = "mv *.txt " + self.new_results_directory
         subprocess.run(command, shell=True, cwd=path_results)
 
-    def test_silicon(self, test_directory='silicon'):
-        print("testing the examples/silicon")
+    def test_samevdos(self, test_directory='results/same_vdos_example_ol'):
 
+        print("testing the results/same_vdos_example_ol same vdos ")
         path_run_command = self.root_directory / test_directory
         path_results = path_run_command / 'results'
         path_results_fixed = path_results / self.fixed_directory
-        path_results_new = path_results / self.new_results_directory
-
-        self.prepare_results_new(path_results_new, path_results, path_run_command)
-
-        self.compare_results(path_results_fixed, path_results_new)
-
-    def test_ice(self, test_directory='ice VII'):
-        print("testing the examples/ice VII")
 
         path_run_command = self.root_directory / test_directory
         path_results = path_run_command / 'results'
-        path_results_benchmark = path_results / self.fixed_directory
-        path_results_new = path_results / self.new_results_directory
-
-        # self.prepare_results_new(path_results_new, path_results, path_run_command)
-        #
-        # self.compare_results(path_results_benchmark, path_results_new)
-
-        print("testing the examples/ice VII, 3rd order")
-        self.compare_results(path_results / 'results.bmf3', path_results / 'results.bfm3')
-
-        print("testing the examples/ice VII, 4th order")
-        self.compare_results(path_results / 'results.bmf4', path_results / 'results.bfm4')
-
-        print("testing the examples/ice VII, 5th order")
-        self.compare_results(path_results / 'results.bmf5', path_results / 'results.bfm5')
+        self.compare_results(path_results_fixed, path_results / 'results.same_vdos_new01')
+        self.compare_results(path_results / 'results.same_vdos_new', path_results / 'results.same_vdos_new01')
+        self.compare_results(path_results / 'results.diff_vdos', path_results / 'results.diff_vdos_new')
 
 
 if __name__ == '__main__':
