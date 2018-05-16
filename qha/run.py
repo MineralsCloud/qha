@@ -7,7 +7,7 @@ import time
 import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
-from qha.plot import Plotter
+from qha.plotting import Plotter
 from qha.settings import from_yaml
 
 parser = argparse.ArgumentParser()
@@ -79,8 +79,8 @@ def main():
 
     T = calc.temperature_array
     DESIRED_PRESSURES_GPa = calc.desired_pressures_gpa
-    DELTA_P_SAMPLE = calc.settings['DELTA_P_SAMPLE']
-    DELTA_P = calc.settings['DELTA_P']
+    # DELTA_P_SAMPLE = calc.settings['DELTA_P_SAMPLE']
+    # DELTA_P = calc.settings['DELTA_P']
 
     T_SAMPLE = calc.temperature_sample_array
     P_SAMPLE_GPa = calc.pressure_sample_array
