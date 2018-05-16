@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 
-class TestOverallRun(unittest.TestCase):
+class TestSamePhononDOS(unittest.TestCase):
     def setUp(self):
         self.root_directory = pathlib.Path('../../examples')
         self.command = 'qha-run'
@@ -19,9 +19,8 @@ class TestOverallRun(unittest.TestCase):
     @staticmethod
     def listdir_nohidden(txt_path):
         for f in os.listdir(txt_path):
-            if not f.startswith('.'):
-                if f.find('_tp') > 0:
-                    yield f
+            if not f.startswith('.') and f.find('_tp') > 0:
+                yield f
 
     def compare_results(self, path_results_benchmark, path_results_new):
         d = dict()
