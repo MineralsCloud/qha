@@ -254,9 +254,9 @@ def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_b
 
     energies_after_calibration = np.empty(volumes_before_calibration.shape)
     for i in range(configurations_amount):
-        strains_before_calibration = calc_eulerian_strain(volumes_before_calibration[i][0],
+        strains_before_calibration = calc_eulerian_strain(volumes_before_calibration[i, 0],
                                                           volumes_before_calibration[i])
-        strains_after_calibration = calc_eulerian_strain(volumes_before_calibration[i][0], volumes_for_reference)
+        strains_after_calibration = calc_eulerian_strain(volumes_before_calibration[i, 0], volumes_for_reference)
         _, energies_after_calibration[i, :] = polynomial_least_square_fitting(strains_before_calibration,
                                                                               energies_before_calibration[i],
                                                                               strains_after_calibration,
