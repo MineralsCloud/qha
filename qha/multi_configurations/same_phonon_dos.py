@@ -18,6 +18,7 @@ from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
+from qha.tools import calibrate_energy_on_reference
 from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -91,7 +92,7 @@ class PartitionFunction:
 
 class FreeEnergy:
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 frequencies: Array3D):
+                 volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,
@@ -107,15 +108,21 @@ class FreeEnergy:
         else:
             self.temperature = temperature
         self.static_energies = np.array(static_energies)
+        self.volumes = np.array(volumes)
         self.degeneracies = np.array(degeneracies)
         self.q_weights = np.array(q_weights)
-
         self._scaled_q_weights = self.q_weights / np.sum(q_weights)
+        self.static_only = static_only
+        self.order = order
+
+    @LazyProperty
+    def static_energy_at_ref_v(self):
+        return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
 
     @LazyProperty
     def static_part(self) -> Vector:
         kt: float = K * self.temperature  # k_B T
-        inside_exp: Matrix = -self.static_energies / kt  # exp( E_n(V) / k_B / T )
+        inside_exp: Matrix = -self.static_energy_at_ref_v.T / kt  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 
     @LazyProperty
@@ -126,3 +133,10 @@ class FreeEnergy:
     @LazyProperty
     def total(self) -> Vector:
         return self.static_part + self.harmonic_part
+
+    @LazyProperty
+    def derive_free_energy(self):
+        if self.static_only:
+            return self.static_part
+
+        return self.total

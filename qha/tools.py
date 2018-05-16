@@ -10,16 +10,18 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 from numba import jit, guvectorize, float64, int64
 
-from qha.type_aliases import Vector, Scalar
+from qha.fitting import polynomial_least_square_fitting
+from qha.grid_interpolation import calc_eulerian_strain
+from qha.type_aliases import Vector, Scalar, Matrix
 
 # ===================== What can be exported? =====================
 __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 'is_monotonic_decreasing',
-           'is_monotonic_increasing', 'arange']
+           'is_monotonic_increasing', 'arange', 'calibrate_energy_on_reference']
 
 
 @jit(nopython=True)
@@ -233,6 +235,33 @@ def is_monotonic_increasing(array: Vector) -> bool:
     """
     dx = np.diff(array)
     return np.all(dx >= 0)
+
+
+def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_before_calibration: Matrix,
+                                  order: Optional[int] = 3):
+    """
+    In multi-configuration system calculation, volume set of each calculation may varies a little,
+    This function would make the volume set  of configuration 1 (normally, the most populated configuration)
+    as a reference volume set, then calibrate the energies of all configurations to this reference volume set.
+
+    :param volumes_before_calibration: Original volume sets of all configurations
+    :param energies_before_calibration: Free energies of all configurations on the corresponding volume sets.
+    :param order: The order of Birch--Murnaghan EOS fitting.
+    :return: Free energies of each configuration on referenced volumes (usually the volumes of the first configuration).
+    """
+    configurations_amount, _ = volumes_before_calibration.shape
+    volumes_for_reference: Vector = volumes_before_calibration[0]
+
+    energies_after_calibration = np.empty(volumes_before_calibration.shape)
+    for i in range(configurations_amount):
+        strains_before_calibration = calc_eulerian_strain(volumes_before_calibration[i, 0],
+                                                          volumes_before_calibration[i])
+        strains_after_calibration = calc_eulerian_strain(volumes_before_calibration[i, 0], volumes_for_reference)
+        _, energies_after_calibration[i, :] = polynomial_least_square_fitting(strains_before_calibration,
+                                                                              energies_before_calibration[i],
+                                                                              strains_after_calibration,
+                                                                              order=order)
+    return energies_after_calibration
 
 
 if __name__ == '__main__':
