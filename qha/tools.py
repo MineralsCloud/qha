@@ -240,9 +240,16 @@ def is_monotonic_increasing(array: Vector) -> bool:
 
 
 def energies_at_ref_volume_set(volume_sets: Matrix, energies_at_different_volume_set: Matrix, order: Optional[int] = 3):
+    """
+    In multi-configuration system calculation, volume set of each calculation may varies a little,
+    This function would make the volume set  of configuration 1 (normally, the most populated configuration)
+    as a reference volume set, then recalibrate the energies of all configurations to this reference volume set.
+    :param volume_sets: volume sets of all configurations
+    :param energies_at_different_volume_set: energies of all configurations in the corresponding the volume sets
+    :param order: orders to fit Birch--Murnaghan EOS
+    :return: Energies of each configuration at the chosen volume set (typically, the volume set of configuration 1).
+    """
     num_configs, num_volumes = volume_sets.shape
-    # Make the volumes of config 1 as a reference volume
-    # The energies of other configs will recalibrate to these certain volumes.
     energies_at_ref_volume = np.empty(volume_sets.shape)
     for i in range(num_configs):
         eulerian_strain = calc_eulerian_strain(volume_sets[i][0], volume_sets[i])
