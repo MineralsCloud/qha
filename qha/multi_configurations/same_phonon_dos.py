@@ -18,6 +18,9 @@ from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
+from qha.fitting import polynomial_least_square_fitting
+from qha.grid_interpolation import calc_eulerian_strain
+
 from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
@@ -91,7 +94,7 @@ class PartitionFunction:
 
 class FreeEnergy:
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 frequencies: Array3D, static_only: Optional[bool] = False):
+                 volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,
@@ -107,16 +110,42 @@ class FreeEnergy:
         else:
             self.temperature = temperature
         self.static_energies = np.array(static_energies)
+        self.volumes = np.array(volumes)
         self.degeneracies = np.array(degeneracies)
         self.q_weights = np.array(q_weights)
-
         self._scaled_q_weights = self.q_weights / np.sum(q_weights)
         self.static_only = static_only
+        self.order = order
+
+    @LazyProperty
+    def static_energy_at_ref_v(self):
+        num_configs, num_volumes = self.volumes.shape
+        # Make the volumes of config 1 as a reference volume
+        # The helmoholtz energies of other configs will recalibrate to these certain volumes.
+        static_energy_fitted = np.empty(self.volumes.shape)
+        for i in range(num_configs):
+            # strains, finer_volumes[i, :] = interpolate_volumes(self.volumes[i], self.__ntv, 1.05)
+            eulerian_strain = calc_eulerian_strain(self.volumes[i][0], self.volumes[i])
+            strains = calc_eulerian_strain(self.volumes[i][0], self.volumes[0])
+            _, static_energy_fitted[i, :] = polynomial_least_square_fitting(eulerian_strain, self.static_energies[i],
+                                                                        strains, order=self.order)
+        return static_energy_fitted
 
     @LazyProperty
     def static_part(self) -> Vector:
+        '''
+        In order to use use the logsumexp(), the inside_exp here needs to be in this form:
+
+        Exp_conf1_V1 Exp_conf2_V1 Exp_conf3_V1 ...
+        Exp_conf1_V2 Exp_conf2_V2 Exp_conf3_V2 ...
+        Exp_conf1_V3 Exp_conf2_V2 Exp_conf3_V3 ...
+
+        ...
+        :return:
+        '''
         kt: float = K * self.temperature  # k_B T
-        inside_exp: Matrix = -self.static_energies / kt  # exp( E_n(V) / k_B / T )
+        # inside_exp: Matrix = -self.static_energies.T / kt  # exp( E_n(V) / k_B / T )
+        inside_exp: Matrix = -self.static_energy_at_ref_v.T / kt  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 
     @LazyProperty
