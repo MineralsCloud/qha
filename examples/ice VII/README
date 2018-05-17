@@ -1,7 +1,0 @@
-dip_data shows some data of each configuration.
-
-1st column: xx of input_confxx
-2nd column: Multiplicity of each configuration. Summing all numbers amounts 8100.
-3rd column: Directions of dipole moments of two sublattices.
-4th column: Direction of total dipole moment
-5th column: Type of two sublattices (Ic1~4 in our CPL 2010).

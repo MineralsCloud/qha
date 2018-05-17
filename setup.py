@@ -31,7 +31,7 @@ setup(name='qha',
       maintainer='Tian Qin, Qi Zhang',
       maintainer_email='qinxx197@umn.edu, qz2280@columbia.edu',
       license='GNU General Public License 3',
-      url='https://bitbucket.org/singularitti/qha',
+      url='https://github.com/MineralsCloud/qha',
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Science/Research',

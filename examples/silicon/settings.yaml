@@ -21,5 +21,5 @@ calculate:
     - Btp
     - Bs
 energy_unit: ry
-plot_results: true
+# plot_results: true
 output_directory: ./results/
