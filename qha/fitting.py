@@ -20,13 +20,15 @@ __all__ = ['polynomial_least_square_fitting', 'birch_murnaghan_finite_strain_fit
 
 def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
     """
-    Equation of calculate the coefficients are from
-    `Wolfram Mathworld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_.
+    Free Energy is expanded to the ``order``:math:`^\mathrm{th}` order in strain.
+
+    Check the `Wolfram Mathworld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_
+    to find the method of calculating the coefficients.
 
     :param x: Eulerian strain of calculated volumes (sparse)
     :param y: Free energy of these calculated volumes (sparse)
     :param new_x: Eulerian strain at a greater dense vector
-    :param order: orders to fit Birch Murnaghan EOS
+    :param order: orders to fit Birch--Murnaghan EOS
     :return: Free energy at a denser strain vector (denser volumes vector)
     """
     order += 1  # The order needed is 1 more than ``numpy.vander`` default value.
@@ -39,12 +41,13 @@ def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
 
 def birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energy, strain, order: Optional[int] = 3):
     """
-    Calculate the F(T,V) for given strain.
+    Calculate the ``F(T,V)`` for given strain.
+    Free Energy is expanded to the ``order``:math:`^\mathrm{th}` order in strain.
 
     :param eulerian_strain: Eulerian strain of calculated volumes (sparse)
     :param free_energy: Free energy of these calculated volumes (sparse)
     :param strain: Eulerian strain at a greater dense vector
-    :param order: orders to fit Birch Murnaghan EOS
+    :param order: orders to fit Birch--Murnaghan EOS
     :return: Free energy at a dense (T, V) grid.
     """
     temperature_amount, _ = free_energy.shape
