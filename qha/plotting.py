@@ -9,7 +9,8 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pylab as plt
 import pandas as pd
 import seaborn as sns
