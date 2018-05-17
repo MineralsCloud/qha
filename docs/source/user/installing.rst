@@ -17,9 +17,9 @@ Our supported platforms are:
 
 Dependencies
 ------------
-- `bigfloat <https://pypi.python.org/pypi/bigfloat)>`_
+- `bigfloat <https://pypi.python.org/pypi/bigfloat)>`_ [#b]_
 - `lazy-property <https://github.com/jackmaney/lazy-property>`_
-- `matplotlib <https://matplotlib.org>`_
+- `matplotlib <https://matplotlib.org>`_ [#m]_
 - `Numba <http://numba.pydata.org>`_
 - `NumPy <http://www.numpy.org>`_
 - `pandas <https://pandas.pydata.org>`_
@@ -30,13 +30,13 @@ Dependencies
 
 Notes:
 
-``GMP`` and ``MPFR`` libraries are required to use ``bigfloat`` package. On macOS,
-install these libraries via ``brew install mpfr``; on Linux, install ``libmpfr-dev`` ,
-for example, on Ubuntu use ``[sudo] apt-get install libmpfr-dev``;
-on Windows, ``bigfloat`` can be installed from the binary file, please check
-`Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_
+.. [#b] ``GMP`` and ``MPFR`` libraries are required to use ``bigfloat`` package. On macOS,
+    install these libraries via ``brew install mpfr``; on Linux, install ``libmpfr-dev`` ,
+    for example, on Ubuntu use ``[sudo] apt-get install libmpfr-dev``;
+    on Windows, ``bigfloat`` can be installed from the binary file, please check
+    `Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_
 
-For some system, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
+.. [#m] For some system, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
 
 Installing the ``mc-thermo`` package
 ----------------------------------
