@@ -19,8 +19,7 @@ from scipy.optimize import fsolve
 # ===================== What can be exported? =====================
 __all__ = [
     'parabola', 'birch', 'murnaghan', 'birch_murnaghan3rd', 'pourier_tarantola', 'vinet',
-    'EOS', 'Birch', 'Murnaghan', 'BirchMurnaghan3rd', 'PourierTarantola', 'Vinet',
-    'SIMPLE_EOS', 'VERSATILE_EOS', 'simple_EOS', 'versatile_EOS'
+    'EOS', 'Birch', 'Murnaghan', 'BirchMurnaghan3rd', 'PourierTarantola', 'Vinet'
 ]
 
 
@@ -274,42 +273,3 @@ class Vinet(EOS):
         x = (v / self.v0) ** (1 / 3)
         xi = 3 / 2 * (self.bp0 - 1)
         return 3 * self.b0 / x ** 2 * (1 - x) * np.exp(xi * (1 - x))
-
-
-SIMPLE_EOS: Dict[str, Callable] = {
-    'm': murnaghan,
-    'b-m': birch_murnaghan3rd,
-    'p-t': pourier_tarantola,
-    'v': vinet,
-    'b': birch
-}
-
-
-def simple_EOS(name: str) -> Callable:
-    """
-    A function that collects severl EOSs for free energy calculation. The only allowed keys
-    are one of "m" (Murnaghan), "b-m" (Birch Murnaghan 3rd-order), "p-t" (Pourier Tarantola), "v" (Vinet), "b" (Birch).
-    See the documentations of ``murnaghan``, ``birch_murnaghan3rd``, ``pourier_tarantola``, ``vinet``,
-    and ``birch`` for details.
-    """
-    return SIMPLE_EOS[name]
-
-
-VERSATILE_EOS = {
-    'b': Birch,
-    'm': Murnaghan,
-    'b-m': BirchMurnaghan3rd,
-    'p-t': PourierTarantola,
-    'v': Vinet,
-}
-
-
-def versatile_EOS(name: str) -> Callable:
-    """
-    A more powerful collection of EOSs that can calculate free energies, pressures, and solve volumes by given pressures.
-    The only *name* allowed
-    is one of "m" (Murnaghan), "b-m" (Birch Murnaghan 3rd-order), "p-t" (Pourier Tarantola), "v" (Vinet), "b" (Birch).
-    See the documentations of ``Birch``, ``Murnaghan``, ``BirchMurnaghan3rd``, ``PourierTarantola``,
-    and ``Vinet`` for details.
-    """
-    return VERSATILE_EOS[name]
