@@ -2,7 +2,7 @@
 Types and signatures
 ====================
 
-This package defines several data type that will be useful in the whole calculation.
+This package defines several data types that will be useful in the whole calculation.
 
 1. The ``Scalar`` type is just a Numba ``float64`` type.
 2. the ``Vector`` type is a 1D ``float64[:]``, can be list, tuple, or ``numpy.ndarray`` of ``float`` numbers.
