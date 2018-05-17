@@ -34,6 +34,7 @@ __all__ = [
 def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
     """
     Derivative of :math:`\\frac{ df(x) }{ dx }`.
+
     :param xs: 1D vector, of length nx.
     :param fs: 2D matrix, of shape (nx, _).
     :return: 2D matrix, of shape (nx, _).
@@ -46,7 +47,10 @@ def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
 
 def pressure_tv(v_vector: Vector, free_energies: Matrix) -> Matrix:
     """
-    P = -dF / dV |_T
+    Equation used to calculate pressure :math:` P = - \\frac{ dF }{ dV } _T`
+
+
+
     :param v_vector: fine volumes vector
     :param free_energies: F(T,V)
     :return: pressure, P(T,V)
@@ -57,6 +61,7 @@ def pressure_tv(v_vector: Vector, free_energies: Matrix) -> Matrix:
 def entropy(ts: Vector, free_energies: Matrix) -> Matrix:
     """
     S= -dF / dT |_V
+
     :param ts: temperature vector
     :param free_energies: F(T,V)
     :return: entropy, S(T,V)
@@ -68,9 +73,11 @@ def thermodynamic_potentials(ts: Vector, v_vector: Vector, free_energies: Matrix
     """
     Calculate H, U, and G on (T,V) grid from F;
     input: nt, and F, which is Helmholtz Free Energy, are needed
+
     U = F + T * S
     H = U + V * P
     G = F + V * P
+
     :param free_energies: F(T,V)
     :param p_tv: pressure, P(T,V)
     :param ts: temperature vector
@@ -89,6 +96,7 @@ def thermodynamic_potentials(ts: Vector, v_vector: Vector, free_energies: Matrix
 def volume_tp(v_vector: Vector, p_vector: Vector, p_tv: Matrix) -> Matrix:
     """
     Convert volume as function of (T,P)
+
     :param v_vector: fine volumes vector
     :param p_vector: desired pressure vector
     :param p_tv: P(T,V) in au.
@@ -103,6 +111,7 @@ def volume_tp(v_vector: Vector, p_vector: Vector, p_tv: Matrix) -> Matrix:
 def thermal_expansion_coefficient(ts: Vector, v_tp: Matrix) -> Matrix:
     """
     alpha = 1 / V * (dV / dT)
+
     :param ts: temperature vector
     :param v_tp: volume, V(T,P)
     :return: thermal expansion coefficient, alpha(T,P)
@@ -114,6 +123,7 @@ def thermal_expansion_coefficient(ts: Vector, v_tp: Matrix) -> Matrix:
 def gruneisen_parameter(v_tp: Matrix, bt_tp: Matrix, alpha_tp: Matrix, cv_tp: Matrix) -> Matrix:
     """
     gamma = alpha  * Bt  * V  / Cv
+
     :param v_tp: volume, V(T,P)
     :param bt_tp: isothermal_bulk_moduli(T,P)
     :param alpha_tp: thermal_expansion_coefficient(T,P)
@@ -130,6 +140,7 @@ def gruneisen_parameter(v_tp: Matrix, bt_tp: Matrix, alpha_tp: Matrix, cv_tp: Ma
 def isothermal_bulk_modulus(v_vector: Vector, p_tv: Matrix) -> Matrix:
     """
     bt = -V * dP / dV
+
     :param v_vector: fine volume vector
     :param p_tv: pressure, P(T,V)
     :return: isothermal bulk modulus, Bt(T,V)
@@ -140,6 +151,7 @@ def isothermal_bulk_modulus(v_vector: Vector, p_tv: Matrix) -> Matrix:
 def adiabatic_bulk_modulus(bt_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts: Vector) -> Matrix:
     """
     Bs = Bt * (1 + alpha * gamma_tp * T)
+
     :param bt_tp: isothermal bulk modulus, Bt(T,P)
     :param alpha_tp: thermal expansion coefficient, alpha(T,P)
     :param gamma_tp: thermodynamic gruneisen parameter, gamma(T,P)
@@ -152,6 +164,7 @@ def adiabatic_bulk_modulus(bt_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts
 def bulk_modulus_derivative(p_vector: Vector, bt_tp: Matrix) -> Matrix:
     """
     B'= dB / dP
+
     :param p_vector: desired pressure vector
     :param bt_tp: isothermal_bulk_modulus, Bt(T,P)
     :return: B', Bpt(T,P)
@@ -162,6 +175,7 @@ def bulk_modulus_derivative(p_vector: Vector, bt_tp: Matrix) -> Matrix:
 def pressure_specific_heat_capacity(cv_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts: Vector) -> Matrix:
     """
     Cp= Bt * (1 + alpha * gamma_tp * T)
+
     :param cv_tp: volume specific heat capacity, Cv(T,P)
     :param alpha_tp: thermal expansion coefficient, alpha(T,P)
     :param gamma_tp: thermodynamic gruneisen parameter, gamma(T,P)
@@ -174,6 +188,7 @@ def pressure_specific_heat_capacity(cv_tp: Matrix, alpha_tp: Matrix, gamma_tp: M
 def volume_specific_heat_capacity(ts: Vector, internal_energies: Matrix) -> Matrix:
     """
     Cv =dU/dT
+
     :param ts: temperature vector
     :param internal_energies: U(T,V)
     :return: volume specific heat capacity, Cv(T,V)
