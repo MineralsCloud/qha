@@ -203,5 +203,5 @@ class Plotter:
         axes[1].set_xlim(volume.index.min(), volume.index.max())
 
         fig.tight_layout(w_pad=3.2, h_pad=0)
-        fig_name_pdf = self.results_folder / 'FVT_PVT.pdf'
+        fig_name_pdf = str(self.results_folder / 'FVT_PVT.pdf')
         fig.savefig(fig_name_pdf, format='pdf', dpi=300, bbox_inches='tight')
