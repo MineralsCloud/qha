@@ -7,5 +7,5 @@ User Manual
    overview
    installing
    eos
-   homo
+   single_configuration
    unit

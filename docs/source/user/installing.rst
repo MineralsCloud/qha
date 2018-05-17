@@ -15,6 +15,21 @@ Our supported platforms are:
 * NVIDIA GPUs of compute capability 2.0 and later
 * AMD APUs supported by the HSA 1.0 final runtime (Kaveri, Carrizo)
 
+Dependencies
+------------
+- [bigfloat](https://pypi.python.org/pypi/bigfloat)[^1]
+- [lazy-property](https://github.com/jackmaney/lazy-property)
+- [matplotlib](https://matplotlib.org)
+- [Numba](http://numba.pydata.org)
+- [NumPy](http://www.numpy.org)
+- [pandas](https://pandas.pydata.org)
+- [PyYAML](http://pyyaml.org)
+- [scientific-string](https://github.com/singularitti/scientific-string)
+- [SciPy](https://www.scipy.org)
+- [text-stream](https://github.com/singularitti/text-stream)
+
+[^1]: `GMP` and `MPFR` libraries are required to use `bigfloat` package. On macOS, install these libraries via `brew install mpfr`; on Linux, install `libmpfr-dev` , for example, on Ubuntu use `[sudo] apt-get install libmpfr-dev`; on Windows, `bigfloat` can be installed from the binary file, please check  "[Unofficial Windows Binaries for Python Extension Packages](https://www.lfd.uci.edu/~gohlke/pythonlibs/)"
+
 
 Installing using Conda
 ----------------------
@@ -37,7 +52,7 @@ or::
 Installing from PyPI
 ~~~~~~~~~~~~~~~~~~~~
 
-pandas can be installed via pip from
+`qha` can be installed via pip from
 `PyPI <http://pypi.python.org/pypi/qha>`__.::
 
    $ pip install qha
@@ -57,5 +72,5 @@ You should be able to import Numba from the Python prompt::
    Type "help", "copyright", "credits" or "license" for more information.
    >>> import qha
    >>> qha.__version__
-   '0.0.1'
+   '1.0.9'
 

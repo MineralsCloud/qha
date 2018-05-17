@@ -6,6 +6,6 @@ which means they are fast.
 
 .. automodule:: qha
 
-.. automodule:: qha.homogeneous_dos
+.. automodule:: qha.single_configuration
    :members:
    :undoc-members:
