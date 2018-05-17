@@ -1,7 +1,8 @@
 Fitting Birch--Murnaghan equation of state
 ******************************************
 
-This module contains a robust Birch--Murnaghan equation of state fitting function, which is used heavily in this package.
+This module is one of the most important part of this package since it implements a robust
+Birch--Murnaghan EoS fitting for ``grid_interpolation`` modules' use.
 
 .. automodule:: qha
 
