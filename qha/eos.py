@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`eos` -- equation of states
-================================
-
 .. module eos
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Referenced from `here <https://wiki.fysik.dtu.dk/ase/_modules/ase/eos.html#EquationOfState>`_.

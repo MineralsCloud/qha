@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`thermodynamics` -- title
-========================================
-
 .. module thermodynamics
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Calculate the basic thermodynamics for system: S, U, H, G, Cv on a (T,V) grid.

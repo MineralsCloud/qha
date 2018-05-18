@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`` --
-========================================
-
 .. module
    :platform: Unix, Windows, Mac, Linux
    :synopsis:

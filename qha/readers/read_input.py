@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod: read_input
-================================
-
 .. module read_input
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Read file and write calculated value to files

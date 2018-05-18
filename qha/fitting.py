@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod: fitting
-================================
-
 .. module fitting
    :platform: Unix, Windows, Mac, Linux
    :synopsis: This module is one of the most important part of this package since it implements a robust

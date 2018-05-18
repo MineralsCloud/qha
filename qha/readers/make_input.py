@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod: make_input
-================================
-
 .. module make_input
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Use data files from Quantum ESPRESSO and other software to generate a standard input.

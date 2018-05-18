@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod: calculator
-================
-
 .. module calculator
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Read file and write calculated value to files
