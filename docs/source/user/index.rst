@@ -9,13 +9,13 @@ User Manual
 
    make_input
    read_input
-   eos
-   single_configuration
-   unit
    statmech
+   single_configuration
    fitting
    grid_interpolation
-   thermodynamics
    v2p
+   thermodynamics
    tools
+   eos
    settings
+   unit_conversion
