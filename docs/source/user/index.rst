@@ -6,7 +6,8 @@ User Manual
 
    overview
    installing
-   
+
+   read_input
    eos
    single_configuration
    unit

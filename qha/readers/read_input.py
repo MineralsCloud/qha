@@ -2,29 +2,33 @@
 """
 .. module read_input
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Read file and write calculated value to files
+   :synopsis: Read file and write calculated value to files.
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
 import pathlib
 import re
-from typing import Iterator, Union
+from typing import Iterator, Union, Tuple
 
 import numpy as np
 from scientific_string import strings_to_integers
 from text_stream import TextStream
 
+from qha.type_aliases import Vector, Array3D
+
 # ===================== What can be exported? =====================
 __all__ = ['read_input']
 
 
-def read_input(inp: Union[str, pathlib.PurePath]):
+def read_input(inp: Union[str, pathlib.PurePath]) -> Tuple[int, Vector, Vector, Array3D, Vector]:
     """
     Can be a string directing to a file, or the file's content directly.
 
     :param inp: The filename or file's path.
-    :return:
+    :return: The input data. They are the number of formula unit in a cell,
+        number of volumes in *inp*, static energies of each volume, frequencies of each volume of each q-point and mode,
+        an array of weights of each q-point, respectively.
     """
     text_stream = TextStream(pathlib.Path(inp))
     gen: Iterator[str] = text_stream.generator_telling_position()
