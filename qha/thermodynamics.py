@@ -47,9 +47,7 @@ def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
 
 def pressure_tv(v_vector: Vector, free_energies: Matrix) -> Matrix:
     """
-    Equation used to calculate pressure :math:` P = - \\frac{ dF }{ dV } _T`
-
-
+    Equation used to calculate pressure: :math:`P = - \\left ( \\frac{ \\partial F }{ \\partial V } \\right )_T`
 
     :param v_vector: fine volumes vector
     :param free_energies: F(T,V)
@@ -60,7 +58,7 @@ def pressure_tv(v_vector: Vector, free_energies: Matrix) -> Matrix:
 
 def entropy(ts: Vector, free_energies: Matrix) -> Matrix:
     """
-    S= -dF / dT |_V
+    Equation used to calculate pressure: :math:`S = - \\left ( \\frac{ \\partial F }{ \\partial T } \\right )_V`
 
     :param ts: temperature vector
     :param free_energies: F(T,V)
