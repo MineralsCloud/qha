@@ -16,3 +16,4 @@ User Manual
    thermodynamics
    v2p
    tools
+   settings
