@@ -3,7 +3,7 @@
 .. module fitting
    :platform: Unix, Windows, Mac, Linux
    :synopsis: This module is one of the most important part of this package since it implements a robust
-        Birch--Murnaghan EoS fitting for ``grid_interpolation`` modules' use.
+    Birch--Murnaghan EoS fitting for ``grid_interpolation`` modules' use.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 

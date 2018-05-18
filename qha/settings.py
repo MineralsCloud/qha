@@ -3,8 +3,8 @@
 .. module settings
    :platform: Unix, Windows, Mac, Linux
    :synopsis: In this module, we give a simple computational settings ``DEFAULT_SETTING``, which will
-        be used by default in the following calculation, if the users do not specify settings themselves.
-        If they want, they can write some settings in a YAML file.
+    be used by default in the following calculation, if the users do not specify settings themselves.
+    If they want, they can write some settings in a YAML file.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
