@@ -2,7 +2,8 @@
 """
 .. module eos
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Referenced from `here <https://wiki.fysik.dtu.dk/ase/_modules/ase/eos.html#EquationOfState>`_.
+   :synopsis: The equation of states are mostly
+    referenced from `here <https://wiki.fysik.dtu.dk/ase/_modules/ase/eos.html#EquationOfState>`_.
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
@@ -146,7 +147,8 @@ def vinet(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -
 class EOS:
     """
     An abstract base class for equations of states. The classes ``Birch``, ``Murnaghan``, ``BirchMurnaghan3rd``,
-    ``PourierTarantola``, and ``Vinet`` are all subclasses of this class.
+    ``PourierTarantola``, and ``Vinet`` are all subclasses of this class. Two of its public methods,
+    ``free_energy_at`` and ``pressure_at`` are **not implemented** here, so they must be implemented in its subclasses.
 
     :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
     :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
@@ -192,11 +194,6 @@ class EOS:
 
 
 class Birch(EOS):
-    """
-    This class is a subclass of the abstract base class ``EOS``, so it implements ``free_energy_at`` and ``pressure_at``
-    methods.
-    """
-
     def free_energy_at(self, v: float) -> float:
         x = (self.v0 / v) ** (2 / 3) - 1
         xi = 9 / 16 * self.b0 * self.v0 * x ** 2
@@ -209,11 +206,6 @@ class Birch(EOS):
 
 
 class Murnaghan(EOS):
-    """
-    This class is a subclass of the abstract base class ``EOS``, so it implements ``free_energy_at`` and ``pressure_at``
-    methods.
-    """
-
     def free_energy_at(self, v: float) -> float:
         x = self.bp0 - 1
         y = (self.v0 / v) ** self.bp0
@@ -224,11 +216,6 @@ class Murnaghan(EOS):
 
 
 class BirchMurnaghan3rd(EOS):
-    """
-    This class is a subclass of the abstract base class ``EOS``, so it implements ``free_energy_at`` and ``pressure_at``
-    methods.
-    """
-
     def free_energy_at(self, v: float) -> float:
         eta = (self.v0 / v) ** (1 / 3)
         xi = eta ** 2 - 1
@@ -240,11 +227,6 @@ class BirchMurnaghan3rd(EOS):
 
 
 class PourierTarantola(EOS):
-    """
-    This class is a subclass of the abstract base class ``EOS``, so it implements ``free_energy_at`` and ``pressure_at``
-    methods.
-    """
-
     def free_energy_at(self, v: float) -> float:
         x = (v / self.v0) ** (1 / 3)
         squiggle = -3 * np.log(x)
@@ -256,11 +238,6 @@ class PourierTarantola(EOS):
 
 
 class Vinet(EOS):
-    """
-    This class is a subclass of the abstract base class ``EOS``, so it implements ``free_energy_at`` and ``pressure_at``
-    methods.
-    """
-
     def free_energy_at(self, v: float) -> float:
         x = (v / self.v0) ** (1 / 3)
         xi = 3 / 2 * (self.bp0 - 1)
