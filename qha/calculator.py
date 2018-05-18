@@ -2,7 +2,11 @@
 """
 .. module calculator
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Read file and write calculated value to files
+   :synopsis: This is one of the most important modules in this package. It defines 3 classes, ``Calculator``,
+    ``SamePhDOSCalculator``, and ``DifferentPhDOSCalculator``. The first one can be used to do single configuration
+    calculation, the others are for multiple configurations calculation. Among them, the second one is for
+    assuming all the configurations have the same phonon density of states, and the third one is for assuming
+    all the configurations have different phonon density of states.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
@@ -135,13 +139,13 @@ class Calculator:
         except KeyError:
             raise KeyError("All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!")
 
-        r = RefineGrid(p_min - p_min_modifier, ntv, option=order)
+        r = RefineGrid(p_min - p_min_modifier, ntv, order=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
-                                                                                     ratio=d['volume_ratio'])
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
+                                                                                    ratio=d['volume_ratio'])
         else:
-            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry)
 
     @LazyProperty
     def vib_ry(self):
