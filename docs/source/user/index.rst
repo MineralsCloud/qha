@@ -7,6 +7,7 @@ User Manual
    overview
    installing
 
+   make_input
    read_input
    eos
    single_configuration
