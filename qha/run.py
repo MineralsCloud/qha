@@ -7,8 +7,8 @@ import time
 import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
-from qha.plot import Plotter
 from qha.settings import from_yaml
+import pathlib
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--settings', default='settings.yaml')
@@ -18,17 +18,16 @@ namespace = parser.parse_args()
 
 def main():
     start_time_total = time.time()
-    user_settings = {}  # save necessary info for plotting later
 
+    user_settings = {}
     file_settings = namespace.settings
-
     settings = from_yaml(file_settings)
 
-    for key in ('same_phonon_dos', 'input', 'volume_energies',
+    for key in ('same_phonon_dos', 'input',
                 'calculate', 'static_only', 'energy_unit',
                 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                'calculate', 'volume_ratio', 'order', 'p_min_modifier',
+                'volume_ratio', 'order', 'p_min_modifier',
                 'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
         try:
             user_settings.update({key: settings[key]})
@@ -52,7 +51,7 @@ def main():
     if isinstance(user_input, str):
         calc = Calculator(user_settings)
         print("You have single-configuration calculation assumed.")
-    elif isinstance(user_input, dict):  # Then it will be multi-configuration calculation.
+    elif isinstance(user_input, dict):
         if user_settings['same_phonon_dos']:
             calc = SamePhDOSCalculator(user_settings)
             print("You have multi-configuration calculation with the same phonon DOS assumed.")
@@ -75,19 +74,12 @@ def main():
 
     calc.desired_pressure_status()
 
-    plotter = Plotter(user_settings)
+    temperature_array = calc.temperature_array
+    desired_pressures_gpa = calc.desired_pressures_gpa
+    temperature_sample = calc.temperature_sample_array
+    p_sample_gpa = calc.pressure_sample_array
 
-    T = calc.temperature_array
-    DESIRED_PRESSURES_GPa = calc.desired_pressures_gpa
-    DELTA_P_SAMPLE = calc.settings['DELTA_P_SAMPLE']
-    DELTA_P = calc.settings['DELTA_P']
-
-    T_SAMPLE = calc.temperature_sample_array
-    P_SAMPLE_GPa = calc.pressure_sample_array
-
-    user_settings.update({'DESIRED_PRESSURES_GPa': DESIRED_PRESSURES_GPa})
-
-    results_folder = user_settings['output_directory']
+    results_folder = pathlib.Path(user_settings['output_directory'])
 
     calculation_option = {'F': 'f_tp',
                           'G': 'g_tp',
@@ -103,47 +95,39 @@ def main():
                           'gamma': 'gamma_tp',
                           }
 
-    # check F(T,V) at the first place
-    file_ftv_fitted = results_folder + 'f_tv_fitted_ev_ang3.txt'
-    save_x_vt(calc.f_tv_ev, T, calc.finer_volumes_ang3, T_SAMPLE, file_ftv_fitted)
-    user_settings.update({'f_tv_fitted': file_ftv_fitted})
+    file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
+    save_x_vt(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
-    file_ftv_non_fitted = results_folder + 'f_tv_nonfitted_ev_ang3.txt'
-    save_x_vt(calc.vib_ev, T, calc.volumes_ang3, T_SAMPLE, file_ftv_non_fitted)
-    user_settings.update({'f_tv_non_fitted': file_ftv_non_fitted})
+    file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
+    save_x_vt(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
 
-    file_ptv_gpa = results_folder + 'p_tv_gpa.txt'
-    save_x_vt(calc.p_tv_gpa, T, calc.finer_volumes_ang3, T_SAMPLE, file_ptv_gpa)
-    user_settings.update({'p_tv_gpa': file_ptv_gpa})
-
-    plotter.fv_pv()
+    file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
+    save_x_vt(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
 
     for idx in calc.settings['calculate']:
         if idx in ['F', 'G', 'H', 'U']:
             attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']
-            file_dir = results_folder + attr_name + '.txt'
-            save_x_tp(getattr(calc, attr_name), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir)
-            user_settings.update({idx: file_dir})
-            plotter.plot2file(idx)
+            file_name = attr_name + '.txt'
+            file_dir = results_folder / file_name
+            save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
 
         if idx == 'V':
             v_bohr3 = calculation_option[idx] + '_' + 'bohr3'
-            file_dir_au = results_folder + v_bohr3 + '.txt'
+            file_name_bohr3 = v_bohr3 + '.txt'
+            file_dir_au = results_folder / file_name_bohr3
             v_ang3 = calculation_option[idx] + '_' + 'ang3'
-            file_dir_ang3 = results_folder + v_ang3 + '.txt'
+            file_name_ang3 = v_ang3 + '.txt'
+            file_dir_ang3 = results_folder / file_name_ang3
 
-            save_x_tp(getattr(calc, v_bohr3), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir_au)
-            save_x_tp(getattr(calc, v_ang3), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir_ang3)
-            user_settings.update({idx: file_dir_ang3})
-
-            plotter.plot2file(idx)
+            save_x_tp(getattr(calc, v_bohr3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_au)
+            save_x_tp(getattr(calc, v_ang3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_ang3)
 
         if idx in ['Cv', 'Cp', 'Bt', 'Btp', 'Bs', 'alpha', 'gamma']:
             attr_name = calculation_option[idx]
-            file_dir = results_folder + attr_name + '.txt'
-            save_x_tp(getattr(calc, attr_name), T, DESIRED_PRESSURES_GPa, P_SAMPLE_GPa, file_dir)
-            user_settings.update({idx: file_dir})
-            plotter.plot2file(idx)
+            file_name = attr_name + '.txt'
+            file_dir = results_folder / file_name
+            save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
+
     end_time_total = time.time()
     time_elapsed = end_time_total - start_time_total
     save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))

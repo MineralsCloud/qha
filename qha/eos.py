@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
-:mod:`eos` -- equation of states
-================================
-
 .. module eos
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Referenced from `here <https://wiki.fysik.dtu.dk/ase/_modules/ase/eos.html#EquationOfState>`_.
+   :synopsis: The equation of states are mostly
+    referenced from `here <https://wiki.fysik.dtu.dk/ase/_modules/ase/eos.html#EquationOfState>`_.
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
@@ -19,8 +17,7 @@ from scipy.optimize import fsolve
 # ===================== What can be exported? =====================
 __all__ = [
     'parabola', 'birch', 'murnaghan', 'birch_murnaghan3rd', 'pourier_tarantola', 'vinet',
-    'EOS', 'Birch', 'Murnaghan', 'BirchMurnaghan3rd', 'PourierTarantola', 'Vinet',
-    'SIMPLE_EOS', 'VERSATILE_EOS', 'simple_eos', 'versatile_eos'
+    'EOS', 'Birch', 'Murnaghan', 'BirchMurnaghan3rd', 'PourierTarantola', 'Vinet'
 ]
 
 
@@ -28,36 +25,36 @@ __all__ = [
 
 @jit(nopython=True)
 def parabola(v: float, a: float, b: float, c: float) -> float:
-    """parabola polynomial function :math:`c v^2 + b v + a`.
-
-    This function is used to fit the data to get good guesses for
-    the equation of state fits.
-    A 2nd order seems to be sufficient, and guarantees a single minimum.
+    """
+    This function is used to fit the data in parabola polynomial: :math:`c v^2 + b v + a`.
+    A second order function seems to be sufficient, and guarantees a single minimum.
 
     :param v: Volume at which free energy is to be calculated.
     :param a: Constant.
-    :param b: Coefficient of linear term.
-    :param c: Coefficient of 2nd-order term.
+    :param b: Coefficient of the linear term.
+    :param c: Coefficient of the 2nd-order term.
     :return: The calculated free energy at volume *v*.
     """
     if c == 0:
-        raise ValueError(
-            "Argument *c* cannot be 0! Because it is the coefficient of 2nd-order term!")
+        raise ValueError("Argument *c* cannot be 0! Because it is the coefficient of 2nd-order term!")
+
     return a + b * v + c * v ** 2
 
 
 @jit(nopython=True)
 def birch(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -> float:
     """
-    Calculate free energy at volume *v*, according to Birch EoS. [#b]_
+    Calculate free energy at volume *v*, according to Birch EOS. [#b]_
 
-    .. [#b] From "Intermetallic compounds: Principles and Practice, Vol. I: Principles Chapter 9 pages 195-210 by M. Mehl. B. Klein, D. Papaconstantopoulos", case where :math:`n=0`.
+    .. [#b] From "Intermetallic compounds: Principles and Practice, Vol. I: Principles Chapter 9 pages 195-210 by
+        M. Mehl. B. Klein, D. Papaconstantopoulos", case where :math:`n=0`.
 
     :param v: Volume at which free energy is to be calculated.
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     :return: The calculated free energy at volume *v*.
     """
     x = (v0 / v) ** (2 / 3) - 1
@@ -66,17 +63,18 @@ def birch(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -
 
 
 @jit(nopython=True)
-def murnaghan(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
+def murnaghan(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -> float:
     """
-    Calculate free energy at volume *v*, according to Murnaghan EoS. [#m]_
+    Calculate free energy at volume *v*, according to Murnaghan EOS. [#m]_
 
     .. [#m] From PRB 28,5480 (1983).
 
     :param v: Volume at which free energy is to be calculated.
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     :return: The calculated free energy at volume *v*.
     """
     x = bp0 - 1
@@ -85,17 +83,19 @@ def murnaghan(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 
 
 
 @jit(nopython=True)
-def birch_murnaghan3rd(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
+def birch_murnaghan3rd(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -> float:
     """
-    Calculate free energy at volume *v*, according to Birch-Murnaghan third-order EoS. [#bm]_
+    Calculate free energy at volume *v*, according to Birch--Murnaghan third-order EOS. [#bm]_
 
-    .. [#bm] BirchMurnaghan equation from PRB 70, 224107 Eq. (3) in the paper. Note that there's a typo in the paper and it uses inverted expression for eta.
+    .. [#bm] Birch--Murnaghan equation from PRB 70, 224107 Eq. (3) in the paper. Note that there's a typo in the paper
+        and it uses inverted expression for eta.
 
     :param v: Volume at which free energy is to be calculated.
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     :return: The calculated free energy at volume *v*.
     """
     eta = (v0 / v) ** (1 / 3)
@@ -104,17 +104,18 @@ def birch_murnaghan3rd(v: float, b0: float, bp0: float, v0: float, f0: Optional[
 
 
 @jit(nopython=True)
-def pourier_tarantola(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
+def pourier_tarantola(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -> float:
     """
-    Calculate free energy at volume *v*, according to Pourier-Tarantola EoS. [#pt]_
+    Calculate free energy at volume *v*, according to Pourier--Tarantola EOS. [#pt]_
 
-    .. [#pt] Pourier-Tarantola's equation from PRB 70, 224107.
+    .. [#pt] Pourier--Tarantola's equation from PRB 70, 224107.
 
-    ::param v: Volume at which free energy is to be calculated.
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param v: Volume at which free energy is to be calculated.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     :return: The calculated free energy at volume *v*.
     """
     x = (v / v0) ** (1 / 3)
@@ -123,18 +124,19 @@ def pourier_tarantola(v: float, b0: float, bp0: float, v0: float, f0: Optional[f
 
 
 @jit(nopython=True)
-def vinet(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
+def vinet(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0) -> float:
     """
-    Calculate free energy at volume *v*, according to Vinet EoS. [#v]_
+    Calculate free energy at volume *v*, according to Vinet EOS. [#v]_
 
     .. [#v] Vinet equation from PRB 70, 224107. It is equivalent to the equation in
-    Poirier, Jean-Paul. *Introduction to the Physics of the Earth's Interior*. Cambridge University Press, 2000.
+        Poirier, Jean-Paul. *Introduction to the Physics of the Earth's Interior*. Cambridge University Press, 2000.
 
     :param v: Volume at which free energy is to be calculated.
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     :return: The calculated free energy at volume *v*.
     """
     x = (v / v0) ** (1 / 3)
@@ -144,12 +146,15 @@ def vinet(v: float, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
 
 class EOS:
     """
-    An abstract base class for equations of states.
+    An abstract base class for equations of states. The classes ``Birch``, ``Murnaghan``, ``BirchMurnaghan3rd``,
+    ``PourierTarantola``, and ``Vinet`` are all subclasses of this class. Two of its public methods,
+    ``free_energy_at`` and ``pressure_at`` are **not implemented** here, so they must be implemented in its subclasses.
 
-    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EoS.
-    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the EoS.
+    :param b0: Bulk modulus at zero-pressure, as a reference parameter for the EOS.
+    :param bp0: Bulk modulus's first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+        EOS.
     :param v0: Zero-pressure volume for the system.
-    :param f0: The baseline of free energy, defaults to :math:`0`.
+    :param f0: The baseline of free energy, defaults to be :math:`0`.
     """
 
     def __init__(self, b0: float, bp0: float, v0: float, f0: Optional[float] = 0):
@@ -242,42 +247,3 @@ class Vinet(EOS):
         x = (v / self.v0) ** (1 / 3)
         xi = 3 / 2 * (self.bp0 - 1)
         return 3 * self.b0 / x ** 2 * (1 - x) * np.exp(xi * (1 - x))
-
-
-SIMPLE_EOS: Dict[str, Callable] = {
-    'm': murnaghan,
-    'b-m': birch_murnaghan3rd,
-    'p-t': pourier_tarantola,
-    'v': vinet,
-    'b': birch
-}
-
-
-def simple_eos(name: str) -> Callable:
-    """
-    A function that collects severl EoSs for free energy calculation. The only allowed keys
-    are one of "m" (Murnaghan), "b-m" (Birch Murnaghan 3rd-order), "p-t" (Pourier Tarantola), "v" (Vinet), "b" (Birch).
-    See the documentations of ``murnaghan``, ``birch_murnaghan3rd``, ``pourier_tarantola``, ``vinet``,
-    and ``birch`` for details.
-    """
-    return SIMPLE_EOS[name]
-
-
-VERSATILE_EOS = {
-    'b': Birch,
-    'm': Murnaghan,
-    'b-m': BirchMurnaghan3rd,
-    'p-t': PourierTarantola,
-    'v': Vinet,
-}
-
-
-def versatile_eos(name: str) -> Callable:
-    """
-    A more powerful collection of EoSs that can calculate free energies, pressures, and solve volumes by given pressures.
-    The only *name* allowed
-    is one of "m" (Murnaghan), "b-m" (Birch Murnaghan 3rd-order), "p-t" (Pourier Tarantola), "v" (Vinet), "b" (Birch).
-    See the documentations of ``Birch``, ``Murnaghan``, ``BirchMurnaghan3rd``, ``PourierTarantola``,
-    and ``Vinet`` for details.
-    """
-    return VERSATILE_EOS[name]

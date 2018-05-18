@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`output` -- The output format module
-=========================================
-
 .. module output
    :platform: Unix, Windows, Mac, Linux
    :synopsis: doc
