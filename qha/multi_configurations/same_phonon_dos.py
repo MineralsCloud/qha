@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-:mod:`mod` -- title
-========================================
-
-.. module mod
+.. module same_phonon_dos
    :platform: Unix, Windows, Mac, Linux
    :synopsis:
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>

@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`tools` -- Tools used in this package
-==========================================
-
 .. module tools
    :platform: Unix, Windows, Mac, Linux
    :synopsis: This module defines some tools used in this package.

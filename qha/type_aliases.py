@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`type_aliases` -- Some useful data types
-=============================================
-
 .. module type_aliases
    :platform: Unix, Windows, Mac, Linux
    :synopsis: This module defines several data type that will be useful in the whole calculation.

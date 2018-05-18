@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`statmech` -- Statistical mechanics
-========================================
-
 .. module statmech
    :platform: Unix, Windows, Mac, Linux
    :synopsis:

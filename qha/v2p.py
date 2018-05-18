@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`v2p` -- title
-========================================
-
 .. module v2p
    :platform: Unix, Windows, Mac, Linux
    :synopsis:

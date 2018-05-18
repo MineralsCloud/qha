@@ -8,9 +8,10 @@ qha documentation
 
 .. toctree::
    :numbered:
-   :maxdepth: 2
+   :maxdepth: 4
 
    user/index
+   user/readers/index
    reference/index
    contributing
 

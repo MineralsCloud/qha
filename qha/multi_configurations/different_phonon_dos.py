@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-:mod:`mod` -- title
-========================================
-
-.. module mod
+.. module different_phonon_dos
    :platform: Unix, Windows, Mac, Linux
    :synopsis:
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>

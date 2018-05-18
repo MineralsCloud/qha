@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-:mod:`mod` --
-========================================
-
-.. module mod
+.. module read_matdyn
    :platform: Unix, Windows, Mac, Linux
    :synopsis: doc
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
