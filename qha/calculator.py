@@ -15,7 +15,6 @@ import textwrap
 from typing import Dict, Any, Optional
 
 import numpy as np
-import pandas as pd
 from lazy_property import LazyProperty
 
 import qha.multi_configurations.different_phonon_dos as different_phonon_dos
