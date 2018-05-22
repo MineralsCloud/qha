@@ -3,7 +3,7 @@
 import argparse
 
 import qha
-from qha.readers.make_input import FromQEOutput
+from qha.input_maker import FromQEOutput
 
 parser = argparse.ArgumentParser()
 parser.add_argument('inp_file_list')
