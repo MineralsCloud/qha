@@ -3,7 +3,7 @@
 import argparse
 
 import qha
-from qha.readers.make_input import QEInputMaker
+from qha.readers.make_input import FromQEOutput
 
 parser = argparse.ArgumentParser()
 parser.add_argument('inp_file_list')
@@ -19,7 +19,7 @@ inp_q_points = namespace.inp_q_points
 
 
 def main():
-    converter = QEInputMaker(inp_file_list, inp_static, inp_q_points)
+    converter = FromQEOutput(inp_file_list, inp_static, inp_q_points)
     converter.read_file_list()
     converter.read_static()
     converter.read_q_points()

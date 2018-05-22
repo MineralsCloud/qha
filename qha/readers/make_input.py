@@ -20,10 +20,10 @@ from text_stream import TextStream
 from qha.type_aliases import Vector, Matrix
 
 # ===================== What can be exported? =====================
-__all__ = ['QEInputMaker']
+__all__ = ['FromQEOutput']
 
 
-class QEInputMaker:
+class FromQEOutput:
     """
     A class that can generate a standard "input" file for ``qha-run`` if you have data collected from Quantum
     ESPRESSO.
