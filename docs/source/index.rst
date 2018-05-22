@@ -11,7 +11,6 @@ qha documentation
    :maxdepth: 4
 
    user/index
-   user/readers/index
    reference/index
    contributing
 
