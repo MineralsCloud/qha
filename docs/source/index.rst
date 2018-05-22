@@ -12,7 +12,7 @@ qha documentation
 
    api/index
    tutorials/index
-   contributing
+   develop/index
 
 Indices and tables
 ==================

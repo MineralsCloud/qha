@@ -1,5 +1,6 @@
-Reference Manual
-================
+Tutorials
+=========
 
 .. toctree::
 
+   installing
