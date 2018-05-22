@@ -7,7 +7,7 @@ User Manual
    overview
    installing
 
-   make_input
+   input_maker
    read_input
    statmech
    single_configuration

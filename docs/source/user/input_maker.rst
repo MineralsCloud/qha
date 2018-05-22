@@ -5,8 +5,6 @@ Make input file for ``qha`` using data from Quantum ESPRESSO.
 
 .. automodule:: qha
 
-.. automodule:: qha.readers
-
-.. automodule:: qha.readers.make_input
+.. automodule:: qha.input_maker
    :members:
    :undoc-members:
