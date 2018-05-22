@@ -1,6 +1,8 @@
-
 Getting started
 ===============
+
+.. contents:: Table of contents:
+   :local:
 
 Compatibility
 -------------

@@ -3,4 +3,3 @@ Reference Manual
 
 .. toctree::
 
-    type
