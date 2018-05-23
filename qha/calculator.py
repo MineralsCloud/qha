@@ -120,6 +120,22 @@ class Calculator:
         self._q_weights = q_weights
 
     @LazyProperty
+    def where_negative_frequencies(self) -> Optional[Vector]:
+        """
+        The indices of negative frequencies are indicated.
+
+        :return:
+        """
+        if self._frequencies is None:
+            print("Please invoke ``read_input`` method first!")  # ``None`` is returned
+        else:
+            _ = np.transpose(np.where(self._frequencies < 0))
+            if _.size == 0:
+                return None
+
+            return _
+
+    @LazyProperty
     def temperature_array(self) -> Vector:
         """
         The temperature calculated to derive free energy at that temperature.

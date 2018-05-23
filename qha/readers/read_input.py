@@ -105,7 +105,7 @@ def read_input(inp: Union[str, pathlib.PurePath]) -> Tuple[int, Vector, Vector, 
         if not line.strip():
             continue
 
-        q_weights[j] = line.split()[-1]
+        q_weights[j] = line.split()[-1]  # This line has format: q_x q_y q_z weight, and only weight is taken
         j += 1
 
     if i != volumes_amount:

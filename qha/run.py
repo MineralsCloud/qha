@@ -66,6 +66,18 @@ def main():
                                                              calc.desired_pressures_gpa[-1]))
 
     calc.read_input()
+
+    print("Caution: If negative frequencies found, they are currently treated as 0!")
+    tmp = calc.where_negative_frequencies
+    if tmp is not None and not (tmp.T[-1].max() <= 2):  # Don't delete this parenthesis!
+        if calc.frequencies.ndim == 4:  # Multiple configuration
+            for indices in tmp:
+                print("Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
+                    *tuple(indices + 1)))
+        elif calc.frequencies.ndim == 3:  # Single configuration
+            for indices in tmp:
+                print("Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
+
     calc.refine_grid()
 
     if user_settings['high_verbosity']:
