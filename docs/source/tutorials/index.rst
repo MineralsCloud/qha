@@ -1,5 +1,8 @@
-Reference Manual
-================
+Tutorials
+#########
 
 .. toctree::
 
+   doc
+   installing
+   run

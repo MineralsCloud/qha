@@ -1,11 +1,7 @@
-
-User Manual
-===========
+API reference
+=============
 
 .. toctree::
-
-   overview
-   installing
 
    input_maker
    read_input
