@@ -28,6 +28,32 @@ K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
 
 
 class PartitionFunction:
+    """
+    A class that represents the partition function of multiple configurations with same phonon density of states.
+    In mathematics, it is represented as
+
+    .. math::
+
+        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}
+        \\bigg\{
+        g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)
+        \prod_{\mathbf{q}s} \\bigg(
+        \\frac{\exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big)}
+        \\bigg)
+        \\bigg\}.
+
+    :param temperature: The temperature at which partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
+        Should be all positive integers.
+    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should
+        have the same q-weights.
+    :param static_energies: The static energy of each configuration of each volume.
+    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point
+        and mode.
+    :param precision: The precision of a big float number to represent the partition function since it is a very large
+        number, by default is ``500``.
+    """
+
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
                  frequencies: Array3D, precision: Optional[int] = 500):
 
@@ -86,6 +112,33 @@ class PartitionFunction:
 
 
 class FreeEnergy:
+    """
+    A class that represents the free energy of multiple configurations with same phonon density of states.
+    In mathematics, it is represented as
+
+    .. math::
+
+        F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)
+        = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)
+        + \sum_{\mathbf{ q }s} \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
+            + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)
+        \\bigg\}.
+
+    :param temperature: The temperature at which partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
+        Should be all positive integers.
+    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should
+        have the same q-weights.
+    :param static_energies: The static energy of each configuration of each volume.
+    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each
+        configuration.
+    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point
+        and mode.
+    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,
+        by default is ``False``.
+    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.
+    """
+
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
                  volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):

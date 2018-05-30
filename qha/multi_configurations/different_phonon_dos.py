@@ -29,6 +29,33 @@ K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
 
 
 class PartitionFunction:
+    """
+    A class that represents the partition function of multiple configurations with different phonon density of states.
+    In mathematics, it is represented as
+
+    .. math::
+
+        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
+
+    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for :math:`j` th
+    configuration.
+
+    :param temperature: The temperature at which partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
+        Should be all positive integers.
+    :param q_weights: The weights of all q-points that are sampled, can be a 2D matrix so each configuration can have
+        a little bit different q-weights, but the number of q-points of each configuration must be the same.
+    :param static_energies: The static energy of each configuration of each volume.
+    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each
+        configuration.
+    :param frequencies: A 4D array that specifies the frequency on each configuration, volume, q-point and mode.
+    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,
+        by default is ``False``.
+    :param precision: The precision of a big float number to represent the partition function since it is a very large
+        number, by default is ``500``.
+    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.
+    """
+
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
                  volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
                  precision: Optional[int] = 500, order: Optional[int] = 3):
@@ -85,6 +112,15 @@ class PartitionFunction:
 
     @LazyProperty
     def derive_free_energy(self):
+        """
+        The free energy calculated from partition function :math:`Z_{\\text{all configs}}(T, V)` by
+
+        .. math::
+
+            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+
+        :return: The free energy on a temperature-volume mesh.
+        """
         try:
             import bigfloat
         except ImportError:
