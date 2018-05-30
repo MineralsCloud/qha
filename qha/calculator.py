@@ -408,7 +408,7 @@ class DifferentPhDOSCalculator(Calculator):
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).get_free_energies()
 
         return mat
 
@@ -424,5 +424,5 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):
-            mat[i] = same_phonon_dos.FreeEnergy(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = same_phonon_dos.FreeEnergy(t, *(arg for arg in args)).get_free_energies()
         return mat

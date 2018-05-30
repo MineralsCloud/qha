@@ -86,19 +86,38 @@ class PartitionFunction:
         self.order = int(order)
 
     @LazyProperty
-    def helmoholtz_configs(self):
-        num_configs, _ = self.volumes.shape
-        f = [free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
-                         self.static_only) for i in
-             range(num_configs)]
-        return np.array(f)
+    def unaligned_free_energies_for_each_configuration(self):
+        """
+        If your input free energy is not aligned for each configuration, at first just calculate the "raw"
+        free energy on each volume and each configuration.
+
+        :return: A matrix of raw free energy of each configuration of each volume.
+        """
+        configurations_amount, _ = self.volumes.shape
+        return np.array([free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
+                                     self.static_only) for i in range(configurations_amount)])
 
     @LazyProperty
-    def helmholtz_at_ref_v(self):
-        return calibrate_energy_on_reference(self.volumes, self.helmoholtz_configs, self.order)
+    def aligned_free_energies_for_each_configuration(self):
+        """
+        Then do a fitting to align all these free energy.
+
+        :return: A matrix of aligned free energy of each configuration of each volume.
+        """
+        return calibrate_energy_on_reference(self.volumes, self.unaligned_free_energies_for_each_configuration,
+                                             self.order)
 
     @LazyProperty
-    def partition_from_helmholtz(self):
+    def partition_functions_for_each_configuration(self):
+        """
+        Inversely solve the free energy to get partition function for :math:`j` th configuration by
+
+        .. math::
+
+             Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
+
+        :return: A matrix of partition function of each configuration of each volume.
+        """
         try:
             import bigfloat
         except ImportError:
@@ -107,11 +126,10 @@ class PartitionFunction:
 
         with bigfloat.precision(self.precision):
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
-                             logsumexp(-self.helmholtz_at_ref_v.T / (K * self.temperature), axis=1,
-                                       b=self.degeneracies)])
+                             logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
+                                       axis=1, b=self.degeneracies)])
 
-    @LazyProperty
-    def derive_free_energy(self):
+    def get_free_energies(self):
         """
         The free energy calculated from partition function :math:`Z_{\\text{all configs}}(T, V)` by
 
@@ -128,5 +146,5 @@ class PartitionFunction:
                 "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_from_helmholtz], dtype=float)
+            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)
         return -K * self.temperature * log_z

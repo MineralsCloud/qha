@@ -77,8 +77,13 @@ class PartitionFunction:
         self._scaled_q_weights = self.q_weights / np.sum(q_weights)
         self.precision = int(precision)
 
-    @LazyProperty
-    def static_part(self) -> Vector:
+    @property
+    def _static_part(self) -> Vector:
+        """
+        Static contribution to the partition function.
+
+        :return: Static contribution on the temperature-volume mesh.
+        """
         try:
             import bigfloat
         except ImportError:
@@ -89,17 +94,36 @@ class PartitionFunction:
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
                              logsumexp(-self.static_energies / (K * self.temperature), axis=1, b=self.degeneracies)])
 
-    @LazyProperty
-    def harmonic_part(self) -> Vector:
+    @property
+    def _harmonic_part(self) -> Vector:
+        """
+        Harmonic contribution to the partition function.
+
+        :return: Harmonic contribution on the temperature-volume mesh.
+        """
         log_product_modes: Matrix = np.sum(
             log_subsystem_partition_function(self.temperature, self.frequencies), axis=2, dtype=float)
         return np.exp(np.dot(log_product_modes, self._scaled_q_weights))  # (vol, 1)
 
     @LazyProperty
     def total(self) -> Vector:
-        return np.multiply(self.static_part, self.harmonic_part)  # (vol, 1), product element-wise
+        """
+        Total partition function.
 
-    def derive_free_energy(self):
+        :return: Partition function on the temperature-volume mesh.
+        """
+        return np.multiply(self._static_part, self._harmonic_part)  # (vol, 1), product element-wise
+
+    def get_free_energies(self):
+        """
+        Give free energy by
+
+        .. math::
+
+             F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+
+        :return: Free energy on the temperature-volume mesh.
+        """
         try:
             import bigfloat
         except ImportError:
@@ -164,26 +188,53 @@ class FreeEnergy:
         self.order = order
 
     @LazyProperty
-    def static_energy_at_ref_v(self):
+    def aligned_static_energies_for_each_configuration(self):
+        """
+        If your input static energy is not aligned for each configuration, then do a
+        fitting to align all these static energy.
+
+        :return: A matrix of aligned static energy of each configuration of each volume.
+        """
         return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
 
     @LazyProperty
     def static_part(self) -> Vector:
+        """
+        Static contribution to the free energy.
+
+        :return: Static contribution on the temperature-volume mesh.
+        """
         kt: float = K * self.temperature  # k_B T
-        inside_exp: Matrix = -self.static_energy_at_ref_v.T / kt  # exp( E_n(V) / k_B / T )
+        inside_exp: Matrix = -self.aligned_static_energies_for_each_configuration.T / kt  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 
     @LazyProperty
     def harmonic_part(self) -> Vector:
+        """
+        Harmonic contribution to the free energy.
+
+        :return: Harmonic contribution on the temperature-volume mesh.
+        """
         sum_modes = np.sum(ho_free_energy(self.temperature, self.frequencies), axis=2)
         return np.dot(sum_modes, self._scaled_q_weights)
 
     @LazyProperty
     def total(self) -> Vector:
+        """
+        Total partition function. Static part plus harmonic part.
+
+        :return: Total free energy on the temperature-volume mesh.
+        """
         return self.static_part + self.harmonic_part
 
-    @LazyProperty
-    def derive_free_energy(self):
+    def get_free_energies(self):
+        """
+        If you specify ``static_only = True`` in class initialization, then here only static contribution will
+        be returned, this is equivalent to the ``static_part`` property. If not, then this is equivalent to
+        the ``total`` property.
+
+        :return: Free energy on the temperature-volume mesh.
+        """
         if self.static_only:
             return self.static_part
 
