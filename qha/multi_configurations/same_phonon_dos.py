@@ -10,7 +10,7 @@ from typing import Optional
 
 import numpy as np
 from lazy_property import LazyProperty
-from scipy.constants import Boltzmann
+from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
@@ -21,12 +21,10 @@ from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction', 'FreeEnergy']
 
-K = {
-    'ha': 8.6173303e-5 / 13.605698066 / 2,
-    'ry': 8.6173303e-5 / 13.605698066,
-    'ev': 8.6173303e-5,
-    'SI': Boltzmann
-}[qha.settings.energy_unit]
+K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
+     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
+     'ev': pc['Boltzmann constant in eV/K'][0],
+     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
 
 
 class PartitionFunction:
