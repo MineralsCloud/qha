@@ -21,14 +21,6 @@ __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 
            'is_monotonic_increasing', 'arange', 'calibrate_energy_on_reference']
 
 
-@jit(nopython=True)
-def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
-    return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
-           (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
-           (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
-           (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
-
-
 def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
     Fourth-order Lagrange interpolation, referenced from
