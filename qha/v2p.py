@@ -7,14 +7,37 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+import numba
 import numpy as np
 
-from qha.tools import _lagrange4
 from qha.tools import vectorized_find_nearest
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['v2p']
+
+
+@numba.jit(nopython=True)
+def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
+    """
+    A fourth-order Lagrange polynomial function. Given 4 points for interpolation:
+    :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.
+
+    :param x: The x-coordinate of the point to be evaluated.
+    :param x0: The x-coordinate of the 1st point.
+    :param x1: The x-coordinate of the 2nd point.
+    :param x2: The x-coordinate of the 3rd point.
+    :param x3: The x-coordinate of the 4th point.
+    :param y0: The y-coordinate of the 1st point.
+    :param y1: The y-coordinate of the 2nd point.
+    :param y2: The y-coordinate of the 3rd point.
+    :param y3: The y-coordinate of the 4th point.
+    :return: The y-coordinate of the point to be evaluated.
+    """
+    return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
+           (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
+           (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
+           (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
 
 
 def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Matrix:

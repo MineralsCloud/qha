@@ -11,7 +11,7 @@ from typing import Optional
 
 import numpy as np
 from lazy_property import LazyProperty
-from scipy.constants import Boltzmann
+from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
@@ -22,15 +22,40 @@ from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction']
 
-K = {
-    'ha': 8.6173303e-5 / 13.605698066 / 2,
-    'ry': 8.6173303e-5 / 13.605698066,
-    'ev': 8.6173303e-5,
-    'SI': Boltzmann
-}[qha.settings.energy_unit]
+K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
+     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
+     'ev': pc['Boltzmann constant in eV/K'][0],
+     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
 
 
 class PartitionFunction:
+    """
+    A class that represents the partition function of multiple configurations with different phonon density of states.
+    In mathematics, it is represented as
+
+    .. math::
+
+        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
+
+    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for :math:`j` th
+    configuration.
+
+    :param temperature: The temperature at which partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
+        Should be all positive integers.
+    :param q_weights: The weights of all q-points that are sampled, can be a 2D matrix so each configuration can have
+        a little bit different q-weights, but the number of q-points of each configuration must be the same.
+    :param static_energies: The static energy of each configuration of each volume.
+    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each
+        configuration.
+    :param frequencies: A 4D array that specifies the frequency on each configuration, volume, q-point and mode.
+    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,
+        by default is ``False``.
+    :param precision: The precision of a big float number to represent the partition function since it is a very large
+        number, by default is ``500``.
+    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.
+    """
+
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
                  volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
                  precision: Optional[int] = 500, order: Optional[int] = 3):
@@ -61,19 +86,38 @@ class PartitionFunction:
         self.order = int(order)
 
     @LazyProperty
-    def helmoholtz_configs(self):
-        num_configs, _ = self.volumes.shape
-        f = [free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
-                         self.static_only) for i in
-             range(num_configs)]
-        return np.array(f)
+    def unaligned_free_energies_for_each_configuration(self):
+        """
+        If your input free energy is not aligned for each configuration, at first just calculate the "raw"
+        free energy on each volume and each configuration.
+
+        :return: A matrix of raw free energy of each configuration of each volume.
+        """
+        configurations_amount, _ = self.volumes.shape
+        return np.array([free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
+                                     self.static_only) for i in range(configurations_amount)])
 
     @LazyProperty
-    def helmholtz_at_ref_v(self):
-        return calibrate_energy_on_reference(self.volumes, self.helmoholtz_configs, self.order)
+    def aligned_free_energies_for_each_configuration(self):
+        """
+        Then do a fitting to align all these free energy.
+
+        :return: A matrix of aligned free energy of each configuration of each volume.
+        """
+        return calibrate_energy_on_reference(self.volumes, self.unaligned_free_energies_for_each_configuration,
+                                             self.order)
 
     @LazyProperty
-    def partition_from_helmholtz(self):
+    def partition_functions_for_each_configuration(self):
+        """
+        Inversely solve the free energy to get partition function for :math:`j` th configuration by
+
+        .. math::
+
+             Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
+
+        :return: A matrix of partition function of each configuration of each volume.
+        """
         try:
             import bigfloat
         except ImportError:
@@ -82,11 +126,19 @@ class PartitionFunction:
 
         with bigfloat.precision(self.precision):
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
-                             logsumexp(-self.helmholtz_at_ref_v.T / (K * self.temperature), axis=1,
-                                       b=self.degeneracies)])
+                             logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
+                                       axis=1, b=self.degeneracies)])
 
-    @LazyProperty
-    def derive_free_energy(self):
+    def get_free_energies(self):
+        """
+        The free energy calculated from partition function :math:`Z_{\\text{all configs}}(T, V)` by
+
+        .. math::
+
+            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+
+        :return: The free energy on a temperature-volume mesh.
+        """
         try:
             import bigfloat
         except ImportError:
@@ -94,5 +146,5 @@ class PartitionFunction:
                 "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_from_helmholtz], dtype=float)
+            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)
         return -K * self.temperature * log_z

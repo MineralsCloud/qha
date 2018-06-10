@@ -10,10 +10,9 @@ qha documentation
    :numbered:
    :maxdepth: 4
 
-   user/index
-   user/readers/index
-   reference/index
-   contributing
+   api/index
+   tutorials/index
+   develop/index
 
 Indices and tables
 ==================

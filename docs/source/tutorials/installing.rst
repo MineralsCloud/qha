@@ -1,6 +1,10 @@
+.. _installing:
 
 Getting started
 ===============
+
+.. contents:: Table of contents:
+   :local:
 
 Compatibility
 -------------
@@ -17,7 +21,7 @@ Our supported platforms are:
 
 Dependencies
 ------------
-- `bigfloat <https://pypi.python.org/pypi/bigfloat)>`_ [#b]_
+- `bigfloat <https://pypi.python.org/pypi/bigfloat>`_ [#b]_
 - `lazy-property <https://github.com/jackmaney/lazy-property>`_
 - `matplotlib <https://matplotlib.org>`_ [#m]_
 - `Numba <http://numba.pydata.org>`_
@@ -38,8 +42,8 @@ Notes:
 
 .. [#m] For some system, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
 
-Installing the ``mc-thermo`` package
-----------------------------------
+Installing the ``qha`` package
+------------------------------
 Installing using Conda
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -59,12 +63,12 @@ or::
    $ conda update qha
 
 Installing using PyPI
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
-``mc-thermo`` can be installed via pip from
+``qha`` can be installed via pip from
 `PyPI <http://pypi.python.org/pypi/qha>`__.::
 
-   $ pip(3) install qha
+   $ pip install qha
 
 This will likely require the installation of a number of dependencies,
 including NumPy, will require a compiler to compile required bits of code,
@@ -74,15 +78,15 @@ Installing from source
 ~~~~~~~~~~~~~~~~~~~~~~
 Download the `latest release <https://github.com/MineralsCloud/qha/releases>`_ , and go to the top-level directory, run::
 
-   $ pip(3) install -e .
+   $ pip install -e .
 
 Checking your installation
 --------------------------
 
 You should be able to import Numba from the Python prompt::
 
-   $ python            
-   Python 3.6.4 (default, Mar  9 2018, 23:15:03) 
+   $ python
+   Python 3.6.4 (default, Mar  9 2018, 23:15:03)
    [GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.39.2)] on darwin
    Type "help", "copyright", "credits" or "license" for more information.
    >>> import qha

@@ -1,16 +1,13 @@
-
-User Manual
-===========
+API reference
+=============
 
 .. toctree::
 
-   overview
-   installing
-
-   make_input
+   input_maker
    read_input
    statmech
    single_configuration
+   multi_configurations
    fitting
    grid_interpolation
    v2p

@@ -8,22 +8,23 @@
 
 import numpy as np
 from numba import float64, vectorize
-from scipy.constants import Boltzmann
+from scipy.constants import physical_constants as pc
 
 import qha.settings
 
 # ===================== What can be exported? =====================
 __all__ = ['ho_free_energy', 'subsystem_partition_function', 'log_subsystem_partition_function']
 
-K = {'ha': 8.617e-5 / 13.6058 / 2,
-     'ry': 8.617e-5 / 13.6058,
-     'ev': 8.617e-5,
-     'SI': Boltzmann}[qha.settings.energy_unit]
+K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
+     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
+     'ev': pc['Boltzmann constant in eV/K'][0],
+     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
 
-HBAR = {'ha': 1.23984193e-4 / 13.6058 / 2,
-        'ry': 1.23984193e-4 / 13.6058,
-        'ev': 1.23984193e-4,
-        'SI': 1.986e-23}[qha.settings.energy_unit]
+HBAR = {'ha': 100 / pc['electron volt-inverse meter relationship'][0] / pc['Hartree energy in eV'][0],
+        'ry': 100 / pc['electron volt-inverse meter relationship'][0] / pc['Rydberg constant times hc in eV'][0],
+        'ev': 100 / pc['electron volt-inverse meter relationship'][0],
+        'SI': 100 / pc['electron volt-inverse meter relationship'][0] / pc['joule-electron volt relationship'][0]}[
+    qha.settings.energy_unit]
 
 
 @vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)

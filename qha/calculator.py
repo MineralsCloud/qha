@@ -15,7 +15,6 @@ import textwrap
 from typing import Dict, Any, Optional
 
 import numpy as np
-import pandas as pd
 from lazy_property import LazyProperty
 
 import qha.multi_configurations.different_phonon_dos as different_phonon_dos
@@ -119,6 +118,22 @@ class Calculator:
         self._static_energies = static_energies
         self._frequencies = frequencies
         self._q_weights = q_weights
+
+    @LazyProperty
+    def where_negative_frequencies(self) -> Optional[Vector]:
+        """
+        The indices of negative frequencies are indicated.
+
+        :return:
+        """
+        if self._frequencies is None:
+            print("Please invoke ``read_input`` method first!")  # ``None`` is returned
+        else:
+            _ = np.transpose(np.where(self._frequencies < 0))
+            if _.size == 0:
+                return None
+
+            return _
 
     @LazyProperty
     def temperature_array(self) -> Vector:
@@ -393,7 +408,7 @@ class DifferentPhDOSCalculator(Calculator):
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).get_free_energies()
 
         return mat
 
@@ -409,5 +424,5 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):
-            mat[i] = same_phonon_dos.FreeEnergy(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = same_phonon_dos.FreeEnergy(t, *(arg for arg in args)).get_free_energies()
         return mat
