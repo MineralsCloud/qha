@@ -67,3 +67,22 @@ just open your terminal, redirect to that directory and run::
 
 then the results will be generated in the directory specified
 in ``results_folder`` option.
+
+
+Output
+======
+
+The output files' names and their meanings are as below:
+
+* Helmholtz free energy: ``f_tp_ry.txt`` or ``f_tp_ev.txt``
+* Gibbs free energy: ``g_tp_ry.txt`` or ``g_tp_ev.txt``
+* Enthalpy: ``h_tp_ry.txt`` or ``h_tp_ev.txt``
+* Volume: ``v_tp_bohr3.txt`` or ``v_tp_ang3.txt``
+* Pressure-specific heat capacity: ``cp_tp_jmolk.txt``
+* Volume-specific heat capacity: ``cv_tp_jmolk.txt``
+* Isothermal bulk modulus: ``bt_tp_gpa.txt``
+* Derivative of the isothermal bulk modulus with
+  respect to pressure: ``btp_tp.txt``
+* Adiabatic bulk modulus: ``bs_tp_gpa.txt``
+* Thermal expansion: ``alpha_tp.txt``
+* Thermal Grüneisen parameters: ``gamma_tp.txt``

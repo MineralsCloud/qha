@@ -7,3 +7,4 @@ Tutorials
    installing
    run
    plot
+   convert
