@@ -24,17 +24,17 @@ If you want to make a pull request, please read their official guide
 Environment
 ===========
 
-Please install ``qha`` with command
+Please install ``qha`` with command::
 
    $ pip install -e /path/to/qha/folder
 
 after your download from `GitHub releases <https://github.com/MineralsCloud/qha/releases>`_.
 
-Or you can just clone `the repo <https://github.com/MineralsCloud/qha>`_ directly by
+Or you can just clone `the repo <https://github.com/MineralsCloud/qha>`_ directly by::
 
    $ git clone git@github.com:MineralsCloud/qha.git /somewhere/on/your/computer
 
-And receive the update by
+And receive the update by::
 
    $ git pull
 
