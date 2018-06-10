@@ -6,3 +6,5 @@ Tutorials
    doc
    installing
    run
+   plot
+   convert
