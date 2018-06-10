@@ -6,3 +6,4 @@ Tutorials
    doc
    installing
    run
+   plot
