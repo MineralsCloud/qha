@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1.11. Equation of states &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.12. Data model for user computational settings" href="settings.html" />
+    <link rel="prev" title="1.10. Some miscellaneous functions" href="tools.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">1.11. Equation of states</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="tools.html" title="Previous Chapter: 1.10. Some miscellaneous functions"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 1.10. Some mi...</span>
+    </a>
+  </li>
+  <li>
+    <a href="settings.html" title="Next Chapter: 1.12. Data model for user computational settings"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">1.12. Data mo... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/api/eos.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="equation-of-states">
+<h1>1.11. Equation of states<a class="headerlink" href="#equation-of-states" title="Permalink to this headline">¶</a></h1>
+<p>Nearly all the functions in this module have been speeduped by <a class="reference external" href="https://numba.pydata.org">Numba</a> package,
+which means they are fast, but all the arguments <strong>must be</strong> of type <code class="docutils literal notranslate"><span class="pre">float</span></code>.</p>
+<span class="target" id="module-qha"></span><span class="target" id="module-qha.eos"></span><dl class="attribute">
+<dt id="qha.eos.parabola">
+<code class="descclassname">qha.eos.</code><code class="descname">parabola</code><span class="sig-paren">(</span><em>v</em>, <em>a</em>, <em>b</em>, <em>c</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#parabola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.parabola" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to fit the data in parabola polynomial: <span class="math notranslate nohighlight">\(c v^2 + b v + a\)</span>.
+A second order function seems to be sufficient, and guarantees a single minimum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Constant.</li>
+<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Coefficient of the linear term.</li>
+<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Coefficient of the 2nd-order term.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qha.eos.birch">
+<code class="descclassname">qha.eos.</code><code class="descname">birch</code><span class="sig-paren">(</span><em>v</em>, <em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#birch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.birch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate free energy at volume <em>v</em>, according to Birch EOS. <a class="footnote-reference" href="#b" id="id1">[1]</a></p>
+<table class="docutils footnote" frame="void" id="b" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>From “Intermetallic compounds: Principles and Practice, Vol. I: Principles Chapter 9 pages 195-210 by
+M. Mehl. B. Klein, D. Papaconstantopoulos”, case where <span class="math notranslate nohighlight">\(n=0\)</span>.</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qha.eos.murnaghan">
+<code class="descclassname">qha.eos.</code><code class="descname">murnaghan</code><span class="sig-paren">(</span><em>v</em>, <em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#murnaghan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.murnaghan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate free energy at volume <em>v</em>, according to Murnaghan EOS. <a class="footnote-reference" href="#m" id="id2">[2]</a></p>
+<table class="docutils footnote" frame="void" id="m" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>From PRB 28,5480 (1983).</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qha.eos.birch_murnaghan3rd">
+<code class="descclassname">qha.eos.</code><code class="descname">birch_murnaghan3rd</code><span class="sig-paren">(</span><em>v</em>, <em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#birch_murnaghan3rd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.birch_murnaghan3rd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate free energy at volume <em>v</em>, according to Birch–Murnaghan third-order EOS. <a class="footnote-reference" href="#bm" id="id3">[3]</a></p>
+<table class="docutils footnote" frame="void" id="bm" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Birch–Murnaghan equation from PRB 70, 224107 Eq. (3) in the paper. Note that there’s a typo in the paper
+and it uses inverted expression for eta.</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qha.eos.pourier_tarantola">
+<code class="descclassname">qha.eos.</code><code class="descname">pourier_tarantola</code><span class="sig-paren">(</span><em>v</em>, <em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#pourier_tarantola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.pourier_tarantola" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate free energy at volume <em>v</em>, according to Pourier–Tarantola EOS. <a class="footnote-reference" href="#pt" id="id4">[4]</a></p>
+<table class="docutils footnote" frame="void" id="pt" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Pourier–Tarantola’s equation from PRB 70, 224107.</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="qha.eos.vinet">
+<code class="descclassname">qha.eos.</code><code class="descname">vinet</code><span class="sig-paren">(</span><em>v</em>, <em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#vinet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.vinet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate free energy at volume <em>v</em>, according to Vinet EOS. <a class="footnote-reference" href="#v" id="id5">[5]</a></p>
+<table class="docutils footnote" frame="void" id="v" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>Vinet equation from PRB 70, 224107. It is equivalent to the equation in
+Poirier, Jean-Paul. <em>Introduction to the Physics of the Earth’s Interior</em>. Cambridge University Press, 2000.</td></tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be calculated.</li>
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The calculated free energy at volume <em>v</em>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.EOS">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">EOS</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#EOS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.EOS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An abstract base class for equations of states. The classes <code class="docutils literal notranslate"><span class="pre">Birch</span></code>, <code class="docutils literal notranslate"><span class="pre">Murnaghan</span></code>, <code class="docutils literal notranslate"><span class="pre">BirchMurnaghan3rd</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PourierTarantola</span></code>, and <code class="docutils literal notranslate"><span class="pre">Vinet</span></code> are all subclasses of this class. Two of its public methods,
+<code class="docutils literal notranslate"><span class="pre">free_energy_at</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure_at</span></code> are <strong>not implemented</strong> here, so they must be implemented in its subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>b0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus at zero-pressure, as a reference parameter for the EOS.</li>
+<li><strong>bp0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Bulk modulus’s first order derivative W.R.T pressure at zero-pressure, as a reference parameter for the 
+EOS.</li>
+<li><strong>v0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Zero-pressure volume for the system.</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The baseline of free energy, defaults to be <span class="math notranslate nohighlight">\(0\)</span>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="qha.eos.EOS.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#EOS.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.EOS.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.EOS.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#EOS.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.EOS.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.EOS.solve_v_by_p">
+<code class="descname">solve_v_by_p</code><span class="sig-paren">(</span><em>p</em>, <em>v_guess</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#EOS.solve_v_by_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.EOS.solve_v_by_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the pressure, according to the equation of state of pressure, an initial guess <em>v_guess</em> is required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – The pressure at which the volume is to be worked out.</li>
+<li><strong>v_guess</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – An initial guess for <code class="docutils literal notranslate"><span class="pre">scipy.optimize.fsovle</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.Birch">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">Birch</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Birch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Birch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qha.eos.EOS" title="qha.eos.EOS"><code class="xref py py-class docutils literal notranslate"><span class="pre">qha.eos.EOS</span></code></a></p>
+<dl class="method">
+<dt id="qha.eos.Birch.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Birch.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Birch.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.Birch.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Birch.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Birch.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.Murnaghan">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">Murnaghan</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Murnaghan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Murnaghan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qha.eos.EOS" title="qha.eos.EOS"><code class="xref py py-class docutils literal notranslate"><span class="pre">qha.eos.EOS</span></code></a></p>
+<dl class="method">
+<dt id="qha.eos.Murnaghan.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Murnaghan.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Murnaghan.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.Murnaghan.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Murnaghan.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Murnaghan.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.BirchMurnaghan3rd">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">BirchMurnaghan3rd</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#BirchMurnaghan3rd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.BirchMurnaghan3rd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qha.eos.EOS" title="qha.eos.EOS"><code class="xref py py-class docutils literal notranslate"><span class="pre">qha.eos.EOS</span></code></a></p>
+<dl class="method">
+<dt id="qha.eos.BirchMurnaghan3rd.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#BirchMurnaghan3rd.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.BirchMurnaghan3rd.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.BirchMurnaghan3rd.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#BirchMurnaghan3rd.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.BirchMurnaghan3rd.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.PourierTarantola">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">PourierTarantola</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#PourierTarantola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.PourierTarantola" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qha.eos.EOS" title="qha.eos.EOS"><code class="xref py py-class docutils literal notranslate"><span class="pre">qha.eos.EOS</span></code></a></p>
+<dl class="method">
+<dt id="qha.eos.PourierTarantola.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#PourierTarantola.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.PourierTarantola.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.PourierTarantola.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#PourierTarantola.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.PourierTarantola.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="qha.eos.Vinet">
+<em class="property">class </em><code class="descclassname">qha.eos.</code><code class="descname">Vinet</code><span class="sig-paren">(</span><em>b0</em>, <em>bp0</em>, <em>v0</em>, <em>f0=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Vinet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Vinet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#qha.eos.EOS" title="qha.eos.EOS"><code class="xref py py-class docutils literal notranslate"><span class="pre">qha.eos.EOS</span></code></a></p>
+<dl class="method">
+<dt id="qha.eos.Vinet.free_energy_at">
+<code class="descname">free_energy_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Vinet.free_energy_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Vinet.free_energy_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate free energy at volume <em>v</em>, according to the equation of state of free energy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which free energy is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated free energy.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="qha.eos.Vinet.pressure_at">
+<code class="descname">pressure_at</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/eos.html#Vinet.pressure_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.eos.Vinet.pressure_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate pressure at volume <em>v</em>, according to the equation of state of pressure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Volume at which pressure is to be evaluated.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The calculated pressure.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

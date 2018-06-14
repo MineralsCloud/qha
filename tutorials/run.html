@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2.3. Run calculation command: qha-run &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.4. Plot results command: qha-plot" href="plot.html" />
+    <link rel="prev" title="2.2. Getting started" href="installing.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">1. API reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">2.3. Run calculation command: <code class="docutils literal notranslate"><span class="pre">qha-run</span></code></a><ul>
+<li><a class="reference internal" href="#how-to-make-settings">2.3.1. How to make settings</a></li>
+<li><a class="reference internal" href="#how-to-make-input-data">2.3.2. How to make input data</a></li>
+<li><a class="reference internal" href="#output">2.3.3. Output</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="installing.html" title="Previous Chapter: 2.2. Getting started"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 2.2. Getting started</span>
+    </a>
+  </li>
+  <li>
+    <a href="plot.html" title="Next Chapter: 2.4. Plot results command: qha-plot"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">2.4. Plot res... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/tutorials/run.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="run-calculation-command-qha-run">
+<h1>2.3. Run calculation command: <code class="docutils literal notranslate"><span class="pre">qha-run</span></code><a class="headerlink" href="#run-calculation-command-qha-run" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="how-to-make-settings">
+<h2>2.3.1. How to make settings<a class="headerlink" href="#how-to-make-settings" title="Permalink to this headline">¶</a></h2>
+<p>First you need to prepare a standard input file and a YAML file specifying
+your computational settings, which by default is named <code class="docutils literal notranslate"><span class="pre">settings.yaml</span></code>.
+Please refer to <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html">this webpage</a>
+if you are not familiar with YAML syntax.</p>
+<p>Here are some keys that can be specified in <code class="docutils literal notranslate"><span class="pre">settings.yaml</span></code>:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">NT</span></code>: Number of temperatures on the grid</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">DT</span></code>: The interval between two nearest temperatures on the grid</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">NTV</span></code>: Number of volumes (or equivalently, pressure) on the gird</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">DELTA_P</span></code>: The interval between two pressures on the grid, default value is <span class="math notranslate nohighlight">\(0.1\)</span> GPa</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">DELTA_P_SAMPLE</span></code>: Pressure-sampling interval, used for output, default value is <span class="math notranslate nohighlight">\(1\)</span> GPa</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">P_MIN</span></code>: Desired minimum pressure to calculate, in GPa</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">input</span></code>: Name of the input file(s). The value here determines the calculation type is single- or multi- configuration calculation</p>
+<ul class="simple">
+<li>In the single-configuration calculation, only the name of the file is needed,</li>
+<li>In the multi-configuration calculation, the names of the inputs files and the corresponding configuration</li>
+</ul>
+<p>degeneracy are given in a YAML dictionary.</p>
+<p>The code will recognize the organization of the input and choose the calculation module accordingly.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">same_phonon_dos</span></code>: Determine whether use the same phonon dos for all configurations, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">static_only</span></code>: Whether to include only static energy in the calculation, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">order</span></code>: Order of Birch–Murnaghan Equation of State fitting, <code class="docutils literal notranslate"><span class="pre">3</span></code> (default), <code class="docutils literal notranslate"><span class="pre">4</span></code> or <code class="docutils literal notranslate"><span class="pre">5</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">energy_unit</span></code>: Energy unit in the output file can be <code class="docutils literal notranslate"><span class="pre">ry</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">ev</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">calculate</span></code>: Determines which properties will be calculated.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">F</span></code>, Helmholtz free energy</li>
+<li><code class="docutils literal notranslate"><span class="pre">G</span></code>, Gibbs free energy</li>
+<li><code class="docutils literal notranslate"><span class="pre">U</span></code>, internal energy</li>
+<li><code class="docutils literal notranslate"><span class="pre">H</span></code>, enthalpy</li>
+<li><code class="docutils literal notranslate"><span class="pre">V</span></code>, volume</li>
+<li><code class="docutils literal notranslate"><span class="pre">Cp</span></code>, pressure specific heat capacity</li>
+<li><code class="docutils literal notranslate"><span class="pre">Cv</span></code>, volumetric specific heat capacity</li>
+<li><code class="docutils literal notranslate"><span class="pre">Bt</span></code>, isothermal bulk modulus</li>
+<li><code class="docutils literal notranslate"><span class="pre">Btp</span></code>, derivative of the isothermal bulk modulus with respect to pressure</li>
+<li><code class="docutils literal notranslate"><span class="pre">Bs</span></code>, adiabatic bulk modulus</li>
+<li><code class="docutils literal notranslate"><span class="pre">alpha</span></code>, thermal expansion coefficient</li>
+<li><code class="docutils literal notranslate"><span class="pre">gamma</span></code>, thermal Grüneisen parameters</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">target</span></code>: Default value is <code class="docutils literal notranslate"><span class="pre">parallel</span></code>.
+This is a Numba package option. Allowed options are <code class="docutils literal notranslate"><span class="pre">cpu</span></code> (used on single-threaded CPU), <code class="docutils literal notranslate"><span class="pre">parallel</span></code> (used on multi-core CPU),
+and <code class="docutils literal notranslate"><span class="pre">cuda</span></code> (used on CUDA GPU).</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">results_folder</span></code>: The path to store all calculated values, the default value is <code class="docutils literal notranslate"><span class="pre">./results</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">plot_results</span></code>: Plot all physic properties in PDF format, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">T4FV</span></code>: Temperature for F versus V plotting. <code class="docutils literal notranslate"><span class="pre">['0',</span> <span class="pre">'300']</span></code> is default</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">high_verbosity</span></code>: Two verbosity levels are implemented, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="how-to-make-input-data">
+<h2>2.3.2. How to make input data<a class="headerlink" href="#how-to-make-input-data" title="Permalink to this headline">¶</a></h2>
+<p>The input format is as below:</p>
+<a class="reference internal image-reference" href="../_images/input_format.png"><img alt="../_images/input_format.png" class="align-center" src="../_images/input_format.png" style="width: 800px;" /></a>
+<p>After you have prepared <code class="docutils literal notranslate"><span class="pre">settings.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">input</span></code> in the same directory,
+just open your terminal, redirect to that directory and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ qha-run settings.yaml
+</pre></div>
+</div>
+<p>then the results will be generated in the directory specified
+in <code class="docutils literal notranslate"><span class="pre">results_folder</span></code> option.</p>
+</div>
+<div class="section" id="output">
+<h2>2.3.3. Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<p>The output files’ names and their meanings are as below:</p>
+<ul class="simple">
+<li>Helmholtz free energy: <code class="docutils literal notranslate"><span class="pre">f_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">f_tp_ev.txt</span></code></li>
+<li>Gibbs free energy: <code class="docutils literal notranslate"><span class="pre">g_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">g_tp_ev.txt</span></code></li>
+<li>Enthalpy: <code class="docutils literal notranslate"><span class="pre">h_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">h_tp_ev.txt</span></code></li>
+<li>Volume: <code class="docutils literal notranslate"><span class="pre">v_tp_bohr3.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">v_tp_ang3.txt</span></code></li>
+<li>Pressure-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cp_tp_jmolk.txt</span></code></li>
+<li>Volume-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cv_tp_jmolk.txt</span></code></li>
+<li>Isothermal bulk modulus: <code class="docutils literal notranslate"><span class="pre">bt_tp_gpa.txt</span></code></li>
+<li>Derivative of the isothermal bulk modulus with
+respect to pressure: <code class="docutils literal notranslate"><span class="pre">btp_tp.txt</span></code></li>
+<li>Adiabatic bulk modulus: <code class="docutils literal notranslate"><span class="pre">bs_tp_gpa.txt</span></code></li>
+<li>Thermal expansion: <code class="docutils literal notranslate"><span class="pre">alpha_tp.txt</span></code></li>
+<li>Thermal Grüneisen parameters: <code class="docutils literal notranslate"><span class="pre">gamma_tp.txt</span></code></li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qha.readers.read_input &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">1. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for qha.readers.read_input</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module read_input</span>
+<span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
+<span class="sd">   :synopsis: Read file and write calculated value to files.</span>
+<span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scientific_string</span> <span class="k">import</span> <span class="n">strings_to_integers</span>
+<span class="kn">from</span> <span class="nn">text_stream</span> <span class="k">import</span> <span class="n">TextStream</span>
+
+<span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Array3D</span>
+
+<span class="c1"># ===================== What can be exported? =====================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;read_input&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="read_input"><a class="viewcode-back" href="../../../api/read_input.html#qha.readers.read_input.read_input">[docs]</a><span class="k">def</span> <span class="nf">read_input</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Array3D</span><span class="p">,</span> <span class="n">Vector</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Can be a string directing to a file, or the file&#39;s content directly.</span>
+
+<span class="sd">    :param inp: The filename or file&#39;s path.</span>
+<span class="sd">    :return: The input data. They are the number of formula unit in a cell,</span>
+<span class="sd">        number of volumes in *inp*, static energies of each volume, frequencies of each volume of each q-point and mode,</span>
+<span class="sd">        an array of weights of each q-point, respectively.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">text_stream</span> <span class="o">=</span> <span class="n">TextStream</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+    <span class="n">gen</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_stream</span><span class="o">.</span><span class="n">generator_telling_position</span><span class="p">()</span>
+
+    <span class="n">volumes_amount</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">q_points_amount</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">modes_per_q_point_amount</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">formula_unit_number</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Now we start reading some metadata.</span>
+    <span class="n">regex0</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;\s*(\d+)[\s,]*(\d+)[\s,]*(\d+)[\s,]*(\d+)&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">line</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex0</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">volumes_amount</span><span class="p">,</span> <span class="n">q_points_amount</span><span class="p">,</span> <span class="n">modes_per_q_point_amount</span><span class="p">,</span> <span class="n">formula_unit_number</span> <span class="o">=</span> <span class="n">strings_to_integers</span><span class="p">(</span>
+                <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
+            <span class="k">break</span>
+
+    <span class="c1"># If the metadata is not found, check the *inp*!</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">(</span><span class="n">volumes_amount</span><span class="p">,</span> <span class="n">q_points_amount</span><span class="p">,</span> <span class="n">modes_per_q_point_amount</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of the desired values &#39;nv&#39;, &#39;nq&#39;, &#39;np&#39; is not found in file </span><span class="si">{0}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+
+    <span class="c1"># Generate containers for storing the following data.</span>
+    <span class="n">volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">volumes_amount</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">static_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">volumes_amount</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">volumes_amount</span><span class="p">,</span> <span class="n">q_points_amount</span><span class="p">,</span> <span class="n">modes_per_q_point_amount</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">q_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">q_points_amount</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># We start a new iterator from where we stopped.</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">text_stream</span><span class="o">.</span><span class="n">generator_starts_from</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># volume count</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># q-point index, note it is not count like `i`!</span>
+
+    <span class="c1"># Now we start reading the energies, volumes, and frequencies.</span>
+    <span class="n">regex1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;P\s*=\s*-?\d*\.?\d*\s*V\s*=(\s*\d*\.?\d*)\s*E\s*=\s*(-?\d*\.?\d*)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="s1">&#39;=&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">regex1</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Search of pattern </span><span class="si">{0}</span><span class="s2"> failed in line &#39;</span><span class="si">{1}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regex1</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">volumes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">static_energies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">continue</span>
+
+        <span class="n">sp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">modes_per_q_point_amount</span><span class="p">):</span>  <span class="c1"># Note `k` is the index of mode, like `j`, not count like `i`.</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>
+                <span class="n">frequencies</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="s1">&#39;weight&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">break</span>
+
+    <span class="c1"># Now we start reading q-point-weights. We start the exact iterator from where we stopped.</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">continue</span>
+
+        <span class="n">q_weights</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># This line has format: q_x q_y q_z weight, and only weight is taken</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">volumes_amount</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of volumes detected is not equal to what specified in head! Check your file!&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">formula_unit_number</span><span class="p">,</span> <span class="n">volumes</span><span class="p">,</span> <span class="n">static_energies</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">,</span> <span class="n">q_weights</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

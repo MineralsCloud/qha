@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qha.fitting &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for qha.fitting</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module fitting</span>
+<span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
+<span class="sd">   :synopsis: This module is one of the most important part of this package since it implements a robust</span>
+<span class="sd">    Birch--Murnaghan EoS fitting for ``grid_interpolation`` modules&#39; use.</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">inv</span>
+
+<span class="c1"># ===================== What can be exported? =====================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;polynomial_least_square_fitting&#39;</span><span class="p">,</span> <span class="s1">&#39;birch_murnaghan_finite_strain_fitting&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="polynomial_least_square_fitting"><a class="viewcode-back" href="../../api/fitting.html#qha.fitting.polynomial_least_square_fitting">[docs]</a><span class="k">def</span> <span class="nf">polynomial_least_square_fitting</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">new_x</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Free Energy is expanded to the ``order``:math:`^\mathrm{th}` order in strain.</span>
+
+<span class="sd">    Check the `Wolfram Mathworld &lt;http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html&gt;`_</span>
+<span class="sd">    to find the method of calculating the coefficients.</span>
+
+<span class="sd">    :param x: Eulerian strain of calculated volumes (sparse).</span>
+<span class="sd">    :param y: Free energy of these calculated volumes (sparse).</span>
+<span class="sd">    :param new_x: Eulerian strain at a greater dense vector.</span>
+<span class="sd">    :param order: The order chose to fit Birch--Murnaghan EoS, default is ``3``, i.e., third-order Birch--Murnaghan</span>
+<span class="sd">        EoS fitting.</span>
+<span class="sd">    :return: Free energy at a denser strain vector (denser volumes vector).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># The order needed is 1 more than ``numpy.vander`` default value.</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vander</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">increasing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># This will make a Vandermonde matrix that will be used in BM fitting.</span>
+    <span class="n">X_T</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">X_T</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X_T</span> <span class="o">@</span> <span class="n">y</span>
+    <span class="n">new_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vander</span><span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">increasing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">@</span> <span class="n">a</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">new_y</span></div>
+
+
+<div class="viewcode-block" id="birch_murnaghan_finite_strain_fitting"><a class="viewcode-back" href="../../api/fitting.html#qha.fitting.birch_murnaghan_finite_strain_fitting">[docs]</a><span class="k">def</span> <span class="nf">birch_murnaghan_finite_strain_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energy</span><span class="p">,</span> <span class="n">strain</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the ``F(T, V)`` for given strain.</span>
+<span class="sd">    Free Energy is expanded to the ``order``:math:`^\mathrm{th}` order in strain.</span>
+
+<span class="sd">    :param eulerian_strain: Eulerian strain of calculated volumes (sparse).</span>
+<span class="sd">    :param free_energy: Free energy of these calculated volumes (sparse).</span>
+<span class="sd">    :param strain: Eulerian strain at a greater dense vector.</span>
+<span class="sd">    :param order: The order chose to fit Birch--Murnaghan EoS, default is ``3``, i.e., third-order Birch--Murnaghan</span>
+<span class="sd">        EoS fitting.</span>
+<span class="sd">    :return: Free energy at a dense :math:`(T, V)` grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temperature_amount</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">free_energy</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">dense_volume_amount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">strain</span><span class="p">)</span>
+    <span class="n">f_v_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">temperature_amount</span><span class="p">,</span> <span class="n">dense_volume_amount</span><span class="p">))</span>  <span class="c1"># Initialize the F(T,V) array</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">temperature_amount</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">f_i</span> <span class="o">=</span> <span class="n">polynomial_least_square_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">strain</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+        <span class="n">f_v_t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_i</span>
+    <span class="k">return</span> <span class="n">f_v_t</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

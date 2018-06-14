@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1.9. Thermodynamic properties &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.10. Some miscellaneous functions" href="tools.html" />
+    <link rel="prev" title="1.8. Parameterize \((V, T)\) to \((P, T)\)" href="v2p.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">1.9. Thermodynamic properties</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="v2p.html" title="Previous Chapter: 1.8. Parameterize \((V, T)\) to \((P, T)\)"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 1.8. Paramete...</span>
+    </a>
+  </li>
+  <li>
+    <a href="tools.html" title="Next Chapter: 1.10. Some miscellaneous functions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">1.10. Some mi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/api/thermodynamics.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="thermodynamic-properties">
+<h1>1.9. Thermodynamic properties<a class="headerlink" href="#thermodynamic-properties" title="Permalink to this headline">¶</a></h1>
+<p>This module is used for calculating various thermodynamic properties using Helmholtz free energy.</p>
+<span class="target" id="module-qha"></span><span class="target" id="module-qha.thermodynamics"></span><dl class="function">
+<dt id="qha.thermodynamics.pressure_tv">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">pressure_tv</code><span class="sig-paren">(</span><em>v_vector</em>, <em>free_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#pressure_tv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.pressure_tv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used to calculate pressure: <span class="math notranslate nohighlight">\(P = - \left ( \frac{ \partial F }{ \partial V } \right )_T\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – fine volumes vector</li>
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – <span class="math notranslate nohighlight">\(F(T,V)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pressure, <span class="math notranslate nohighlight">\(P(T,V)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.entropy">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">entropy</code><span class="sig-paren">(</span><em>ts</em>, <em>free_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used to calculate entropy: <span class="math notranslate nohighlight">\(S = - \left ( \frac{ \partial F }{ \partial T } \right )_V\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – <span class="math notranslate nohighlight">\(F(T,V)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">entropy, <span class="math notranslate nohighlight">\(S(T,V)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.thermodynamic_potentials">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">thermodynamic_potentials</code><span class="sig-paren">(</span><em>ts</em>, <em>v_vector</em>, <em>free_energies</em>, <em>p_tv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#thermodynamic_potentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.thermodynamic_potentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate <span class="math notranslate nohighlight">\(H\)</span>, <span class="math notranslate nohighlight">\(U\)</span>, and <span class="math notranslate nohighlight">\(G\)</span> on <span class="math notranslate nohighlight">\((T,V)\)</span> grid from <span class="math notranslate nohighlight">\(F\)</span>;</p>
+<p><span class="math notranslate nohighlight">\(U = F + TS, H = U + PV, G = F + PV\)</span></p>
+<p>input: nt, and F, which is Helmholtz Free Energy, are needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – <span class="math notranslate nohighlight">\(F(T,V)\)</span></li>
+<li><strong>p_tv</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – pressure, <span class="math notranslate nohighlight">\(P(T,V)\)</span></li>
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+<li><strong>v_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – fine volumes vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><span class="math notranslate nohighlight">\(U\)</span>, <span class="math notranslate nohighlight">\(H\)</span>, <span class="math notranslate nohighlight">\(G\)</span> on <span class="math notranslate nohighlight">\((T,V)\)</span> grid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.volume_tp">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">volume_tp</code><span class="sig-paren">(</span><em>v_vector</em>, <em>p_vector</em>, <em>p_tv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#volume_tp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.volume_tp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert volume as function of <span class="math notranslate nohighlight">\((T,P)\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – fine volumes vector</li>
+<li><strong>p_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – desired pressure vector</li>
+<li><strong>p_tv</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – P(T,V) in au.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">volume, V(T,P)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.thermal_expansion_coefficient">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">thermal_expansion_coefficient</code><span class="sig-paren">(</span><em>ts</em>, <em>v_tp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#thermal_expansion_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.thermal_expansion_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thermal expansion: <span class="math notranslate nohighlight">\(\alpha = \frac{ 1 }{ V }  \left ( \frac{ \partial V }{ \partial T } \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+<li><strong>v_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – volume, <span class="math notranslate nohighlight">\(V(T,P)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">thermal expansion coefficient, <span class="math notranslate nohighlight">\(\alpha(T,P)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.gruneisen_parameter">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">gruneisen_parameter</code><span class="sig-paren">(</span><em>v_tp</em>, <em>bt_tp</em>, <em>alpha_tp</em>, <em>cv_tp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#gruneisen_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.gruneisen_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used to calculate thermodynamic Gruneisen parameter: <span class="math notranslate nohighlight">\(\gamma = \alpha B_{t} V / Cv\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>v_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – volume, <span class="math notranslate nohighlight">\(V(T,P)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>:param bt_tp:isothermal bulk modulus <span class="math notranslate nohighlight">\(Bt(T,P)\)</span>
+:type alpha_tp: array(float64, 2d, A)
+:param alpha_tp: thermal expansion coefficient, <span class="math notranslate nohighlight">\(\alpha(T,P)\)</span>
+:type cv_tp: array(float64, 2d, A)
+:param cv_tp: volume specific heat capacity, <span class="math notranslate nohighlight">\(Cv(T,P)\)</span>
+:rtype: array(float64, 2d, A)
+:return: thermodynamic gruneisen parameter, <span class="math notranslate nohighlight">\(\gamma(T,P)\)</span></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.isothermal_bulk_modulus">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">isothermal_bulk_modulus</code><span class="sig-paren">(</span><em>v_vector</em>, <em>p_tv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#isothermal_bulk_modulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.isothermal_bulk_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used to calculate isothermal bulk modulus: <span class="math notranslate nohighlight">\(Bt = - V  \left ( \frac{ \partial P }{ \partial V } \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>v_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – fine volume vector</li>
+<li><strong>p_tv</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – pressure, <span class="math notranslate nohighlight">\(P(T,V)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">isothermal bulk modulus, <span class="math notranslate nohighlight">\(Bt(T,V)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.adiabatic_bulk_modulus">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">adiabatic_bulk_modulus</code><span class="sig-paren">(</span><em>bt_tp</em>, <em>alpha_tp</em>, <em>gamma_tp</em>, <em>ts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#adiabatic_bulk_modulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.adiabatic_bulk_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used to calculate adiabatic bulk modulus: <span class="math notranslate nohighlight">\(Bs = Bt \left ( 1 + \alpha \gamma T \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bt_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – isothermal bulk modulus, <span class="math notranslate nohighlight">\(Bt(T,P)\)</span></li>
+<li><strong>alpha_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – thermal expansion coefficient, <span class="math notranslate nohighlight">\(\alpha(T,P)\)</span></li>
+<li><strong>gamma_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – thermodynamic gruneisen parameter, <span class="math notranslate nohighlight">\(\gamma(T,P)\)</span></li>
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">adiabatic bulk modulus, <span class="math notranslate nohighlight">\(Bs(T,P)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.bulk_modulus_derivative">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">bulk_modulus_derivative</code><span class="sig-paren">(</span><em>p_vector</em>, <em>bt_tp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#bulk_modulus_derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.bulk_modulus_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used: <span class="math notranslate nohighlight">\(Bt' = \left ( \frac{ \partial Bt }{ \partial P } \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p_vector</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – desired pressure vector</li>
+<li><strong>bt_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – isothermal_bulk_modulus, <span class="math notranslate nohighlight">\(Bt(T,P)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><span class="math notranslate nohighlight">\(Bt'(T,P)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.pressure_specific_heat_capacity">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">pressure_specific_heat_capacity</code><span class="sig-paren">(</span><em>cv_tp</em>, <em>alpha_tp</em>, <em>gamma_tp</em>, <em>ts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#pressure_specific_heat_capacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.pressure_specific_heat_capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used: <span class="math notranslate nohighlight">\(Cp = Bt \left ( 1 + \alpha \gamma T \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cv_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – volume specific heat capacity, <span class="math notranslate nohighlight">\(Cv(T,P)\)</span></li>
+<li><strong>alpha_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – thermal expansion coefficient, <span class="math notranslate nohighlight">\(\alpha(T,P)\)</span></li>
+<li><strong>gamma_tp</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – thermodynamic gruneisen parameter, <span class="math notranslate nohighlight">\(\gamma(T,P)\)</span></li>
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pressure specific heat capacity, <span class="math notranslate nohighlight">\(Cp(T,P)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.volume_specific_heat_capacity">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">volume_specific_heat_capacity</code><span class="sig-paren">(</span><em>ts</em>, <em>internal_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#volume_specific_heat_capacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.volume_specific_heat_capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equation used: <span class="math notranslate nohighlight">\(Cv = \left ( \frac{ \partial U }{ \partial T } \right )\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ts</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – temperature vector</li>
+<li><strong>internal_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – <span class="math notranslate nohighlight">\(U(T,V)\)</span></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">volume specific heat capacity, <span class="math notranslate nohighlight">\(Cv(T,V)\)</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

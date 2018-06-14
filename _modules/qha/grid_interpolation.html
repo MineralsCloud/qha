@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qha.grid_interpolation &#8212; qha 1.0.10 documentation</title>
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.10</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for qha.grid_interpolation</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module</span>
+<span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
+<span class="sd">   :synopsis: This module defines a class ``RefineGrid`` that will do Birch--Murnaghan EoS fitting on the input</span>
+<span class="sd">    free energies and volumes, and evaluate the fitted function on a denser volume grid.</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">vectorize</span><span class="p">,</span> <span class="n">float64</span><span class="p">,</span> <span class="n">jit</span><span class="p">,</span> <span class="n">int64</span>
+<span class="kn">from</span> <span class="nn">numba.types</span> <span class="k">import</span> <span class="n">UniTuple</span>
+
+<span class="kn">from</span> <span class="nn">qha.fitting</span> <span class="k">import</span> <span class="n">polynomial_least_square_fitting</span><span class="p">,</span> <span class="n">birch_murnaghan_finite_strain_fitting</span>
+<span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span>
+<span class="kn">from</span> <span class="nn">qha.unit_conversion</span> <span class="k">import</span> <span class="n">gpa_to_ry_b3</span>
+
+<span class="c1"># ===================== What can be exported? =====================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;calc_eulerian_strain&#39;</span><span class="p">,</span> <span class="s1">&#39;from_eulerian_strain&#39;</span><span class="p">,</span> <span class="s1">&#39;interpolate_volumes&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RefineGrid&#39;</span><span class="p">]</span>
+
+
+<span class="nd">@vectorize</span><span class="p">([</span><span class="n">float64</span><span class="p">(</span><span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">)],</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">calc_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Eulerian strain (:math:`f`) of a given volume vector *v* regarding to a reference *v0*, where</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).</span>
+
+<span class="sd">    :param v0: The volume set as reference for Eulerian strain calculation.</span>
+<span class="sd">    :param v: The volume to be calculated its strain W.R.T. *v0*.</span>
+<span class="sd">    :return: Calculated Eulerian strain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">v0</span> <span class="o">/</span> <span class="n">v</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@vectorize</span><span class="p">([</span><span class="n">float64</span><span class="p">(</span><span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">)],</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">from_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate corresponding volume :math:`V` from given Eulerian strain (*f*) and reference volume *v0*. It is the</span>
+<span class="sd">    inverse of ``calc_eulerian_strain`` function, i.e.,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        V = V_0 (2 f + 1)^{-3/2}.</span>
+
+<span class="sd">    :param v0: The volume set as reference for volume calculation.</span>
+<span class="sd">    :param f: Eulerian strain for :math:`V` W.R.T. :math:`V_0`.</span>
+<span class="sd">    :return: Calculated volume :math:`V`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">v0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="interpolate_volumes"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.interpolate_volumes">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">UniTuple</span><span class="p">(</span><span class="n">float64</span><span class="p">[:],</span> <span class="mi">2</span><span class="p">)(</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">int64</span><span class="p">,</span> <span class="n">float64</span><span class="p">),</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">interpolate_volumes</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interpolate volumes on input, with *ratio* given.</span>
+<span class="sd">    For Eulerian strain, the larger the strain, the smaller the volume. So large volume corresponds to small strain.</span>
+
+<span class="sd">    :param in_volumes: The input sparse 1D array of volumes.</span>
+<span class="sd">    :param out_volumes_num: Number of output volumes. It should be larger than the number of input volumes.</span>
+<span class="sd">    :param ratio: The ratio of the largest volume used in fitting W.R.T. the largest input volumes.</span>
+<span class="sd">    :return: The interpolated strains in a finer grid, and corresponding volumes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v_min</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">)</span>
+    <span class="n">v_smallest</span><span class="p">,</span> <span class="n">v_largest</span> <span class="o">=</span> <span class="n">v_min</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="c1"># The *v_max* is a reference value here. It equals to ``v_max / v_largest = v_smallest / v_min``.</span>
+    <span class="n">s_largest</span><span class="p">,</span> <span class="n">s_smallest</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_smallest</span><span class="p">),</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_largest</span><span class="p">)</span>
+    <span class="n">strains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s_smallest</span><span class="p">,</span> <span class="n">s_largest</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">strains</span><span class="p">,</span> <span class="n">from_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">strains</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RefineGrid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid">[docs]</a><span class="k">class</span> <span class="nc">RefineGrid</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that will do the Birch--Murnaghan finite-strain EoS fitting,</span>
+<span class="sd">    and evaluate the fitted function on a denser volume grid.</span>
+
+<span class="sd">    :param desired_p_min: The desired minimum pressure to calculate for further steps.</span>
+<span class="sd">    :param nv: The number of volumes on a denser grid.</span>
+<span class="sd">    :param order: The order of the Birch--Murnaghan finite-strain EoS fitting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_p_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">nv</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_desire</span> <span class="o">=</span> <span class="n">desired_p_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="n">order</span>
+
+<div class="viewcode-block" id="RefineGrid.approach_to_best_ratio"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.approach_to_best_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">approach_to_best_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trying to find the best volume grids based on an a very large volume grids.</span>
+
+<span class="sd">        :param volumes: Volumes of these calculations were perform (sparse).</span>
+<span class="sd">        :param free_energies: Free energies at the highest temperature (sparse).</span>
+<span class="sd">        :param initial_ratio: Initial ratio, a guess value, which can be set to a very large number.</span>
+<span class="sd">        :return: The suitable `ratio` for further calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">strains</span><span class="p">,</span> <span class="n">finer_volumes</span> <span class="o">=</span> <span class="n">interpolate_volumes</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">)</span>
+        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">f_v_tmax</span> <span class="o">=</span> <span class="n">polynomial_least_square_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">,</span> <span class="n">strains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">)</span>
+        <span class="n">p_v_tmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">f_v_tmax</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">finer_volumes</span><span class="p">)</span>
+        <span class="n">p_desire</span> <span class="o">=</span> <span class="n">gpa_to_ry_b3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_desire</span><span class="p">)</span>
+        <span class="c1"># Find the index of the first pressure value that slightly smaller than p_desire.</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">p_v_tmax</span> <span class="o">&lt;</span> <span class="n">p_desire</span><span class="p">)</span>
+        <span class="n">final_ratio</span> <span class="o">=</span> <span class="n">finer_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">volumes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">final_ratio</span></div>
+
+<div class="viewcode-block" id="RefineGrid.refine_grid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.refine_grid">[docs]</a>    <span class="k">def</span> <span class="nf">refine_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
+                    <span class="n">ratio</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the appropriate volume grid for interpolation.</span>
+<span class="sd">        Avoid to use a too large volume grid to obtain data, which might lose accuracy.</span>
+
+<span class="sd">        :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).</span>
+<span class="sd">        :param volumes: Volumes of these calculations were perform (sparse).</span>
+<span class="sd">        :param ratio: This ratio is used to get a larger volume grid</span>
+<span class="sd">        :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ratio</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ratio</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">approach_to_best_ratio</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="mf">1.45</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_ratio</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="c1"># if the new_ratio is smaller than 1.0, which means the volumes calculated is large enough,</span>
+                <span class="c1"># there is no need to expand the volumes.</span>
+                <span class="n">new_ratio</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
+        <span class="n">strains</span><span class="p">,</span> <span class="n">finer_volumes</span> <span class="o">=</span> <span class="n">interpolate_volumes</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">new_ratio</span><span class="p">)</span>
+        <span class="n">f_tv_bfm</span> <span class="o">=</span> <span class="n">birch_murnaghan_finite_strain_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">,</span> <span class="n">strains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">finer_volumes</span><span class="p">,</span> <span class="n">f_tv_bfm</span><span class="p">,</span> <span class="n">new_ratio</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
