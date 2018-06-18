@@ -10,11 +10,11 @@
 from typing import Callable, Optional
 
 import numpy as np
-from numba import jit, guvectorize, float64, int64
+from numba import float64, guvectorize, int64, jit, vectorize
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calc_eulerian_strain
-from qha.type_aliases import Vector, Scalar, Matrix
+from qha.type_aliases import Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 'is_monotonic_decreasing',
@@ -36,7 +36,7 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2, x3 = xs
     y0, y1, y2, y3 = ys
 
-    @jit(nopython=True, nogil=True)
+    @vectorize(["float64(float64)"], target='parallel')
     def f(x: float) -> float:
         """
         A helper which function only does the evaluation.
@@ -78,7 +78,7 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2 = xs
     y0, y1, y2 = ys
 
-    @jit(nopython=True, nogil=True)
+    @vectorize(["float64(float64)"], target='parallel')
     def f(x: float) -> float:
         """
         A helper which function only does the evaluation.
