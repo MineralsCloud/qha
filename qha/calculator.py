@@ -39,7 +39,7 @@ class Calculator:
 
         allowed_keys = ('same_phonon_dos', 'input', 'volume_energies',
                         'calculate', 'static_only', 'energy_unit',
-                        'NT', 'DT', 'DT_SAMPLE',
+                        'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                         'calculate', 'volume_ratio', 'order', 'p_min_modifier',
                         'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
@@ -144,7 +144,11 @@ class Calculator:
         """
         # Normally, the last 2 temperature points in Cp are not accurate.
         # Here 4 more points are added for calculation, but they will be removed at the output files.
-        return qha.tools.arange(0, self.settings['NT'] + 4, self.settings['DT'])
+        minimum_temperature = self.settings['T_MIN']
+        if minimum_temperature < 0:
+            raise ValueError("Minimum temperature should be no less than 0!")
+
+        return qha.tools.arange(minimum_temperature, self.settings['NT'] + 4, self.settings['DT'])
 
     def refine_grid(self):
         d = self.settings
