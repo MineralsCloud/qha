@@ -25,7 +25,7 @@ def main():
 
     for key in ('same_phonon_dos', 'input',
                 'calculate', 'static_only', 'energy_unit',
-                'NT', 'DT', 'DT_SAMPLE',
+                'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                 'volume_ratio', 'order', 'p_min_modifier',
                 'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
