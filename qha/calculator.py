@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-:mod: calculator
-================
-
 .. module calculator
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Read file and write calculated value to files
+   :synopsis: This is one of the most important modules in this package. It defines 3 classes, ``Calculator``,
+    ``SamePhDOSCalculator``, and ``DifferentPhDOSCalculator``. The first one can be used to do single configuration
+    calculation, the others are for multiple configurations calculation. Among them, the second one is for
+    assuming all the configurations have the same phonon density of states, and the third one is for assuming
+    all the configurations have different phonon density of states.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
@@ -14,7 +15,6 @@ import textwrap
 from typing import Dict, Any, Optional
 
 import numpy as np
-import pandas as pd
 from lazy_property import LazyProperty
 
 import qha.multi_configurations.different_phonon_dos as different_phonon_dos
@@ -29,6 +29,9 @@ from qha.type_aliases import Vector
 from qha.unit_conversion import gpa_to_ry_b3, ry_b3_to_gpa, b3_to_a3, ry_to_j_mol, ry_to_ev
 from qha.v2p import v2p
 
+# ===================== What can be exported? =====================
+__all__ = ['Calculator', 'SamePhDOSCalculator', 'DifferentPhDOSCalculator']
+
 
 class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
@@ -36,7 +39,7 @@ class Calculator:
 
         allowed_keys = ('same_phonon_dos', 'input', 'volume_energies',
                         'calculate', 'static_only', 'energy_unit',
-                        'NT', 'DT', 'DT_SAMPLE',
+                        'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                         'calculate', 'volume_ratio', 'order', 'p_min_modifier',
                         'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
@@ -55,8 +58,8 @@ class Calculator:
         self._frequencies = None
         self._q_weights = None
 
-        self._finer_volumes_au = None
-        self._f_tv_au = None
+        self._finer_volumes_bohr3 = None
+        self._f_tv_ry = None
         self._v_ratio = None
 
     @property
@@ -90,12 +93,12 @@ class Calculator:
         return self._q_weights
 
     @property
-    def finer_volumes_au(self):
-        return self._finer_volumes_au
+    def finer_volumes_bohr3(self):
+        return self._finer_volumes_bohr3
 
     @property
-    def f_tv_au(self):
-        return self._f_tv_au
+    def f_tv_ry(self):
+        return self._f_tv_ry
 
     @property
     def v_ratio(self) -> Optional[float]:
@@ -117,6 +120,22 @@ class Calculator:
         self._q_weights = q_weights
 
     @LazyProperty
+    def where_negative_frequencies(self) -> Optional[Vector]:
+        """
+        The indices of negative frequencies are indicated.
+
+        :return:
+        """
+        if self._frequencies is None:
+            print("Please invoke ``read_input`` method first!")  # ``None`` is returned
+        else:
+            _ = np.transpose(np.where(self._frequencies < 0))
+            if _.size == 0:
+                return None
+
+            return _
+
+    @LazyProperty
     def temperature_array(self) -> Vector:
         """
         The temperature calculated to derive free energy at that temperature.
@@ -125,7 +144,11 @@ class Calculator:
         """
         # Normally, the last 2 temperature points in Cp are not accurate.
         # Here 4 more points are added for calculation, but they will be removed at the output files.
-        return qha.tools.arange(0, self.settings['NT'] + 4, self.settings['DT'])
+        minimum_temperature = self.settings['T_MIN']
+        if minimum_temperature < 0:
+            raise ValueError("Minimum temperature should be no less than 0!")
+
+        return qha.tools.arange(minimum_temperature, self.settings['NT'] + 4, self.settings['DT'])
 
     def refine_grid(self):
         d = self.settings
@@ -135,13 +158,13 @@ class Calculator:
         except KeyError:
             raise KeyError("All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!")
 
-        r = RefineGrid(p_min - p_min_modifier, ntv, option=order)
+        r = RefineGrid(p_min - p_min_modifier, ntv, order=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_au, self._f_tv_au, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry,
-                                                                                  ratio=d['volume_ratio'])
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
+                                                                                    ratio=d['volume_ratio'])
         else:
-            self._finer_volumes_au, self._f_tv_au, self._v_ratio = r.refine_grids(self.volumes, self.vib_ry)
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry)
 
     @LazyProperty
     def vib_ry(self):
@@ -156,7 +179,7 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_au, self.f_tv_au, self.p_tv_au)
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au)
 
     @LazyProperty
     def temperature_sample_array(self):
@@ -177,7 +200,7 @@ class Calculator:
 
     @LazyProperty
     def finer_volumes_ang3(self):
-        return b3_to_a3(self.finer_volumes_au)
+        return b3_to_a3(self.finer_volumes_bohr3)
 
     @LazyProperty
     def vib_ev(self):
@@ -202,70 +225,70 @@ class Calculator:
                            
                            DESIRED PRESSURE is too high (NTV is too large)!
                            QHA results might not be right!
-                           Please reduce the NTV accordingly, for example, try to set NTV < %4d.
+                           Please reduce the NTV accordingly, for example, try to set NTV < {:4d}.
                            """.format(ntv_max)))
 
             raise ValueError("DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!")
 
     @LazyProperty
     def p_tv_au(self):
-        return pressure_tv(self.finer_volumes_au, self.f_tv_au)
+        return pressure_tv(self.finer_volumes_bohr3, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
-        return ry_to_ev(self.f_tv_au)
+        return ry_to_ev(self.f_tv_ry)
 
     @LazyProperty
     def p_tv_gpa(self):
         return ry_b3_to_gpa(self.p_tv_au)
 
     @LazyProperty
-    def f_tp_au(self):
-        return v2p(self.f_tv_au, self.p_tv_au, self.desired_pressures)
+    def f_tp_ry(self):
+        return v2p(self.f_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def f_tp_ev(self):
-        return ry_to_ev(self.f_tp_au)
+        return ry_to_ev(self.f_tp_ry)
 
     @LazyProperty
-    def u_tv_au(self):
+    def u_tv_ry(self):
         return self.thermodynamic_potentials['U']
 
     @LazyProperty
-    def u_tp_au(self):
-        return v2p(self.u_tv_au, self.p_tv_au, self.desired_pressures)
+    def u_tp_ry(self):
+        return v2p(self.u_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def u_tp_ev(self):
-        return ry_to_ev(self.u_tp_au)
+        return ry_to_ev(self.u_tp_ry)
 
     @LazyProperty
-    def h_tv_au(self):
+    def h_tv_ry(self):
         return self.thermodynamic_potentials['H']
 
     @LazyProperty
-    def h_tp_au(self):
-        return v2p(self.h_tv_au, self.p_tv_au, self.desired_pressures)
+    def h_tp_ry(self):
+        return v2p(self.h_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def h_tp_ev(self):
-        return ry_to_ev(self.h_tp_au)
+        return ry_to_ev(self.h_tp_ry)
 
     @LazyProperty
-    def g_tv_au(self):
+    def g_tv_ry(self):
         return self.thermodynamic_potentials['G']
 
     @LazyProperty
-    def g_tp_au(self):
-        return v2p(self.g_tv_au, self.p_tv_au, self.desired_pressures)
+    def g_tp_ry(self):
+        return v2p(self.g_tv_ry, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
     def g_tp_ev(self):
-        return ry_to_ev(self.g_tp_au)
+        return ry_to_ev(self.g_tp_ry)
 
     @LazyProperty
     def bt_tv_au(self):
-        return isothermal_bulk_modulus(self.finer_volumes_au, self.p_tv_au)
+        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv_au)
 
     @LazyProperty
     def bt_tp_au(self):
@@ -280,32 +303,32 @@ class Calculator:
         return bulk_modulus_derivative(self.desired_pressures, self.bt_tp_au)
 
     @LazyProperty
-    def v_tp_au(self):
-        return volume_tp(self.finer_volumes_au, self.desired_pressures, self.p_tv_au)
+    def v_tp_bohr3(self):
+        return volume_tp(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
 
     @LazyProperty
     def v_tp_ang3(self):
-        return b3_to_a3(self.v_tp_au)
+        return b3_to_a3(self.v_tp_bohr3)
 
     @LazyProperty
     def alpha_tp(self):
-        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_au)
+        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_bohr3)
 
     @LazyProperty
     def cv_tv_au(self):
-        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_au)
+        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_ry)
 
     @LazyProperty
     def cv_tp_au(self):
         return v2p(self.cv_tv_au, self.p_tv_au, self.desired_pressures)
 
     @LazyProperty
-    def cv_tp_jmol(self):
+    def cv_tp_jmolk(self):
         return ry_to_j_mol(self.cv_tp_au) / self.formula_unit_number
 
     @LazyProperty
     def gamma_tp(self):
-        return gruneisen_parameter(self.v_tp_au, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
+        return gruneisen_parameter(self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
 
     @LazyProperty
     def bs_tp_au(self):
@@ -320,39 +343,8 @@ class Calculator:
         return pressure_specific_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
     @LazyProperty
-    def cp_tp_jmol(self):
-        return pressure_specific_heat_capacity(self.cv_tp_jmol, self.alpha_tp, self.gamma_tp, self.temperature_array)
-
-
-class SamePhDOSCalculator(Calculator):
-    def __init__(self, user_settings):
-        super().__init__(user_settings)
-
-        self._volume_energy = None
-        self._degeneracies = None
-
-    @property
-    def volume_energy(self):
-        return self._volume_energy
-
-    @property
-    def degeneracies(self):
-        return self._degeneracies
-
-    def read_energy_degeneracy(self):
-        volume_energies = pd.read_csv(self.settings['volume_energies'], sep='\s+', index_col='volume')
-        self._degeneracies = tuple(self.settings['input'].values())
-
-        self._volume_energy = volume_energies
-
-    @LazyProperty
-    def vib_ry(self):
-        v = np.empty(self.temperature_array.shape)
-
-        for i, t in enumerate(self.temperature_array):
-            v[i] = same_phonon_dos.FreeEnergy(t, self.volume_energy.as_matrix(), self.degeneracies, self.q_weights,
-                                              self.frequencies).total
-        return v
+    def cp_tp_jmolk(self):
+        return pressure_specific_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
 
 class DifferentPhDOSCalculator(Calculator):
@@ -415,11 +407,26 @@ class DifferentPhDOSCalculator(Calculator):
     @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.static_energies, self.degeneracies, self.q_weights, self.frequencies, self._volumes, \
+        args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
                self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
-            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).derive_free_energy
+            mat[i] = different_phonon_dos.PartitionFunction(t, *(arg for arg in args)).get_free_energies()
 
+        return mat
+
+
+class SamePhDOSCalculator(DifferentPhDOSCalculator):
+    def __init__(self, user_settings):
+        super().__init__(user_settings)
+
+    @LazyProperty
+    def vib_ry(self):
+        args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
+               self.settings['static_only'], self.settings['order']
+        mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
+
+        for i, t in enumerate(self.temperature_array):
+            mat[i] = same_phonon_dos.FreeEnergy(t, *(arg for arg in args)).get_free_energies()
         return mat

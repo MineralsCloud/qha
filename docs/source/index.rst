@@ -8,11 +8,11 @@ qha documentation
 
 .. toctree::
    :numbered:
-   :maxdepth: 2
+   :maxdepth: 4
 
-   user/index
-   reference/index
-   contributing
+   api/index
+   tutorials/index
+   develop/index
 
 Indices and tables
 ==================
