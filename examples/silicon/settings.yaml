@@ -6,6 +6,7 @@ DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
 input: input
 P_MIN: 0
+T_MIN: 5000
 high_verbosity: true
 calculate:
     - F
