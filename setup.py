@@ -54,18 +54,20 @@ setup(name='qha',
           'pyyaml',
           'matplotlib',
           'seaborn',
+          'pint',
       ],
       packages=[
           'qha',
           'qha.multi_configurations',
           'qha.readers',
-          'qha.cli'
+          'qha.cli',
+          'qha.units',
       ],
       entry_points={
           'console_scripts': [
               'qha-run=qha.run:main',
               'qha-convert=qha.convert:main',
               'qha-plot=qha.plot:main',
-              'mc-qha=qha.cli:main'
+              'mc-qha=qha.cli:main',
           ],
       })

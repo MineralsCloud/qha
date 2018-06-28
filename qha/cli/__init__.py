@@ -1,5 +1,6 @@
 from .parser import QHAArgumentParser
 from .runner import QHARunner
+from .runner2 import QHARunner2
 from .plotter import QHAPlotter
 from .converter import QHAConverter
 
@@ -11,6 +12,9 @@ def main():
 
     qha_runner = QHARunner()
     parser.add_program('run', qha_runner)
+
+    qha_runner2 = QHARunner2()
+    parser.add_program('run2', qha_runner2)
 
     qha_runner = QHAPlotter()
     parser.add_program('plot', qha_runner)
