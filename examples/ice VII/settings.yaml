@@ -2,9 +2,10 @@ NT: 401
 DT: 1
 DT_SAMPLE: 10
 P_MIN: 0
+T_MIN: 0
 NTV: 701
 DELTA_P: 0.1
-DELTA_P_SAMPLE: 1
+DELTA_P_SAMPLE: 10
 order: 3
 input:
     input_conf01: 6
