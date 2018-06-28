@@ -46,6 +46,14 @@ def save_x_vt(x, t, volume_grid, t_sample, outfile_name):
         f.write(sample.to_string())
 
 
+def save_x_tv(x, t, volume_grid, t_sample, outfile_name):
+    df = pd.DataFrame(x, index=t, columns=volume_grid)[:-4]
+    df.columns.name = 'T(K)\V(A^3)'
+    sample = df.T[t_sample[:-4]].T
+    with open(outfile_name, 'w') as f:
+        f.write(sample.to_string())
+
+
 def make_starting_string() -> str:
     return textwrap.dedent("""\
         ============================================================
