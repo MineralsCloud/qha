@@ -40,8 +40,8 @@ class PlotHandler:
 
         plotter = Plotter(user_settings)
 
-        DESIRED_PRESSURES_GPa = qha.tools.arange(user_settings['P_MIN'], user_settings['NTV'], user_settings['DELTA_P'])
-        user_settings.update({'DESIRED_PRESSURES_GPa': DESIRED_PRESSURES_GPa})
+        desired_pressures_gpa = qha.tools.arange(user_settings['P_MIN'], user_settings['NTV'], user_settings['DELTA_P'])
+        user_settings.update({'DESIRED_PRESSURES_GPa': desired_pressures_gpa})
 
         results_folder = pathlib.Path(user_settings['output_directory'])
 
