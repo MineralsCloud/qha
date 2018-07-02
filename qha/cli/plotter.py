@@ -1,27 +1,32 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
+import pathlib
 
 import qha
 import qha.tools
 from qha.plotting import Plotter
 from qha.settings import from_yaml
-import pathlib
-from qha.cli.program import QHAProgram
 
-class QHAPlotter(QHAProgram):
-    def __init__(self):
-        super().__init__()
 
-    def init_parser(self, parser):
-        super().init_parser(parser)
-        parser.add_argument('-s', '--settings', default='settings.yaml')
-  
-    def run(self, namespace):
+class PlotHandler:
+    def __init__(self, arguments_for_command: dict = {}):
+        if not arguments_for_command:
+            if not isinstance(arguments_for_command, dict):
+                raise TypeError("The *arguments_for_command* argument must be a dictionary!")
+
+            if not all(isinstance(k, str) for k in arguments_for_command.keys()):
+                raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
+
+            if not all(isinstance(v, str) for v in arguments_for_command.values()):
+                raise TypeError("The *arguments_for_command* argument's values must be all strings!")
+
+        self._arguments_for_command = arguments_for_command
+        self.file_settings = self._arguments_for_command['settings']
+
+    def run(self):
         user_settings = {}  # save necessary info for plotting later
-        file_settings = namespace.settings
-        settings = from_yaml(file_settings)
+        settings = from_yaml(self.file_settings)
 
         for key in ('energy_unit', 'NT', 'DT', 'DT_SAMPLE', 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                     'calculate', 'T4FV', 'output_directory'):
@@ -31,8 +36,7 @@ class QHAPlotter(QHAProgram):
                 continue
 
         if not os.path.exists(user_settings['output_directory']):
-            print("There is no results folder, please run: `qha-run` first! ")
-            exit(1)
+            raise FileNotFoundError("There is no results folder, please run: `qha-run` first! ")
 
         plotter = Plotter(user_settings)
 
@@ -42,18 +46,18 @@ class QHAPlotter(QHAProgram):
         results_folder = pathlib.Path(user_settings['output_directory'])
 
         calculation_option = {'F': 'f_tp',
-                            'G': 'g_tp',
-                            'H': 'h_tp',
-                            'U': 'u_tp',
-                            'V': 'v_tp',
-                            'Cv': 'cv_tp_jmolk',
-                            'Cp': 'cp_tp_jmolk',
-                            'Bt': 'bt_tp_gpa',
-                            'Btp': 'btp_tp',
-                            'Bs': 'bs_tp_gpa',
-                            'alpha': 'alpha_tp',
-                            'gamma': 'gamma_tp',
-                            }
+                              'G': 'g_tp',
+                              'H': 'h_tp',
+                              'U': 'u_tp',
+                              'V': 'v_tp',
+                              'Cv': 'cv_tp_jmolk',
+                              'Cp': 'cp_tp_jmolk',
+                              'Bt': 'bt_tp_gpa',
+                              'Btp': 'btp_tp',
+                              'Bs': 'bs_tp_gpa',
+                              'alpha': 'alpha_tp',
+                              'gamma': 'gamma_tp',
+                              }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
         user_settings.update({'f_tv_fitted': file_ftv_fitted})
