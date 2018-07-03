@@ -30,11 +30,7 @@ class HelmholtzFreeEnergyCalculator:
             raise RuntimeError('Working temperatures should be above zero.')
 
     def calculate(self):
-        #self.read_input()
-        # TODO: position of read_input
         self.calculate_helmholtz_free_energy()
-        #print(self.helmholtz_free_energies_2)
-        #print(self.helmholtz_free_energies)
 
     def calculate_helmholtz_free_energy(self):
         raise NotImplementedError()
@@ -54,7 +50,6 @@ class HelmholtzFreeEnergyCalculator:
             self.settings['DT']
         )
 
-    #@LazyProperty
     @property
     @units.wraps(units.Ryd, None)
     def helmholtz_free_energies(self):

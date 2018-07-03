@@ -37,11 +37,11 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
         self._helmholtz_free_energies = numpy.array([
             same_phonon_dos.FreeEnergy(
                 temperature,
-                self.degeneracies(),
-                self.q_weights(),
-                self.static_energies(),
-                self.volumes(),
-                self.frequencies(),
+                self.degeneracies,
+                self.q_weights,
+                self.static_energies,
+                self.volumes,
+                self.frequencies,
                 self.settings['static_only'],
                 self.settings['order']
             ).free_energies()
@@ -50,7 +50,7 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
     
     @LazyProperty
     def q_weights(self):
-        return self.all_q_weighs[0]
+        return self.all_q_weights[0]
 
     @LazyProperty
     @units.wraps(units.Hz, None)
