@@ -6,7 +6,7 @@ import time
 
 import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
-from qha.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.utils.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.settings import from_yaml
 import pathlib
 

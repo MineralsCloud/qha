@@ -6,7 +6,7 @@ which means they are fast, but the input argument must be of type ``float``.
 
 .. automodule:: qha
 
-.. automodule:: qha.unit_conversion
+.. automodule:: qha.utils.unit_conversion
 
    .. autofunction:: j_to_ev(value)
    .. autofunction:: ev_to_j(value)

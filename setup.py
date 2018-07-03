@@ -59,9 +59,11 @@ setup(name='qha',
       packages=[
           'qha',
           'qha.multi_configurations',
-          'qha.readers',
+          'qha.calculator2',
+          'qha.calculator2.helmholtz_calculator',
           'qha.cli',
-          'qha.units',
+          'qha.utils',
+          'qha.utils.readers',
       ],
       entry_points={
           'console_scripts': [
