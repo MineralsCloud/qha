@@ -19,7 +19,7 @@ class DiversePhDOSHolmholtzFreeEnergyCalculator(HelmholtzFreeEnergyCalculator):
     def __init__(self, settings):
         super().__init__(settings)
         self.configurations = []
-        self._degeneracies = self.settings['input'].values()
+        self._degeneracies = list(self.settings['input'].values())
     
     def read_input(self):
         self.configurations = list(
@@ -46,14 +46,14 @@ class DiversePhDOSHolmholtzFreeEnergyCalculator(HelmholtzFreeEnergyCalculator):
         self._helmholtz_free_energies = numpy.array([ 
             different_phonon_dos.PartitionFunction(
                 temperature,
-                self.degeneracies.magnitude,
+                self.degeneracies,
                 self.all_q_weights,
                 self.all_static_energies,
                 self.all_volumes,
                 self.all_frequencies,
                 self.settings['static_only']
             ).get_free_energies()
-            for temperature in self.get_temperature_array().magnitude
+            for temperature in self.temperature_array.magnitude
         ])
     
     def get_calibration_target_configuration(self):
@@ -94,7 +94,7 @@ class DiversePhDOSHolmholtzFreeEnergyCalculator(HelmholtzFreeEnergyCalculator):
     @units.wraps(units.Ryd, None)
     def all_static_energies(self):
         return self.get_all_from_pressures_from_configurations(
-            lambda data: data.static_energies
+            lambda data: data.static_energy
         )
 
     @LazyProperty
