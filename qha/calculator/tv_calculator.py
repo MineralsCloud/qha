@@ -12,7 +12,7 @@ from qha.grid_interpolation import RefineGrid
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
 from qha.v2p import v2p
-from qha.calculator2.helmholtz_calculator import *
+from qha.calculator.helmholtz_calculator import *
 
 from .tp_adapter import TemperaturePressureFieldAdapter
 

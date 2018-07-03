@@ -2,7 +2,7 @@ import numpy
 from lazy_property import LazyProperty
 
 from qha.multi_configurations import same_phonon_dos
-from qha.calculator2.utils import is_all_same
+from qha.calculator.utils import is_all_same
 from qha.utils.units import QHAUnits
 import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 # TODO: move to other places

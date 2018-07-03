@@ -7,7 +7,7 @@ from qha.utils.units import QHAUnits
 from .abstract import HelmholtzFreeEnergyCalculator
 from .configuration import StructureConfiguration
 
-from qha.calculator2.utils import is_all_same
+from qha.calculator.utils import is_all_same
 
 import qha.multi_configurations.different_phonon_dos as different_phonon_dos
 
