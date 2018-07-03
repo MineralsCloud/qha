@@ -3,33 +3,35 @@ import os
 import shutil
 import time
 
-import qha
-from qha.calculator import *
-#from qha.utils.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
+import pathlib
+import types
+
 from qha.settings import from_yaml
 from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string
 
-import pathlib
-
-import types
-
-from qha.cli.program import QHAProgram
-
-from qha.calculator2 import *
+from qha.calculator import *
 from qha.utils.units import QHAUnits
+
 from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
 
 units = QHAUnits()
 
-class QHACalculator(QHAProgram):
-    def __init__(self):
-        super().__init__()
-        self.settings = None
-        self.start_time = time.time()
+class RunHandler:
+    def __init__(self, arguments_for_command: dict = {}):
+        if not isinstance(arguments_for_command, dict):
+            raise TypeError("The *arguments_for_command* argument must be a dictionary!")
 
-    def init_parser(self, parser):
-        super().init_parser(parser)
-        parser.add_argument('-s', '--settings', default='settings.yaml')
+        if not all(isinstance(k, str) for k in arguments_for_command.keys()):
+            raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
+
+        if not all(isinstance(v, str) for v in arguments_for_command.values()):
+            raise TypeError("The *arguments_for_command* argument's values must be all strings!")
+
+        self._arguments_for_command = arguments_for_command
+        self.file_settings = self._arguments_for_command['settings']
+
+        self.settings = None
+        self.start_time = None
     
     def prompt(self, message: str):
         save_to_output(
@@ -68,7 +70,6 @@ class QHACalculator(QHAProgram):
         output_directory_path = self.__get_output_directory_path()
         if os.path.exists(output_directory_path):
             shutil.rmtree(output_directory_path)
-            # TODO: if it is a file
         os.makedirs(output_directory_path)
  
     __accepted_keys = [
@@ -80,9 +81,10 @@ class QHACalculator(QHAProgram):
         'T4FV', 'output_directory', 'plot_results', 'high_verbosity'
     ]
     
-    def run(self, namespace):
-        settings_file_path = namespace.settings
-        input_settings = from_yaml(settings_file_path)
+    def run(self):
+        self.start_time = time.time()
+
+        input_settings = from_yaml(self.file_settings)
 
         self.settings = dict()
         for key in self.__accepted_keys:
@@ -96,19 +98,21 @@ class QHACalculator(QHAProgram):
 
         calculator = TemperatureVolumeFieldCalculator(self.settings)
 
-        print(self.settings)
         # TODO: find_negative_frequencies
 
         calculator.calculate()
 
-        self.__save_temperature_pressure_info(calculator, int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P']))
+        p_sample_ratio = int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])
+        t_sample_ratio = int(self.settings['DT_SAMPLE'] / self.settings['DT'])
+
+        self.__save_temperature_pressure_info(calculator, p_sample_ratio)
 
         self.__save_volume_range(calculator.v_ratio)
 
         tv_writer = TVFieldResultsWriter(
             output_directory_path,
             calculator,
-            int(self.settings['DT_SAMPLE'] / self.settings['DT'])
+            t_sample_ratio
         )
         tv_writer.write('P', 'p_tv_gpa.txt', units.GPa)
         tv_writer.write('F', 'f_tv_fitted_ev_ang3.txt', units.eV)
@@ -116,14 +120,14 @@ class QHACalculator(QHAProgram):
         raw_tv_writer = TVFieldResultsWriter(
             output_directory_path,
             calculator.helmholtz_free_energy_calculator,
-            int(self.settings['DT_SAMPLE'] / self.settings['DT'])
+            t_sample_ratio
         )
         raw_tv_writer.write('F', 'f_tv_nonfitted_ev_ang3.txt', units.eV)
 
         tp_writer = TPFieldResultsWriter(
             output_directory_path,
             calculator,
-            int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])
+            p_sample_ratio
         )
         for prop_settings in self.settings['calculate']:
             print(prop_settings)

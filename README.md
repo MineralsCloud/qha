@@ -65,13 +65,13 @@ $ pip install -e .
 ## Simple run
 
 ```shell
-$ qha-run /path/to/settings.yaml
+$ qha run /path/to/settings.yaml
 ```
 
 If you want to plot your results, run
 
 ```shell
-$ qha-plot /path/to/settings.yaml
+$ qha plot /path/to/settings.yaml
 ```
 
 ## License

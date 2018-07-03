@@ -67,9 +67,6 @@ setup(name='qha',
       ],
       entry_points={
           'console_scripts': [
-              'qha-run=qha.run:main',
-              'qha-convert=qha.convert:main',
-              'qha-plot=qha.plot:main',
-              'mc-qha=qha.cli:main',
+              'qha=qha.cli:main'
           ],
       })
