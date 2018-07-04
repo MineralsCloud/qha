@@ -13,26 +13,21 @@ from qha.calculator import *
 from qha.utils.units import QHAUnits
 
 from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
+from .program import QHAProgram
 
 units = QHAUnits()
 
-class RunHandler:
-    def __init__(self, arguments_for_command: dict = {}):
-        if not isinstance(arguments_for_command, dict):
-            raise TypeError("The *arguments_for_command* argument must be a dictionary!")
-
-        if not all(isinstance(k, str) for k in arguments_for_command.keys()):
-            raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
-
-        if not all(isinstance(v, str) for v in arguments_for_command.values()):
-            raise TypeError("The *arguments_for_command* argument's values must be all strings!")
-
-        self._arguments_for_command = arguments_for_command
-        self.file_settings = self._arguments_for_command['settings']
+class QHARunner(QHAProgram):
+    def __init__(self):
+        super().__init__()
 
         self.settings = None
         self.start_time = None
-    
+
+    def init_parser(self, parser):
+        super().init_parser(parser)
+        parser.add_argument('settings', type=str)
+
     def prompt(self, message: str):
         save_to_output(
             os.path.join(self.__get_output_directory_path(), 'output.txt'),
@@ -81,10 +76,11 @@ class RunHandler:
         'T4FV', 'output_directory', 'plot_results', 'high_verbosity'
     ]
     
-    def run(self):
+    def run(self, namespace):
         self.start_time = time.time()
 
-        input_settings = from_yaml(self.file_settings)
+        settings_file_path = namespace.settings
+        input_settings = from_yaml(settings_file_path)
 
         self.settings = dict()
         for key in self.__accepted_keys:
