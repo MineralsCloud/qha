@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-import argparse
-
-from qha.input_maker import FromQEOutput
 from qha.cli.program import QHAProgram
+from qha.input_maker import FromQEOutput
 
 class QHAConverter(QHAProgram):
     def __init__(self):

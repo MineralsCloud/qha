@@ -1,7 +1,10 @@
-from .parser import QHAArgumentParser
-from .runner import QHARunner
-from .plotter import QHAPlotter
+#!/usr/bin/env python3
+
 from .converter import QHAConverter
+from .parser import QHAArgumentParser
+from .plotter import QHAPlotter
+from .runner import QHARunner
+
 
 def main():
     parser = QHAArgumentParser()
@@ -14,8 +17,6 @@ def main():
 
     qha_runner = QHAPlotter()
     parser.add_program('plot', qha_runner)
-
-    namespace = parser.parse_args()
 
 if __name__ == '__main__':
     main()

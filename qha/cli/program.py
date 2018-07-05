@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 import argparse
+
 
 class QHAProgram:
 
@@ -7,6 +10,6 @@ class QHAProgram:
 
     def init_parser(self, parser: argparse.ArgumentParser):
         pass
-   
+
     def run(self, namespace):
         raise NotImplementedError()

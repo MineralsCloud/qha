@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
 import argparse
-from qha.cli.program import QHAProgram
 import sys
 
 from qha import __version__
+from qha.cli.program import QHAProgram
+
 
 class QHAArgumentParser:
     def __init__(self):

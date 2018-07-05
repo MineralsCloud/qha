@@ -1,10 +1,9 @@
+#!/usr/bin/env python3
+
 import argparse
 import os
 import shutil
 import time
-
-import pathlib
-import types
 
 from qha.settings import from_yaml
 from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string

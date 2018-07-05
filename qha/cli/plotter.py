@@ -4,10 +4,9 @@ import argparse
 import os
 
 import qha.tools
+from qha.cli.program import QHAProgram
 from qha.plotting import Plotter
 from qha.settings import from_yaml
-import pathlib
-from qha.cli.program import QHAProgram
 
 class QHAPlotter(QHAProgram):
     def __init__(self):
