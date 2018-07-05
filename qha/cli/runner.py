@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
+import pathlib
 import time
 
-import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
+from qha.cli.program import QHAProgram
 from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.settings import from_yaml
-import pathlib
 
-import types
-
-from qha.cli.program import QHAProgram
 
 class QHARunner(QHAProgram):
     def __init__(self):
@@ -21,7 +17,7 @@ class QHARunner(QHAProgram):
     def init_parser(self, parser):
         super().init_parser(parser)
         parser.add_argument('-s', '--settings', default='settings.yaml')
-    
+
     def run(self, namespace):
         start_time_total = time.time()
 
@@ -67,9 +63,10 @@ class QHARunner(QHAProgram):
         else:
             raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
 
-        save_to_output(user_settings['qha_output'], make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
-                                                                calc.desired_pressures_gpa[0],
-                                                                calc.desired_pressures_gpa[-1]))
+        save_to_output(user_settings['qha_output'],
+                       make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
+                                    calc.desired_pressures_gpa[0],
+                                    calc.desired_pressures_gpa[-1]))
 
         calc.read_input()
 
@@ -78,17 +75,19 @@ class QHARunner(QHAProgram):
         if tmp is not None and not (tmp.T[-1].max() <= 2):  # Don't delete this parenthesis!
             if calc.frequencies.ndim == 4:  # Multiple configuration
                 for indices in tmp:
-                    print("Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
-                        *tuple(indices + 1)))
+                    print(
+                        "Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
+                            *tuple(indices + 1)))
             elif calc.frequencies.ndim == 3:  # Single configuration
                 for indices in tmp:
-                    print("Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
+                    print(
+                        "Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
 
         calc.refine_grid()
 
         if user_settings['high_verbosity']:
             save_to_output(user_settings['qha_output'],
-                        'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
+                           'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
 
         calc.desired_pressure_status()
 
@@ -100,18 +99,18 @@ class QHARunner(QHAProgram):
         results_folder = pathlib.Path(user_settings['output_directory'])
 
         calculation_option = {'F': 'f_tp',
-                            'G': 'g_tp',
-                            'H': 'h_tp',
-                            'U': 'u_tp',
-                            'V': 'v_tp',
-                            'Cv': 'cv_tp_jmolk',
-                            'Cp': 'cp_tp_jmolk',
-                            'Bt': 'bt_tp_gpa',
-                            'Btp': 'btp_tp',
-                            'Bs': 'bs_tp_gpa',
-                            'alpha': 'alpha_tp',
-                            'gamma': 'gamma_tp',
-                            }
+                              'G': 'g_tp',
+                              'H': 'h_tp',
+                              'U': 'u_tp',
+                              'V': 'v_tp',
+                              'Cv': 'cv_tp_jmolk',
+                              'Cp': 'cp_tp_jmolk',
+                              'Bt': 'bt_tp_gpa',
+                              'Btp': 'btp_tp',
+                              'Bs': 'bs_tp_gpa',
+                              'alpha': 'alpha_tp',
+                              'gamma': 'gamma_tp',
+                              }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
         save_x_vt(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)

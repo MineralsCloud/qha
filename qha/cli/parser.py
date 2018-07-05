@@ -1,7 +1,11 @@
+#!/usr/bin/env python3
+
 import argparse
+import sys
+
 import qha
 from qha.cli.program import QHAProgram
-import sys
+
 
 class QHAArgumentParser:
     def __init__(self):
@@ -20,19 +24,19 @@ class QHAArgumentParser:
             'parser': subparser
         })
         prog.init_parser(subparser)
-    
+
     def parse_args(self, args=None, namespace=None):
         namespace = self.parser.parse_args(args, namespace)
         try:
             program = next(prog for prog in self.programs
-                        if prog['command'] == namespace.command)['program']
+                           if prog['command'] == namespace.command)['program']
             program.run(namespace)
         except StopIteration:
             self.parser.print_usage(sys.stderr)
 
         return namespace
-    
+
     def init_parser(self):
         self.parser.add_argument(
             '-v', '--version', action='version',
-           version="current qha version: {0}".format(qha.__version__))
+            version="current qha version: {0}".format(qha.__version__))
