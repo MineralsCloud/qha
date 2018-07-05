@@ -15,8 +15,6 @@ class QHAConverter(QHAProgram):
         parser.add_argument('inp_q_points')
 
     def run(self, namespace):
-        namespace = self.parser.parse_args()
-
         inp_file_list = namespace.inp_file_list
         inp_static = namespace.inp_static
         inp_q_points = namespace.inp_q_points
