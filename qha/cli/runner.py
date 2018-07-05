@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
-import pathlib
 import time
 
+import qha
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
-from qha.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.settings import from_yaml
+import pathlib
 
+import types
 
-class RunHandler:
-    def __init__(self, arguments_for_command: dict = {}):
-        if not isinstance(arguments_for_command, dict):
-            raise TypeError("The *arguments_for_command* argument must be a dictionary!")
+from qha.cli.program import QHAProgram
 
-        if not all(isinstance(k, str) for k in arguments_for_command.keys()):
-            raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
+class QHARunner(QHAProgram):
+    def __init__(self):
+        super().__init__()
 
-        if not all(isinstance(v, str) for v in arguments_for_command.values()):
-            raise TypeError("The *arguments_for_command* argument's values must be all strings!")
-
-        self._arguments_for_command = arguments_for_command
-        self.file_settings = self._arguments_for_command['settings']
-
-    def run(self):
+    def init_parser(self, parser):
+        super().init_parser(parser)
+        parser.add_argument('-s', '--settings', default='settings.yaml')
+    
+    def run(self, namespace):
         start_time_total = time.time()
 
         user_settings = {}
-        settings = from_yaml(self.file_settings)
+        file_settings = namespace.settings
+        settings = from_yaml(file_settings)
 
         for key in ('same_phonon_dos', 'input',
                     'calculate', 'static_only', 'energy_unit',
@@ -67,10 +67,9 @@ class RunHandler:
         else:
             raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
 
-        save_to_output(user_settings['qha_output'],
-                       make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
-                                    calc.desired_pressures_gpa[0],
-                                    calc.desired_pressures_gpa[-1]))
+        save_to_output(user_settings['qha_output'], make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
+                                                                calc.desired_pressures_gpa[0],
+                                                                calc.desired_pressures_gpa[-1]))
 
         calc.read_input()
 
@@ -79,19 +78,17 @@ class RunHandler:
         if tmp is not None and not (tmp.T[-1].max() <= 2):  # Don't delete this parenthesis!
             if calc.frequencies.ndim == 4:  # Multiple configuration
                 for indices in tmp:
-                    print(
-                        "Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
-                            *tuple(indices + 1)))
+                    print("Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
+                        *tuple(indices + 1)))
             elif calc.frequencies.ndim == 3:  # Single configuration
                 for indices in tmp:
-                    print(
-                        "Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
+                    print("Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
 
         calc.refine_grid()
 
         if user_settings['high_verbosity']:
             save_to_output(user_settings['qha_output'],
-                           'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
+                        'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
 
         calc.desired_pressure_status()
 
@@ -103,27 +100,27 @@ class RunHandler:
         results_folder = pathlib.Path(user_settings['output_directory'])
 
         calculation_option = {'F': 'f_tp',
-                              'G': 'g_tp',
-                              'H': 'h_tp',
-                              'U': 'u_tp',
-                              'V': 'v_tp',
-                              'Cv': 'cv_tp_jmolk',
-                              'Cp': 'cp_tp_jmolk',
-                              'Bt': 'bt_tp_gpa',
-                              'Btp': 'btp_tp',
-                              'Bs': 'bs_tp_gpa',
-                              'alpha': 'alpha_tp',
-                              'gamma': 'gamma_tp',
-                              }
+                            'G': 'g_tp',
+                            'H': 'h_tp',
+                            'U': 'u_tp',
+                            'V': 'v_tp',
+                            'Cv': 'cv_tp_jmolk',
+                            'Cp': 'cp_tp_jmolk',
+                            'Bt': 'bt_tp_gpa',
+                            'Btp': 'btp_tp',
+                            'Bs': 'bs_tp_gpa',
+                            'alpha': 'alpha_tp',
+                            'gamma': 'gamma_tp',
+                            }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_tv(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
+        save_x_vt(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
+        save_x_vt(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
-        save_x_tv(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
+        save_x_vt(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
 
         for idx in calc.settings['calculate']:
             if idx in ['F', 'G', 'H', 'U']:
