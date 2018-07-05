@@ -5,28 +5,23 @@ import pathlib
 
 import qha
 import qha.tools
+from qha.cli.program import QHAProgram
 from qha.plotting import Plotter
 from qha.settings import from_yaml
 
 
-class PlotHandler:
-    def __init__(self, arguments_for_command: dict = {}):
-        if not arguments_for_command:
-            if not isinstance(arguments_for_command, dict):
-                raise TypeError("The *arguments_for_command* argument must be a dictionary!")
+class QHAPlotter(QHAProgram):
+    def __init__(self):
+        super().__init__()
 
-            if not all(isinstance(k, str) for k in arguments_for_command.keys()):
-                raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
+    def init_parser(self, parser):
+        super().init_parser(parser)
+        parser.add_argument('-s', '--settings', default='settings.yaml')
 
-            if not all(isinstance(v, str) for v in arguments_for_command.values()):
-                raise TypeError("The *arguments_for_command* argument's values must be all strings!")
-
-        self._arguments_for_command = arguments_for_command
-        self.file_settings = self._arguments_for_command['settings']
-
-    def run(self):
+    def run(self, namespace):
         user_settings = {}  # save necessary info for plotting later
-        settings = from_yaml(self.file_settings)
+        file_settings = namespace.settings
+        settings = from_yaml(file_settings)
 
         for key in ('energy_unit', 'NT', 'DT', 'DT_SAMPLE', 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                     'calculate', 'T4FV', 'output_directory'):
@@ -36,7 +31,8 @@ class PlotHandler:
                 continue
 
         if not os.path.exists(user_settings['output_directory']):
-            raise FileNotFoundError("There is no results folder, please run: `qha-run` first! ")
+            print("There is no results folder, please run: `qha-run` first! ")
+            exit(1)
 
         plotter = Plotter(user_settings)
 

@@ -5,29 +5,25 @@ import pathlib
 import time
 
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
+from qha.cli.program import QHAProgram
 from qha.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.settings import from_yaml
 
 
-class RunHandler:
-    def __init__(self, arguments_for_command: dict = {}):
-        if not isinstance(arguments_for_command, dict):
-            raise TypeError("The *arguments_for_command* argument must be a dictionary!")
+class QHARunner(QHAProgram):
+    def __init__(self):
+        super().__init__()
 
-        if not all(isinstance(k, str) for k in arguments_for_command.keys()):
-            raise TypeError("The *arguments_for_command* argument's keys must be all strings!")
+    def init_parser(self, parser):
+        super().init_parser(parser)
+        parser.add_argument('-s', '--settings', default='settings.yaml')
 
-        if not all(isinstance(v, str) for v in arguments_for_command.values()):
-            raise TypeError("The *arguments_for_command* argument's values must be all strings!")
-
-        self._arguments_for_command = arguments_for_command
-        self.file_settings = self._arguments_for_command['settings']
-
-    def run(self):
+    def run(self, namespace):
         start_time_total = time.time()
 
         user_settings = {}
-        settings = from_yaml(self.file_settings)
+        file_settings = namespace.settings
+        settings = from_yaml(file_settings)
 
         for key in ('same_phonon_dos', 'input',
                     'calculate', 'static_only', 'energy_unit',
