@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
 from .abstract import HelmholtzFreeEnergyCalculator
-from .diverse_phdos import DiversePhDOSHolmholtzFreeEnergyCalculator
-from .identical_phdos import IdenticalPhDOSHolmholtzFreeEnergyCalculator
+from .diverse_phdos import DiversePhDOSHelmholtzFreeEnergyCalculator
+from .identical_phdos import IdenticalPhDOSHelmholtzFreeEnergyCalculator
 from .single_conf import SingleConfigurationHelmholtzFreeEnergyCalculator

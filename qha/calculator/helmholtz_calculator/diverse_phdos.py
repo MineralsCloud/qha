@@ -15,7 +15,7 @@ from .configuration import StructureConfiguration
 units = QHAUnits()
 
 
-class DiversePhDOSHolmholtzFreeEnergyCalculator(HelmholtzFreeEnergyCalculator):
+class DiversePhDOSHelmholtzFreeEnergyCalculator(HelmholtzFreeEnergyCalculator):
     def __init__(self, settings):
         super().__init__(settings)
         self.configurations = []

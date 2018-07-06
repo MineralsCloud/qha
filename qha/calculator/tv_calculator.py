@@ -67,9 +67,9 @@ class TemperatureVolumeFieldCalculator:
             self._helmholtz_free_energy_calculator = SingleConfigurationHelmholtzFreeEnergyCalculator(self.settings)
         elif isinstance(user_input, dict):
             if self.settings['same_phonon_dos']:
-                self._helmholtz_free_energy_calculator = IdenticalPhDOSHolmholtzFreeEnergyCalculator(self.settings)
+                self._helmholtz_free_energy_calculator = IdenticalPhDOSHelmholtzFreeEnergyCalculator(self.settings)
             else:
-                self._helmholtz_free_energy_calculator = DiversePhDOSHolmholtzFreeEnergyCalculator(self.settings)
+                self._helmholtz_free_energy_calculator = DiversePhDOSHelmholtzFreeEnergyCalculator(self.settings)
         else:
             raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
 

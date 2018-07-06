@@ -6,14 +6,14 @@ from lazy_property import LazyProperty
 import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 from qha.calculator.utils import is_all_same
 from qha.utils.units import QHAUnits
-from .diverse_phdos import DiversePhDOSHolmholtzFreeEnergyCalculator
+from .diverse_phdos import DiversePhDOSHelmholtzFreeEnergyCalculator
 
 # TODO: move to other places
 
 units = QHAUnits()
 
 
-class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnergyCalculator):
+class IdenticalPhDOSHelmholtzFreeEnergyCalculator(DiversePhDOSHelmholtzFreeEnergyCalculator):
     def validate(self):
         super().validate()
         self.validate_is_configuration_same()
