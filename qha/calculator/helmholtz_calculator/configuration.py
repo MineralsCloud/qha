@@ -22,7 +22,7 @@ class StructureConfiguration:
         self._formula_unit_number = formula_unit_number
         self._q_weights = q_weights
 
-        self.dataset: List[StructureConfiguration] = sorted([
+        self.dataset: List[PressureSpecificData] = sorted([
             PressureSpecificData(*v) for v in zip(volumes, static_energies, frequencies)
         ], key=lambda data: data.volume, reverse=True)
 
