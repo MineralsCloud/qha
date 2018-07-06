@@ -1,19 +1,13 @@
-import numpy
+#!/usr/bin/env python3
+
+from typing import Dict, Any
+
 from lazy_property import LazyProperty
 
-from typing import Dict, Any, Optional
-from qha.type_aliases import Vector
-
-from qha.utils.units import QHAUnits
-from qha.utils.out import save_to_output
-
-import qha.tools
-from qha.grid_interpolation import RefineGrid
-from qha.single_configuration import free_energy
-from qha.thermodynamics import *
-from qha.v2p import v2p
 from qha.calculator.helmholtz_calculator import *
-
+from qha.grid_interpolation import RefineGrid
+from qha.thermodynamics import *
+from qha.utils.units import QHAUnits
 from .tp_adapter import TemperaturePressureFieldAdapter
 
 __all__ = [
@@ -22,8 +16,8 @@ __all__ = [
 
 units = QHAUnits()
 
-class TemperatureVolumeFieldCalculator:
 
+class TemperatureVolumeFieldCalculator:
     __allowed_keys = [
         'same_phonon_dos', 'input', 'volume_energies',
         'calculate', 'static_only', 'energy_unit',
@@ -58,15 +52,15 @@ class TemperatureVolumeFieldCalculator:
     @property
     def settings(self):
         return self._settings
-    
+
     @property
     def helmholtz_free_energy_calculator(self):
         return self._helmholtz_free_energy_calculator
-    
+
     @property
     def temperature_pressure_field_adapter(self):
         return self._temperature_pressure_field_adapter
-    
+
     def make_helmholtz_free_energy_calculator(self):
         user_input = self.settings['input']
         if isinstance(user_input, str):
@@ -78,7 +72,7 @@ class TemperatureVolumeFieldCalculator:
                 self._helmholtz_free_energy_calculator = DiversePhDOSHolmholtzFreeEnergyCalculator(self.settings)
         else:
             raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
-    
+
     def make_temperature_pressure_adapter(self):
         self._temperature_pressure_field_adapter = TemperaturePressureFieldAdapter(self)
 
@@ -92,7 +86,7 @@ class TemperatureVolumeFieldCalculator:
         self.refine_grid()
         self.calculate_thermodynamic_potentials()
         self.temperature_pressure_field_adapter.validate()
-    
+
     def calculate_thermodynamic_potentials(self):
         self._thermodynamic_potentials = \
             thermodynamic_potentials(
@@ -101,14 +95,14 @@ class TemperatureVolumeFieldCalculator:
                 self.helmholtz_free_energies.magnitude,
                 self.pressures.magnitude
             )
-    
-    def refine_grid(self):
-        p_min          = self.settings['P_MIN']
-        p_min_modifier = self.settings['p_min_modifier']
-        ntv            = self.settings['NTV']
-        order          = self.settings['order']
 
-        ratio          = self.settings.get('volume_ratio')
+    def refine_grid(self):
+        p_min = self.settings['P_MIN']
+        p_min_modifier = self.settings['p_min_modifier']
+        ntv = self.settings['NTV']
+        order = self.settings['order']
+
+        ratio = self.settings.get('volume_ratio')
 
         refiner = RefineGrid(p_min - p_min_modifier, ntv, order=order)
 
@@ -124,12 +118,12 @@ class TemperatureVolumeFieldCalculator:
     @units.wraps(units.kelvin, None)
     def temperature_array(self):
         return self.helmholtz_free_energy_calculator.temperature_array.magnitude
-    
+
     @property
-    @units.wraps(units.Bohr**3, None)
+    @units.wraps(units.Bohr ** 3, None)
     def volume_array(self):
         return self._volume_array
-    
+
     @property
     @units.wraps(units.Ryd, None)
     def helmholtz_free_energies(self):
@@ -157,7 +151,7 @@ class TemperatureVolumeFieldCalculator:
             self.temperature_array.magnitude,
             self.internal_energies.magnitude
         )
-    
+
     @LazyProperty
     @units.wraps(units.Ryd / units.Bohr ** 3, None)
     def isothermal_bulk_moduli(self):

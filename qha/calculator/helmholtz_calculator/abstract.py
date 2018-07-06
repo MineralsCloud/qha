@@ -1,20 +1,23 @@
+#!/usr/bin/env python3
+
+from typing import Optional
+
 import numpy
-from typing import List, Optional
 from lazy_property import LazyProperty
 
 import qha.tools
-from qha.utils.units import QHAUnits
-from qha.utils.readers import read_input
 from qha.type_aliases import Vector
+from qha.utils.units import QHAUnits
 
 units = QHAUnits()
+
 
 class HelmholtzFreeEnergyCalculator:
     def __init__(self, settings):
         self._helmholtz_free_energies = None
         self.settings = settings
         self.read_input()
-    
+
     def find_negative_frequencies(self) -> Optional[Vector]:
         locations = numpy.transpose(numpy.where(self.frequencies.magnitude < 0))
         return locations if locations.size != 0 else None

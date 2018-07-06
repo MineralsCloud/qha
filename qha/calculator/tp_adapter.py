@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
+
 from lazy_property import LazyProperty
 
-from qha.utils.units import QHAUnits
-from qha.thermodynamics import *
 import qha.tools
+from qha.thermodynamics import *
+from qha.utils.units import QHAUnits
 from qha.v2p import v2p
-
 from .helmholtz_calculator import HelmholtzFreeEnergyCalculator
 
 units = QHAUnits()
@@ -13,12 +15,13 @@ __all__ = [
     'TemperaturePressureFieldAdapter'
 ]
 
+
 class TemperaturePressureFieldAdapter:
     def __init__(self, calculator: HelmholtzFreeEnergyCalculator):
         self.calculator = calculator
         # self.calculator.bind_pressure_adapter(self)
         self._settings = self.calculator.settings
-    
+
     def validate(self):
         self.validate_pressure_array_in_interplotation_range()
 
@@ -37,7 +40,7 @@ class TemperaturePressureFieldAdapter:
                 p_tv_gpa[:, -1].min()
             ))
         '''
-        
+
         if p_tv_gpa[:, -1].min() < desired_pressures_gpa.max():
             ntv_max = int((p_tv_gpa[:, -1].min() - desired_pressures_gpa.min()) / d['DELTA_P'])
 
@@ -55,7 +58,7 @@ class TemperaturePressureFieldAdapter:
 
     @property
     def settings(self): return self.calculator.settings
-    
+
     def __convert_to_pressure_field(self, volume_field):
         return v2p(
             volume_field,
@@ -66,7 +69,7 @@ class TemperaturePressureFieldAdapter:
     @LazyProperty
     def formula_unit_number(self):
         return self.calculator.formula_unit_number
-    
+
     @LazyProperty
     @units.wraps(units.kelvin, None)
     def temperature_array(self):
@@ -83,7 +86,7 @@ class TemperaturePressureFieldAdapter:
             ),
             units.GPa
         ).to(units.Ryd / units.Bohr ** 3).magnitude
-   
+
     @LazyProperty
     @units.wraps(units.Ryd, None)
     def helmholtz_free_energies(self):
@@ -175,8 +178,8 @@ class TemperaturePressureFieldAdapter:
     @LazyProperty
     @units.wraps(units.Bohr ** 3, None)
     def volumes(self):
-       return volume_tp(
-           self.calculator.volume_array.magnitude,
-           self.pressure_array.magnitude,
-           self.calculator.pressures.magnitude
-       )
+        return volume_tp(
+            self.calculator.volume_array.magnitude,
+            self.pressure_array.magnitude,
+            self.calculator.pressures.magnitude
+        )

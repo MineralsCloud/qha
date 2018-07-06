@@ -1,15 +1,17 @@
+#!/usr/bin/env python3
+
 import numpy
 from lazy_property import LazyProperty
 
-from qha.multi_configurations import same_phonon_dos
+import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 from qha.calculator.utils import is_all_same
 from qha.utils.units import QHAUnits
-import qha.multi_configurations.same_phonon_dos as same_phonon_dos
-# TODO: move to other places
-
 from .diverse_phdos import DiversePhDOSHolmholtzFreeEnergyCalculator
 
+# TODO: move to other places
+
 units = QHAUnits()
+
 
 class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnergyCalculator):
     def validate(self):
@@ -20,7 +22,7 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
         self.validate_is_q_weights_same()
         self.validate_is_volumes_same()
         self.validate_is_frequencies_same()
-    
+
     def validate_is_q_weights_same(self):
         if not is_all_same(self.all_q_weights):
             raise RuntimeError('q-weights for different configurations are different!')
@@ -47,7 +49,7 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
             ).free_energies()
             for temperature in self.temperatures().magnitude
         ])
-    
+
     @LazyProperty
     def q_weights(self):
         return self.all_q_weights[0]
@@ -56,9 +58,9 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
     @units.wraps(units.Hz, None)
     def frequencies(self):
         return self.all_frequencies[0]
-    
+
     @LazyProperty
-    @units.wraps(units.bohr**3, None)
+    @units.wraps(units.bohr ** 3, None)
     def volumes(self):
         return self.all_volumes[0]
 
@@ -66,4 +68,3 @@ class IdenticalPhDOSHolmholtzFreeEnergyCalculator(DiversePhDOSHolmholtzFreeEnerg
     @units.wraps(units.Hz, None)
     def static_energies(self):
         return self.all_static_energies[0]
- 
