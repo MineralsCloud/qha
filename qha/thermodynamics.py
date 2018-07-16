@@ -189,3 +189,27 @@ def volume_specific_heat_capacity(ts: Vector, internal_energies: Matrix) -> Matr
     :return: volume specific heat capacity, :math:`Cv(T,V)`
     """
     return calculate_derivatives(ts, internal_energies)
+
+def thermal_expansion_tv(volumes: Vector, temperatures: Vector, pressures: Vector, v_tp: Matrix, p_tv: Matrix):
+    """
+    Equation used: \alpha(T,V) = -\frac{1}{V}(\frac{\partial V}{\partial P})_T(\frac{\partial P}{\partial T})_V
+    :param volumes: a volume vector
+    :param temperatures: a temperature
+    :param v_tp:
+    :param p_tv:
+    :return: alpha(T,V)
+    """
+    dp_dt = calculate_derivatives(temperatures, p_tv)
+    dp_dt = dp_dt.T
+    dv_dp = calculate_derivatives(pressures, v_tp.T)
+    alpha_wo_v = dv_dp * dp_dt
+    all_alpha = []
+    volume_list = list(volumes)
+    i = 0
+    while i < len(volume_list):
+        alpha_row = [-x /volume_list[i] for x in alpha_wo_v[i]]
+        all_alpha.append(alpha_row)
+        i += 1
+    all_alpha = np.array(all_alpha)
+    all_alpha = all_alpha.T
+    return all_alpha
