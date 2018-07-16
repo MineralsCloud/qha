@@ -1,3 +1,4 @@
+T_MIN: 0
 NT: 101
 DT: 10
 DT_SAMPLE: 10
@@ -18,7 +19,8 @@ calculate:
     - Cp
     - Cv
     - Bt
+    - Btp
     - Bs
-energy_unit: ev
-plot_results: true
+energy_unit: ry
+# plot_results: true
 output_directory: ./results/

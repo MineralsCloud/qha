@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-:mod:`homogeneous_dos` -- Free energy sampler for single configuration
-======================================================================
-
-.. module homogeneous_dos
+.. module single_configuration
    :platform: Unix, Windows, Mac, Linux
    :synopsis: Free energy calculator for a single configuration.
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>

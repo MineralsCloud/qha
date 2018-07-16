@@ -2,7 +2,7 @@
 
 [TOC]
 
-This repo is created by [Tian Qin](mailto:qinxx197@umn.edu) (Sunny), for in-group use for [Renata Wentzcovitch](mailto:rmw2150@columbia.edu). It is now maintained by [Qi Zhang](mailto:qz2280@columbia.edu) and Sunny.
+This repo is created by [Tian Qin](mailto:qinxx197@umn.edu) (Sunny). It is now maintained by [Qi Zhang](mailto:qz2280@columbia.edu) and Sunny.
 
 ## What can be done
 
@@ -11,11 +11,11 @@ This code is designed to calculate the thermodynamics properties of crystalline 
 ## Input files needed
 
 1. Input data file: `input`
-2. Input control file: You can create your own settings according to the template given in `settings.yaml`.
+2. Input control file: You can create your own settings according to the template given as `settings.yaml`.
 
 ## Output files
 
-volume ($V(T, P)$), bulk modulus ($B(T, P)$), enthalpy ($H(T, P)$), Helmholtz free energy ($F(T, P)$), Gibbs free energy ($G(T, P)$) at certain pressure ($P$) and Temperature ($T$).
+Files that contain volume ($V(T, P)$), bulk modulus ($B(T, P)$), enthalpy ($H(T, P)$), Helmholtz free energy ($F(T, P)$), Gibbs free energy ($G(T, P)$) at certain pressure ($P$) and Temperature ($T$).
 
 ## Where to get it
 
@@ -50,20 +50,31 @@ $ pip install qha
 
 ## Installation from sources
 
-Download the latest release, and go to the top-level directory, run
+Download the latest release, and go to the top-level directory (e.g., `/path/to/repo/qha`), run
 
 ```shell
-$ python setup.py install
+$ pip install .
 ```
 
-Notice that you have to use Python version above 3.5 to install.
+Notice that you have to use Python version above 3.5 to install. If you want to install `qha` in development mode, instead run
+
+```shell
+$ pip install -e .
+```
 
 ## Simple run
 
 ```shell
-$ qha /path/to/settings.yaml
+$ qha run /path/to/settings.yaml
+```
+
+If you want to plot your results, run
+
+```shell
+$ qha plot /path/to/settings.yaml
 ```
 
 ## License
 
-GNU General Public License 3
+[GNU General Public License v3](./LICENSE.txt)
+

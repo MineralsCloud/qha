@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`unit_conversion` -- A module of packaged unit-conversion functions
-========================================================================
-
 .. module unit_conversion
    :platform: Unix, Windows, Mac, Linux
    :synopsis: A module of packaged unit-conversion functions, with [Numba's](https://numba.pydata.org) ``@jit`` speedup.

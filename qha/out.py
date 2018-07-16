@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """
-:mod:`output` -- The output format module
-=========================================
-
 .. module output
    :platform: Unix, Windows, Mac, Linux
    :synopsis: doc
@@ -45,6 +42,14 @@ def save_x_vt(x, t, volume_grid, t_sample, outfile_name):
     df = pd.DataFrame(x.T, index=volume_grid, columns=t)
     df.columns.name = 'V(A^3)\T(K)'
     sample = df[t_sample]
+    with open(outfile_name, 'w') as f:
+        f.write(sample.to_string())
+
+
+def save_x_tv(x, t, volume_grid, t_sample, outfile_name):
+    df = pd.DataFrame(x, index=t, columns=volume_grid)[:-4]
+    df.columns.name = 'T(K)\V(A^3)'
+    sample = df.T[t_sample[:-4]].T
     with open(outfile_name, 'w') as f:
         f.write(sample.to_string())
 
