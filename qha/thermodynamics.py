@@ -24,7 +24,10 @@ __all__ = [
     'adiabatic_bulk_modulus',
     'bulk_modulus_derivative',
     'pressure_specific_heat_capacity',
-    'volume_specific_heat_capacity'
+    'volume_specific_heat_capacity',
+    'thermal_expansion_tv',
+    'gruneisen_parameter_tv'
+
 ]
 
 

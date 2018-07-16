@@ -346,6 +346,15 @@ class Calculator:
     def cp_tp_jmolk(self):
         return pressure_specific_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
+    @LazyProperty
+    def alpha_tv(self):
+        return thermal_expansion_tv(self.finer_volumes_bohr3, self.temperature_array, self.desired_pressures
+                                    , self.v_tp_bohr3, self.p_tv_au)
+
+    @LazyProperty
+    def gamma_tv(self):
+        return gruneisen_parameter_tv(self.finer_volumes_bohr3, self.bt_tv_au, self.cv_tv_au, self.alpha_tv)
+
 
 class DifferentPhDOSCalculator(Calculator):
     def __init__(self, user_settings: Dict[str, Any]):
