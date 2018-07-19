@@ -140,11 +140,25 @@ class QHARunner(QHAProgram):
                 save_x_tp(getattr(calc, v_bohr3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_au)
                 save_x_tp(getattr(calc, v_ang3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_ang3)
 
-            if idx in ['Cv', 'Cp', 'Bt', 'Btp', 'Bs', 'alpha', 'gamma']:
+            if idx in ['Cp', 'Bs', 'Btp']:
                 attr_name = calculation_option[idx]
                 file_name = attr_name + '.txt'
                 file_dir = results_folder / file_name
-                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
+                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa,
+                          file_dir)
+
+            if idx in ['Cv', 'Bt', 'alpha', 'gamma', 'S']:
+                attr_name = calculation_option[idx]
+                file_name = attr_name + '.txt'
+                file_dir = results_folder / file_name
+                if 'tp' in calculation_option[idx]:
+                    save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa,
+                              file_dir)
+                elif 'tv' in calculation_option[idx]:
+                    save_x_tv(getattr(calc, attr_name), temperature_array, calc.finer_volumes_ang3, temperature_sample,
+                              file_dir)
+                else:
+                    raise ValueError('Thermodynamics properties must be X(T,V) or X(T,P)!')
 
         end_time_total = time.time()
         time_elapsed = end_time_total - start_time_total
