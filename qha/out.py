@@ -35,7 +35,7 @@ def save_x_pt(df, t, desired_pressures_gpa, t_sample, outfile_name):
     df.columns.name = 'P(GPa)\T(K)'
     sample = df[t_sample]
     with open(outfile_name, 'w') as f:
-        f.write(sample.to_string())
+        f.write(sample.to_string(float_format=lambda x: "{:20.16f}".format(x)))
 
 
 def save_x_vt(x, t, volume_grid, t_sample, outfile_name):
@@ -43,7 +43,7 @@ def save_x_vt(x, t, volume_grid, t_sample, outfile_name):
     df.columns.name = 'V(A^3)\T(K)'
     sample = df[t_sample]
     with open(outfile_name, 'w') as f:
-        f.write(sample.to_string())
+        f.write(sample.to_string(float_format=lambda x: "{:20.16f}".format(x)))
 
 
 def save_x_tv(x, t, volume_grid, t_sample, outfile_name):
@@ -51,7 +51,7 @@ def save_x_tv(x, t, volume_grid, t_sample, outfile_name):
     df.columns.name = 'T(K)\V(A^3)'
     sample = df.T[t_sample[:-4]].T
     with open(outfile_name, 'w') as f:
-        f.write(sample.to_string())
+        f.write(sample.to_string(float_format=lambda x: "{:20.16f}".format(x)))
 
 
 def make_starting_string() -> str:
