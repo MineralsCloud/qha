@@ -23,6 +23,7 @@ DEFAULT_SETTING: Dict[str, Any] = {
     'order': 3,  # BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.
     'p_min_modifier': 1.0,
     'target': 'parallel',
+    'T_MIN': 0,
     'DT_SAMPLE': 10,
     'DELTA_P': 0.1,
     'DELTA_P_SAMPLE': 1,

@@ -44,7 +44,7 @@ setup(name='qha',
       keywords='thermodynamic-properties quasi-harmonic-approximation scientific-computation',
       install_requires=[
           'lazy_property',
-          'numba',
+          'numba>=0.34.0',
           'numpy',
           'bigfloat',
           'pandas',
@@ -59,11 +59,10 @@ setup(name='qha',
           'qha',
           'qha.multi_configurations',
           'qha.readers',
+          'qha.cli'
       ],
       entry_points={
           'console_scripts': [
-              'qha-run=qha.run:main',
-              'qha-convert=qha.convert:main',
-              'qha-plot=qha.plot:main'
+              'qha=qha.cli:main'
           ],
       })
