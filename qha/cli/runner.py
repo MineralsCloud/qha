@@ -99,6 +99,7 @@ class QHARunner(QHAProgram):
         results_folder = pathlib.Path(user_settings['output_directory'])
 
         calculation_option = {'F': 'f_tp',
+                              'S': 's_tv_ry',
                               'G': 'g_tp',
                               'H': 'h_tp',
                               'U': 'u_tp',

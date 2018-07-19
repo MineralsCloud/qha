@@ -231,6 +231,10 @@ class Calculator:
             raise ValueError("DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!")
 
     @LazyProperty
+    def s_tv_ry(self):
+        return entropy(self.temperature_array, self.f_tv_ry)
+
+    @LazyProperty
     def p_tv_au(self):
         return pressure_tv(self.finer_volumes_bohr3, self.f_tv_ry)
 
@@ -348,8 +352,7 @@ class Calculator:
 
     @LazyProperty
     def alpha_tv(self):
-        return thermal_expansion_tv(self.finer_volumes_bohr3, self.temperature_array, self.desired_pressures
-                                    , self.v_tp_bohr3, self.p_tv_au)
+        return thermal_expansion_coefficient(self.temperature_array, self.p_tv_au, self.bt_tv_au)
 
     @LazyProperty
     def gamma_tv(self):

@@ -25,7 +25,7 @@ __all__ = [
     'bulk_modulus_derivative',
     'pressure_specific_heat_capacity',
     'volume_specific_heat_capacity',
-    'thermal_expansion_tv',
+    'thermal_expansion_coefficient_tv',
     'gruneisen_parameter_tv'
 
 ]
@@ -193,29 +193,17 @@ def volume_specific_heat_capacity(ts: Vector, internal_energies: Matrix) -> Matr
     """
     return calculate_derivatives(ts, internal_energies)
 
-def thermal_expansion_tv(volumes: Vector, temperatures: Vector, pressures: Vector, v_tp: Matrix, p_tv: Matrix):
+def thermal_expansion_coefficient_tv(temperatures: Vector, p_tv: Matrix, bt_tv: Matrix):
     """
-    Equation used: \alpha(T,V) = -\frac{1}{V}(\frac{\partial V}{\partial P})_T(\frac{\partial P}{\partial T})_V
-    :param volumes: a volume vector
-    :param temperatures: a temperature
-    :param v_tp:
-    :param p_tv:
-    :return: alpha(T,V)
+    Equation: \alpha(T,V) = \frac{\partial P}{\partial T})_V / B_T(T, V)
+    Credit to Jingyi
+    :param temperatures: temperature vector
+    :param p_tv: pressure(t, v) matrix
+    :param bt_tv: isothermal bulk modulus, bt(T,V)
+    :return:
     """
     dp_dt = calculate_derivatives(temperatures, p_tv)
-    dp_dt = dp_dt.T
-    dv_dp = calculate_derivatives(pressures, v_tp.T)
-    alpha_wo_v = dv_dp * dp_dt
-    all_alpha = []
-    volume_list = list(volumes)
-    i = 0
-    while i < len(volume_list):
-        alpha_row = [-x /volume_list[i] for x in alpha_wo_v[i]]
-        all_alpha.append(alpha_row)
-        i += 1
-    all_alpha = np.array(all_alpha)
-    all_alpha = all_alpha.T
-    return all_alpha
+    return np.divide(dp_dt, bt_tv)
 
 def gruneisen_parameter_tv(volumes: Vector, b_tv: Matrix, cv_tv: Matrix, alpha_tv: Matrix):
     """
@@ -229,12 +217,8 @@ def gruneisen_parameter_tv(volumes: Vector, b_tv: Matrix, cv_tv: Matrix, alpha_t
     alpha_bt_cv = alpha_tv * b_tv / cv_tv
     alpha_bt_cv = alpha_bt_cv.T
     all_gamma = []
-    volume_list = list(volumes)
-    i = 0
-    while i < len(volume_list):
-        gamma_row = [volume_list[i] * x for x in alpha_bt_cv[i]]
+    for i in range(len(volumes)):
+        gamma_row = [volumes[i] * x for x in alpha_bt_cv[i]]
         all_gamma.append(gamma_row)
-        i += 1
     all_gamma = np.array(all_gamma)
-    all_gamma = all_gamma.T
-    return all_gamma
+    return all_gamma.T
