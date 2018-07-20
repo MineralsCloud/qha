@@ -46,7 +46,8 @@ $ pip install qha
 - [SciPy](https://www.scipy.org)
 - [text-stream](https://github.com/singularitti/text-stream)
 
-[^1]: `GMP` and `MPFR` libraries are required to use `bigfloat` package. On macOS, install these libraries via `brew install mpfr`; on Linux, install `libmpfr-dev` , for example, on Ubuntu use `[sudo] apt-get install libmpfr-dev`; on Windows, `bigfloat` can be installed from the binary file, please check  "[Unofficial Windows Binaries for Python Extension Packages](https://www.lfd.uci.edu/~gohlke/pythonlibs/)"
+[^1]: `GMP` and `MPFR` libraries are required to use `bigfloat` package. On macOS, install these libraries via `brew install mpfr`; on Linux, install `libmpfr-dev` , for example, on Ubuntu use `[sudo] apt-get install libmpfr-dev`; on Windows, `bigfloat` can be installed from the binary file, please check  "[Unofficial Windows Binaries for Python Extension Packages](https://www.lfd.uci.edu/~gohlke/pythonlibs/)", download the version suitable for the system, for example, for 64-bit version, use pip to install it `pip(3) install /the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl`
+
 
 ## Installation from sources
 
@@ -62,16 +63,16 @@ Notice that you have to use Python version above 3.5 to install. If you want to 
 $ pip install -e .
 ```
 
-## Simple run
+## Simple run (go to examples/ice VII or examples/silicon)
 
 ```shell
-$ qha-run /path/to/settings.yaml
+$ qha run
 ```
 
-If you want to plot your results, run
+If you want to plot your results, in the same folder, run
 
 ```shell
-$ qha-plot /path/to/settings.yaml
+$ qha plot
 ```
 
 ## License
