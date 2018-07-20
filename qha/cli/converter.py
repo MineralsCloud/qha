@@ -3,6 +3,7 @@
 from qha.cli.program import QHAProgram
 from qha.input_maker import FromQEOutput
 
+
 class QHAConverter(QHAProgram):
     def __init__(self):
         super().__init__()

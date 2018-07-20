@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
+import pathlib
 
 import qha.tools
 from qha.cli.program import QHAProgram
 from qha.plotting import Plotter
 from qha.settings import from_yaml
+
 
 class QHAPlotter(QHAProgram):
     def __init__(self):
@@ -16,7 +17,7 @@ class QHAPlotter(QHAProgram):
         super().init_parser(parser)
         parser.add_argument('settings', type=str)
         parser.add_argument('--outdir', type=str, help='output directory')
-  
+
     def run(self, namespace):
         user_settings = {}  # save necessary info for plotting later
         file_settings = namespace.settings
@@ -41,18 +42,18 @@ class QHAPlotter(QHAProgram):
         results_folder = pathlib.Path(user_settings['output_directory'])
 
         calculation_option = {'F': 'f_tp',
-                            'G': 'g_tp',
-                            'H': 'h_tp',
-                            'U': 'u_tp',
-                            'V': 'v_tp',
-                            'Cv': 'cv_tp_jmolk',
-                            'Cp': 'cp_tp_jmolk',
-                            'Bt': 'bt_tp_gpa',
-                            'Btp': 'btp_tp',
-                            'Bs': 'bs_tp_gpa',
-                            'alpha': 'alpha_tp',
-                            'gamma': 'gamma_tp',
-                            }
+                              'G': 'g_tp',
+                              'H': 'h_tp',
+                              'U': 'u_tp',
+                              'V': 'v_tp',
+                              'Cv': 'cv_tp_jmolk',
+                              'Cp': 'cp_tp_jmolk',
+                              'Bt': 'bt_tp_gpa',
+                              'Btp': 'btp_tp',
+                              'Bs': 'bs_tp_gpa',
+                              'alpha': 'alpha_tp',
+                              'gamma': 'gamma_tp',
+                              }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
         user_settings.update({'f_tv_fitted': file_ftv_fitted})

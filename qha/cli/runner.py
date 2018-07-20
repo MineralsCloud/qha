@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
 import shutil
 import time
 
+from qha.calculator import *
 from qha.settings import from_yaml
 from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string
-
-from qha.calculator import *
 from qha.utils.units import QHAUnits
-
-from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
 from .program import QHAProgram
+from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
 
 units = QHAUnits()
+
 
 class QHARunner(QHAProgram):
     def __init__(self):
@@ -39,42 +37,44 @@ class QHARunner(QHAProgram):
             make_tp_info(
                 tv_calc.temperature_array.magnitude[0],
                 tv_calc.temperature_array.magnitude[-1 - 4],
-                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[0::pressure_sample_ratio][0],
-                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[0::pressure_sample_ratio][-1]
+                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[
+                0::pressure_sample_ratio][0],
+                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[
+                0::pressure_sample_ratio][-1]
             )
         )
-    
+
     def __save_starting_string(self):
         self.prompt(make_starting_string())
-    
+
     def __save_ending_string(self):
         self.prompt(make_ending_string(time.time() - self.start_time))
-    
+
     def __save_volume_range(self, v_ratio):
         if self.settings['high_verbosity']:
             self.prompt(
                 'The volume range used in this calculation expanded x {0:6.4f}'.format(v_ratio)
             )
-    
+
     def __get_output_directory_path(self):
         output_directory_path = self.settings['output_directory']
         return output_directory_path
-    
+
     def __make_output_directory(self):
         output_directory_path = self.__get_output_directory_path()
         if os.path.exists(output_directory_path):
             shutil.rmtree(output_directory_path)
         os.makedirs(output_directory_path)
- 
+
     __accepted_keys = [
-        'same_phonon_dos','input',
+        'same_phonon_dos', 'input',
         'calculate', 'static_only', 'energy_unit',
         'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
         'volume_ratio', 'order', 'p_min_modifier',
         'T4FV', 'output_directory', 'plot_results', 'high_verbosity'
     ]
-    
+
     def run(self, namespace):
         self.start_time = time.time()
 
@@ -131,6 +131,5 @@ class QHARunner(QHAProgram):
                 prop_settings.get('output'),
                 prop_settings.get('unit')
             )
-        
+
         self.__save_ending_string()
-    

@@ -25,7 +25,7 @@ class QHAArgumentParser:
             'aliases': aliases
         })
         prog.init_parser(subparser)
-    
+
     def parse_args(self, args=None, namespace=None):
         namespace = self.parser.parse_args(args, namespace)
         command = namespace.command
@@ -37,8 +37,8 @@ class QHAArgumentParser:
         except StopIteration:
             self.parser.print_usage(sys.stderr)
         return namespace
-    
+
     def init_parser(self):
         self.parser.add_argument(
             '-v', '--version', action='version',
-           version="current qha version: {0}".format(__version__))
+            version="current qha version: {0}".format(__version__))
