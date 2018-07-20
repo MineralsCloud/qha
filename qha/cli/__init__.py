@@ -18,6 +18,11 @@ def main():
     qha_runner = QHAPlotter()
     parser.add_program('plot', qha_runner)
 
+    qha_plotter = QHAPlotter()
+    parser.add_program('plot', qha_plotter)
+
+    parser.parse_args()
+
 
 if __name__ == '__main__':
     main()
