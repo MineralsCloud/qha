@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
+import abc
 import argparse
 
 
-class QHACommandHandler:
-
-    def __init__(self):
-        pass
-
+class QHACommandHandler(abc.ABC):
+    @abc.abstractmethod
     def init_parser(self, parser: argparse.ArgumentParser):
-        pass
+        ...
 
+    @abc.abstractmethod
     def run(self, namespace):
-        raise NotImplementedError()
+        ...
