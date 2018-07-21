@@ -27,16 +27,16 @@ class QHAArgumentParser:
         handler.init_parser(subparsers)
 
     def parse_args(self, args=None, namespace=None):
-        namespace = self.parser.parse_args(args, namespace)
+        return self.parser.parse_args(args, namespace)
+
+    def invoke_handler(self, namespace):
         command = namespace.command
+
         try:
-            program = next(program for program in self.handlers
-                           if command == program['command']
-                           or command in program['aliases'])['program']
-            program.run(namespace)
-        except StopIteration:
-            self.parser.print_usage(sys.stderr)
-        return namespace
+            handler = self.handlers[command](namespace)
+            handler.run()
+        except KeyError:
+            raise ValueError("Command is not recognized!")
 
     def init_parser(self):
         self.parser.add_argument(
