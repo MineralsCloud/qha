@@ -8,7 +8,7 @@ from qha.calculator import *
 from qha.settings import from_yaml
 from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.utils.units import QHAUnits
-from .program import QHACommandHandler
+from .handler import QHACommandHandler
 from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
 
 units = QHAUnits()

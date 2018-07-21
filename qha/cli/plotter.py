@@ -4,7 +4,7 @@ import os
 import pathlib
 
 import qha.tools
-from qha.cli.program import QHACommandHandler
+from qha.cli.handler import QHACommandHandler
 from qha.plotting import Plotter
 from qha.settings import from_yaml
 

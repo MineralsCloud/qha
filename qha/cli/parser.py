@@ -4,7 +4,7 @@ import argparse
 import sys
 
 from qha import __version__
-from qha.cli.program import QHACommandHandler
+from qha.cli.handler import QHACommandHandler
 
 
 class QHAArgumentParser:
@@ -14,23 +14,23 @@ class QHAArgumentParser:
         self.subparsers = self.parser.add_subparsers(
             dest='command'
         )
-        self.programs = []
+        self.handlers = []
 
-    def add_program(self, cmd: str, prog: QHACommandHandler, aliases: list = []):
-        subparser = self.subparsers.add_parser(cmd, aliases=aliases)
-        self.programs.append({
+    def add_handler(self, cmd: str, handler: QHACommandHandler, aliases: list = []):
+        subparsers = self.subparsers.add_parser(cmd, aliases=aliases)
+        self.handlers.append({
             'command': cmd,
-            'program': prog,
-            'parser': subparser,
+            'handler': handler,
+            'parser': subparsers,
             'aliases': aliases
         })
-        prog.init_parser(subparser)
+        handler.init_parser(subparsers)
 
     def parse_args(self, args=None, namespace=None):
         namespace = self.parser.parse_args(args, namespace)
         command = namespace.command
         try:
-            program = next(program for program in self.programs
+            program = next(program for program in self.handlers
                            if command == program['command']
                            or command in program['aliases'])['program']
             program.run(namespace)

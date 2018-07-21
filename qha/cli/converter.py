@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from qha.cli.program import QHACommandHandler
+from qha.cli.handler import QHACommandHandler
 from qha.input_maker import FromQEOutput
 
 

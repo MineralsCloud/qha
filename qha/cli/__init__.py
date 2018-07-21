@@ -10,16 +10,16 @@ def main():
     parser = QHAArgumentParser()
 
     qha_converter = QHAConverter()
-    parser.add_program('convert', qha_converter, aliases=['conv'])
+    parser.add_handler('convert', qha_converter, aliases=['conv'])
 
     qha_runner = QHARunner()
-    parser.add_program('run', qha_runner)
+    parser.add_handler('run', qha_runner)
 
     qha_runner = QHAPlotter()
-    parser.add_program('plot', qha_runner)
+    parser.add_handler('plot', qha_runner)
 
     qha_plotter = QHAPlotter()
-    parser.add_program('plot', qha_plotter)
+    parser.add_handler('plot', qha_plotter)
 
     parser.parse_args()
 
