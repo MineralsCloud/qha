@@ -30,8 +30,11 @@ class QHAArgumentParser:
     def add_plugin_programs(self):
         for entry_point in pkg_resources.iter_entry_points(group='qha.applications'):
             klass = entry_point.load()
-            command = klass.command
-            aliases = klass.aliases
+            if 'command' in dir(klass):
+                command = klass.command
+            else:
+                raise RuntimeError('The plugin program %s does not have a sub-command!' % repr(klass))
+            aliases = klass.aliases if 'aliases' in dir(klass) else None
             program = klass()
             self.add_program(command, program, aliases)
     
