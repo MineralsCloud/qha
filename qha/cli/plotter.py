@@ -4,12 +4,12 @@ import os
 import pathlib
 
 import qha.tools
-from qha.cli.program import QHAProgram
+from qha.cli.program import QHACommandHandler
 from qha.plotting import Plotter
 from qha.settings import from_yaml
 
 
-class QHAPlotter(QHAProgram):
+class QHAPlotter(QHACommandHandler):
     def __init__(self):
         super().__init__()
 

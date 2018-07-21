@@ -3,7 +3,7 @@
 import argparse
 
 
-class QHAProgram:
+class QHACommandHandler:
 
     def __init__(self):
         pass

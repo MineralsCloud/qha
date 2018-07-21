@@ -8,13 +8,13 @@ from qha.calculator import *
 from qha.settings import from_yaml
 from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.utils.units import QHAUnits
-from .program import QHAProgram
+from .program import QHACommandHandler
 from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
 
 units = QHAUnits()
 
 
-class QHARunner(QHAProgram):
+class QHARunner(QHACommandHandler):
     def __init__(self):
         super().__init__()
 

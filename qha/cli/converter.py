@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from qha.cli.program import QHAProgram
+from qha.cli.program import QHACommandHandler
 from qha.input_maker import FromQEOutput
 
 
-class QHAConverter(QHAProgram):
+class QHAConverter(QHACommandHandler):
     def __init__(self):
         super().__init__()
 

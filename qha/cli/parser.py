@@ -4,7 +4,7 @@ import argparse
 import sys
 
 from qha import __version__
-from qha.cli.program import QHAProgram
+from qha.cli.program import QHACommandHandler
 
 
 class QHAArgumentParser:
@@ -16,7 +16,7 @@ class QHAArgumentParser:
         )
         self.programs = []
 
-    def add_program(self, cmd: str, prog: QHAProgram, aliases: list = []):
+    def add_program(self, cmd: str, prog: QHACommandHandler, aliases: list = []):
         subparser = self.subparsers.add_parser(cmd, aliases=aliases)
         self.programs.append({
             'command': cmd,
