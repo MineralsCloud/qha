@@ -21,6 +21,8 @@ def main():
     qha_plotter = QHAPlotter()
     parser.add_program('plot', qha_plotter)
 
+    parser.add_plugin_programs()
+
     parser.parse_args()
 
 

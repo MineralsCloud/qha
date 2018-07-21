@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import pkg_resources
 
 from qha import __version__
 from qha.cli.program import QHAProgram
@@ -25,7 +26,15 @@ class QHAArgumentParser:
             'aliases': aliases
         })
         prog.init_parser(subparser)
-
+    
+    def add_plugin_programs(self):
+        for entry_point in pkg_resources.iter_entry_points(group='qha.applications'):
+            klass = entry_point.load()
+            command = klass.command
+            aliases = klass.aliases
+            program = klass()
+            self.add_program(command, program, aliases)
+    
     def parse_args(self, args=None, namespace=None):
         namespace = self.parser.parse_args(args, namespace)
         command = namespace.command
