@@ -51,7 +51,7 @@ class QHAArgumentParser:
             version="current qha version: {0}".format(__version__)
         )
 
-    def add_plugin_programs(self):
+    def load_plugins(self):
         for entry_point in pkg_resources.iter_entry_points(group='qha.applications'):
             klass = entry_point.load()
             command = entry_point.name

@@ -21,7 +21,7 @@ def main():
     qha_plotter = QHAPlotter()
     parser.add_handler('plot', qha_plotter)
 
-    parser.add_plugin_programs()
+    parser.load_plugins()
 
     namespace = parser.parse_args()
     parser.invoke_handler(namespace)
