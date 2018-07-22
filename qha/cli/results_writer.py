@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import abc
 import pathlib
 
 from qha.calculator.per_unit import PerMole
@@ -9,15 +10,16 @@ from qha.utils.units import QHAUnits
 units = QHAUnits()
 
 
-class ResultsWriter:
+class ResultsWriter(abc.ABC):
     def __init__(self, results_dir: str):
         self.results_directory_path = pathlib.Path(results_dir)
 
     def get_output_file_path(self, file_name):
         return self.results_directory_path / file_name
 
-    def write(self):
-        raise NotImplementedError()
+    @abc.abstractmethod
+    def write(self, prop_name, file_name, *args):
+        ...
 
 
 class FieldResultsWriter(ResultsWriter):
@@ -157,8 +159,8 @@ class FieldResultsWriter(ResultsWriter):
             unit if unit else prop['default_unit']
         ).magnitude
 
-    def write(self):
-        raise NotImplementedError()
+    def write(self, prop_name, file_name, *args):
+        ...
 
 
 class TVFieldResultsWriter(FieldResultsWriter):
