@@ -3,20 +3,20 @@
 import os
 import pathlib
 
-import qha
 import qha.tools
-from qha.cli.program import QHAProgram
+from qha.cli.handler import QHACommandHandler
 from qha.plotting import Plotter
 from qha.settings import from_yaml
 
 
-class QHAPlotter(QHAProgram):
+class QHAPlotter(QHACommandHandler):
     def __init__(self):
         super().__init__()
 
     def init_parser(self, parser):
         super().init_parser(parser)
-        parser.add_argument('-s', '--settings', default='settings.yaml')
+        parser.add_argument('settings', type=str)
+        parser.add_argument('--outdir', type=str, help='output directory')
 
     def run(self, namespace):
         user_settings = {}  # save necessary info for plotting later
@@ -66,7 +66,8 @@ class QHAPlotter(QHAProgram):
 
         plotter.fv_pv()
 
-        for idx in user_settings['calculate']:
+        for prop_settings in user_settings['calculate']:
+            idx = prop_settings['prop']
             if idx in ['F', 'G', 'H', 'U']:
                 attr_name = calculation_option[idx] + '_' + user_settings['energy_unit']
                 file_name = attr_name + '.txt'

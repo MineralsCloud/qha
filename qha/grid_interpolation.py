@@ -16,7 +16,7 @@ from numba.types import UniTuple
 
 from qha.fitting import polynomial_least_square_fitting, birch_murnaghan_finite_strain_fitting
 from qha.type_aliases import Vector, Matrix
-from qha.unit_conversion import gpa_to_ry_b3
+from qha.utils.unit_conversion import gpa_to_ry_b3
 
 # ===================== What can be exported? =====================
 __all__ = ['calc_eulerian_strain', 'from_eulerian_strain', 'interpolate_volumes',

@@ -54,12 +54,16 @@ setup(name='qha',
           'pyyaml',
           'matplotlib',
           'seaborn',
+          'pint',
       ],
       packages=[
           'qha',
           'qha.multi_configurations',
-          'qha.readers',
-          'qha.cli'
+          'qha.calculator',
+          'qha.calculator.helmholtz_calculator',
+          'qha.cli',
+          'qha.utils',
+          'qha.utils.readers',
       ],
       entry_points={
           'console_scripts': [

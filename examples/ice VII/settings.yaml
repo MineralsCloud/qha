@@ -61,18 +61,34 @@ input:
     input_conf51: 24
     input_conf52: 12
 calculate:
-    - F
-    - G
-    - U
-    - H
-    - V
-    - alpha
-    - gamma
-    - Cp
-    - Cv
-    - Bt
-    - Btp
-    - Bs
+    - prop: F
+      output: f_tp_ry.txt
+    - prop: G
+      output: g_tp_ry.txt
+    - prop: U
+      output: u_tp_ry.txt
+    - prop: H
+      output: h_tp_ry.txt
+    - prop: V
+      output: v_tp_ang3.txt
+      unit: angstrom^3
+    - prop: V
+      output: v_tp_bohr3.txt
+      unit: bohr^3
+    - prop: alpha
+      output: alpha_tp.txt
+    - prop: gamma
+      output: gamma_tp.txt
+    - prop: Cp
+      output: cp_tp_jmolk.txt
+    - prop: Cv
+      output: cv_tp_jmolk.txt
+    - prop: Bt
+      output: bt_tp_gpa.txt
+    - prop: Btp
+      output: btp_tp.txt
+    - prop: Bs
+      output: bs_tp_gpa.txt
 energy_unit: ry
 output_directory: ./results/
 high_verbosity: true

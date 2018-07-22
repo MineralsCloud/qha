@@ -10,15 +10,19 @@ def main():
     parser = QHAArgumentParser()
 
     qha_converter = QHAConverter()
-    parser.add_program('convert', qha_converter)
+    parser.add_handler('convert', qha_converter, 'conv')
 
     qha_runner = QHARunner()
-    parser.add_program('run', qha_runner)
+    parser.add_handler('run', qha_runner)
 
     qha_runner = QHAPlotter()
-    parser.add_program('plot', qha_runner)
+    parser.add_handler('plot', qha_runner)
+
+    qha_plotter = QHAPlotter()
+    parser.add_handler('plot', qha_plotter)
 
     namespace = parser.parse_args()
+    parser.invoke_handler(namespace)
 
 
 if __name__ == '__main__':

@@ -1,150 +1,135 @@
 #!/usr/bin/env python3
 
 import os
-import pathlib
+import shutil
 import time
 
-from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
-from qha.cli.program import QHAProgram
-from qha.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.calculator import *
 from qha.settings import from_yaml
+from qha.utils.output import save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.utils.units import QHAUnits
+from .handler import QHACommandHandler
+from .results_writer import TVFieldResultsWriter, TPFieldResultsWriter
+
+units = QHAUnits()
 
 
-class QHARunner(QHAProgram):
+class QHARunner(QHACommandHandler):
     def __init__(self):
         super().__init__()
 
+        self.settings = None
+        self.start_time = None
+
     def init_parser(self, parser):
         super().init_parser(parser)
-        parser.add_argument('-s', '--settings', default='settings.yaml')
+        parser.add_argument('settings', type=str)
+
+    def prompt(self, message: str):
+        save_to_output(
+            os.path.join(self.__get_output_directory_path(), 'output.txt'),
+            message
+        )
+        print(message)
+
+    def __save_temperature_pressure_info(self, tv_calc, pressure_sample_ratio: int):
+        self.prompt(
+            make_tp_info(
+                tv_calc.temperature_array.magnitude[0],
+                tv_calc.temperature_array.magnitude[-1 - 4],
+                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[
+                0::pressure_sample_ratio][0],
+                tv_calc.temperature_pressure_field_adapter.pressure_array.to(units.GPa).magnitude[
+                0::pressure_sample_ratio][-1]
+            )
+        )
+
+    def __save_starting_string(self):
+        self.prompt(make_starting_string())
+
+    def __save_ending_string(self):
+        self.prompt(make_ending_string(time.time() - self.start_time))
+
+    def __save_volume_range(self, v_ratio):
+        if self.settings['high_verbosity']:
+            self.prompt(
+                'The volume range used in this calculation expanded x {0:6.4f}'.format(v_ratio)
+            )
+
+    def __get_output_directory_path(self):
+        output_directory_path = self.settings['output_directory']
+        return output_directory_path
+
+    def __make_output_directory(self):
+        output_directory_path = self.__get_output_directory_path()
+        if os.path.exists(output_directory_path):
+            shutil.rmtree(output_directory_path)
+        os.makedirs(output_directory_path)
+
+    __accepted_keys = [
+        'same_phonon_dos', 'input',
+        'calculate', 'static_only', 'energy_unit',
+        'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
+        'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
+        'volume_ratio', 'order', 'p_min_modifier',
+        'T4FV', 'output_directory', 'plot_results', 'high_verbosity'
+    ]
 
     def run(self, namespace):
-        start_time_total = time.time()
+        self.start_time = time.time()
 
-        user_settings = {}
-        file_settings = namespace.settings
-        settings = from_yaml(file_settings)
+        settings_file_path = namespace.settings
+        input_settings = from_yaml(settings_file_path)
 
-        for key in ('same_phonon_dos', 'input',
-                    'calculate', 'static_only', 'energy_unit',
-                    'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
-                    'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                    'volume_ratio', 'order', 'p_min_modifier',
-                    'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
-            try:
-                user_settings.update({key: settings[key]})
-            except KeyError:
-                continue
+        self.settings = dict()
+        for key in self.__accepted_keys:
+            if key in input_settings.keys():
+                self.settings[key] = input_settings[key]
 
-        if not os.path.exists(user_settings['output_directory']):
-            os.makedirs(user_settings['output_directory'])
+        output_directory_path = self.__get_output_directory_path()
+        self.__make_output_directory()
 
-        user_settings.update({'qha_output': os.path.join(user_settings['output_directory'], 'output.txt')})
+        self.__save_starting_string()
 
-        try:
-            os.remove(user_settings['qha_output'])
-        except OSError:
-            pass
+        calculator = TemperatureVolumeFieldCalculator(self.settings)
 
-        save_to_output(user_settings['qha_output'], make_starting_string())
+        # TODO: find_negative_frequencies
 
-        user_input = user_settings['input']
+        calculator.calculate()
 
-        if isinstance(user_input, str):
-            calc = Calculator(user_settings)
-            print("You have single-configuration calculation assumed.")
-        elif isinstance(user_input, dict):
-            if user_settings['same_phonon_dos']:
-                calc = SamePhDOSCalculator(user_settings)
-                print("You have multi-configuration calculation with the same phonon DOS assumed.")
-            else:
-                calc = DifferentPhDOSCalculator(user_settings)
-                print("You have multi-configuration calculation with different phonon DOS assumed.")
-        else:
-            raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
+        p_sample_ratio = int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])
+        t_sample_ratio = int(self.settings['DT_SAMPLE'] / self.settings['DT'])
 
-        save_to_output(user_settings['qha_output'],
-                       make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
-                                    calc.desired_pressures_gpa[0],
-                                    calc.desired_pressures_gpa[-1]))
+        self.__save_temperature_pressure_info(calculator, p_sample_ratio)
 
-        calc.read_input()
+        self.__save_volume_range(calculator.v_ratio)
 
-        print("Caution: If negative frequencies found, they are currently treated as 0!")
-        tmp = calc.where_negative_frequencies
-        if tmp is not None and not (tmp.T[-1].max() <= 2):  # Don't delete this parenthesis!
-            if calc.frequencies.ndim == 4:  # Multiple configuration
-                for indices in tmp:
-                    print(
-                        "Found negative frequency in {0}th configuration {1}th volume {2}th q-point {3}th band".format(
-                            *tuple(indices + 1)))
-            elif calc.frequencies.ndim == 3:  # Single configuration
-                for indices in tmp:
-                    print(
-                        "Found negative frequency in {0}th volume {1}th q-point {2}th band".format(*tuple(indices + 1)))
+        tv_writer = TVFieldResultsWriter(
+            output_directory_path,
+            calculator,
+            t_sample_ratio
+        )
+        tv_writer.write('P', 'p_tv_gpa.txt', units.GPa)
+        tv_writer.write('F', 'f_tv_fitted_ev_ang3.txt', units.eV)
 
-        calc.refine_grid()
+        raw_tv_writer = TVFieldResultsWriter(
+            output_directory_path,
+            calculator.helmholtz_free_energy_calculator,
+            t_sample_ratio
+        )
+        raw_tv_writer.write('F', 'f_tv_nonfitted_ev_ang3.txt', units.eV)
 
-        if user_settings['high_verbosity']:
-            save_to_output(user_settings['qha_output'],
-                           'The volume range used in this calculation expanded x {0:6.4f}'.format(calc.v_ratio))
+        tp_writer = TPFieldResultsWriter(
+            output_directory_path,
+            calculator,
+            p_sample_ratio
+        )
+        for prop_settings in self.settings['calculate']:
+            print(prop_settings)
+            tp_writer.write(
+                prop_settings.get('prop'),
+                prop_settings.get('output'),
+                prop_settings.get('unit')
+            )
 
-        calc.desired_pressure_status()
-
-        temperature_array = calc.temperature_array
-        desired_pressures_gpa = calc.desired_pressures_gpa
-        temperature_sample = calc.temperature_sample_array
-        p_sample_gpa = calc.pressure_sample_array
-
-        results_folder = pathlib.Path(user_settings['output_directory'])
-
-        calculation_option = {'F': 'f_tp',
-                              'G': 'g_tp',
-                              'H': 'h_tp',
-                              'U': 'u_tp',
-                              'V': 'v_tp',
-                              'Cv': 'cv_tp_jmolk',
-                              'Cp': 'cp_tp_jmolk',
-                              'Bt': 'bt_tp_gpa',
-                              'Btp': 'btp_tp',
-                              'Bs': 'bs_tp_gpa',
-                              'alpha': 'alpha_tp',
-                              'gamma': 'gamma_tp',
-                              }
-
-        file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_tv(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
-
-        file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
-
-        file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
-        save_x_tv(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
-
-        for idx in calc.settings['calculate']:
-            if idx in ['F', 'G', 'H', 'U']:
-                attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']
-                file_name = attr_name + '.txt'
-                file_dir = results_folder / file_name
-                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
-
-            if idx == 'V':
-                v_bohr3 = calculation_option[idx] + '_' + 'bohr3'
-                file_name_bohr3 = v_bohr3 + '.txt'
-                file_dir_au = results_folder / file_name_bohr3
-                v_ang3 = calculation_option[idx] + '_' + 'ang3'
-                file_name_ang3 = v_ang3 + '.txt'
-                file_dir_ang3 = results_folder / file_name_ang3
-
-                save_x_tp(getattr(calc, v_bohr3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_au)
-                save_x_tp(getattr(calc, v_ang3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_ang3)
-
-            if idx in ['Cv', 'Cp', 'Bt', 'Btp', 'Bs', 'alpha', 'gamma']:
-                attr_name = calculation_option[idx]
-                file_name = attr_name + '.txt'
-                file_dir = results_folder / file_name
-                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
-
-        end_time_total = time.time()
-        time_elapsed = end_time_total - start_time_total
-        save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))
+        self.__save_ending_string()
