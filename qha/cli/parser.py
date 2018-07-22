@@ -6,7 +6,7 @@ from collections import namedtuple
 from qha import __version__
 from qha.cli.handler import QHACommandHandler
 
-Command = namedtuple('Command', ['handler', 'parser'])
+CommandResolvers = namedtuple('CommandResolvers', ['handler', 'parser'])
 
 
 class QHAArgumentParser:
@@ -23,7 +23,7 @@ class QHAArgumentParser:
         self.handlers.update(
             dict.fromkeys(
                 (command, *aliases),
-                Command(
+                CommandResolvers(
                     handler=handler,
                     parser=new_parser,
                 )
