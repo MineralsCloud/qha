@@ -15,11 +15,10 @@ def main():
     qha_runner = QHARunner()
     parser.add_handler('run', qha_runner)
 
-    qha_runner = QHAPlotter()
-    parser.add_handler('plot', qha_runner)
-
     qha_plotter = QHAPlotter()
     parser.add_handler('plot', qha_plotter)
+
+    parser.load_plugins()
 
     namespace = parser.parse_args()
     parser.invoke_handler(namespace)
