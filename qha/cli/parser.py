@@ -44,5 +44,7 @@ class QHAArgumentParser:
 
     def init_parser(self):
         self.parser.add_argument(
-            '-v', '--version', action='version',
-            version="current qha version: {0}".format(__version__))
+            '-V', '--version',
+            action='version',
+            version="current qha version: {0}".format(__version__)
+        )
