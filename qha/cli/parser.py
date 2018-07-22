@@ -52,9 +52,7 @@ class QHAArgumentParser:
         )
 
     def load_plugins(self):
-        for entry_point in pkg_resources.iter_entry_points(group='qha.applications'):
-            klass = entry_point.load()
-            command = entry_point.name
+        for plugin in pkg_resources.iter_entry_points(group='qha.plugins'):
+            klass = plugin.load()
             aliases = klass.aliases if 'aliases' in dir(klass) else None
-            program = klass()
-            self.add_handler(command, program, aliases)
+            self.add_handler(plugin.name, klass(), *aliases)
