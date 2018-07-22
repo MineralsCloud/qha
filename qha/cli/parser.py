@@ -3,6 +3,8 @@
 import argparse
 from collections import namedtuple
 
+import pkg_resources
+
 from qha import __version__
 from qha.cli.handler import QHACommandHandler
 
@@ -48,3 +50,11 @@ class QHAArgumentParser:
             action='version',
             version="current qha version: {0}".format(__version__)
         )
+
+    def add_plugin_programs(self):
+        for entry_point in pkg_resources.iter_entry_points(group='qha.applications'):
+            klass = entry_point.load()
+            command = entry_point.name
+            aliases = klass.aliases if 'aliases' in dir(klass) else None
+            program = klass()
+            self.add_handler(command, program, aliases)
