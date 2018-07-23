@@ -126,10 +126,8 @@ class TemperaturePressureFieldAdapter:
     @units.wraps(units.Ryd / units.kelvin, None)
     def pressure_specific_heat_capacities(self):
         return pressure_specific_heat_capacity(
-            self.volume_specific_heat_capacities.magnitude,
-            self.thermal_expansion_coefficients.magnitude,
-            self.gruneisen_parameters.magnitude,
-            self.temperature_array.magnitude
+            self.temperature_array.magnitude,
+            self.entropies.magnitude
         )
 
     @LazyProperty

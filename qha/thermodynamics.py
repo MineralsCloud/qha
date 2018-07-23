@@ -167,7 +167,7 @@ def bulk_modulus_derivative(p_vector: Vector, bt_tp: Matrix) -> Matrix:
     return calculate_derivatives(p_vector, bt_tp.T).T
 
 
-def pressure_specific_heat_capacity(cv_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts: Vector) -> Matrix:
+def pressure_specific_heat_capacity(ts: Vector, h_tp: Matrix) -> Matrix:
     """
     Equation used: :math:`Cp = Bt \\left ( 1 + \\alpha \\gamma T \\right )`
 
@@ -177,7 +177,7 @@ def pressure_specific_heat_capacity(cv_tp: Matrix, alpha_tp: Matrix, gamma_tp: M
     :param ts: temperature vector
     :return: pressure specific heat capacity, :math:`Cp(T,P)`
     """
-    return cv_tp * (1.0 + alpha_tp * gamma_tp * ts[:, None])
+    return calculate_derivatives(ts, h_tp)
 
 
 def volume_specific_heat_capacity(ts: Vector, internal_energies: Matrix) -> Matrix:
