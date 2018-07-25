@@ -28,7 +28,7 @@ class QHARunner(QHACommandHandler):
         file_settings = namespace.settings
         settings = from_yaml(file_settings)
 
-        for key in ('same_phonon_dos', 'input',
+        for key in ('input', 'calculation',
                     'calculate', 'static_only', 'energy_unit',
                     'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                     'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
@@ -51,20 +51,19 @@ class QHARunner(QHACommandHandler):
 
         save_to_output(user_settings['qha_output'], make_starting_string())
 
-        user_input = user_settings['input']
-
-        if isinstance(user_input, str):
+        calculation_type = user_settings['calculation'].lower()
+        if calculation_type == 'single':
             calc = Calculator(user_settings)
             print("You have single-configuration calculation assumed.")
-        elif isinstance(user_input, dict):
-            if user_settings['same_phonon_dos']:
-                calc = SamePhDOSCalculator(user_settings)
-                print("You have multi-configuration calculation with the same phonon DOS assumed.")
-            else:
-                calc = DifferentPhDOSCalculator(user_settings)
-                print("You have multi-configuration calculation with different phonon DOS assumed.")
+        elif calculation_type == 'same phonon dos':
+            calc = SamePhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with the same phonon DOS assumed.")
+        elif calculation_type == 'different phonon dos':
+            calc = DifferentPhDOSCalculator(user_settings)
+            print("You have multi-configuration calculation with different phonon DOS assumed.")
         else:
-            raise ValueError("The 'input' in your settings in not recognized! It must be a dictionary or a list!")
+            raise ValueError("The 'calculation' in your settings in not recognized! It must be one of:"
+                             "'single', 'same phonon dos', 'different phonon dos'!")
 
         save_to_output(user_settings['qha_output'],
                        make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
