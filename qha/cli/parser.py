@@ -44,10 +44,6 @@ class QHAArgumentParser:
             version="current qha version: {0}".format(__version__),
             help='The current release version of ``qha``.'
         )
-        self.parser.add_argument(
-            '-h', '--help',
-            action='help',
-        )
 
     def add_handler(self, command: str, handler: QHACommandHandler, *aliases):
         """
