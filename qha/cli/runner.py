@@ -5,7 +5,7 @@ import pathlib
 import time
 
 from qha.calculator import Calculator, SamePhDOSCalculator, DifferentPhDOSCalculator
-from qha.out import save_x_tp, save_x_vt, save_to_output, make_starting_string, make_tp_info, make_ending_string
+from qha.out import save_x_tp, save_x_tv, save_to_output, make_starting_string, make_tp_info, make_ending_string
 from qha.settings import from_yaml
 from .handler import QHACommandHandler
 
@@ -116,13 +116,13 @@ class QHARunner(QHACommandHandler):
                               }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_vt(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
+        save_x_tv(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_vt(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
+        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
-        save_x_vt(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
+        save_x_tv(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
 
         for idx in calc.settings['calculate']:
             if idx in ['F', 'G', 'H', 'U']:

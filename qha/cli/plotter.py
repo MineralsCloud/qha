@@ -66,8 +66,7 @@ class QHAPlotter(QHACommandHandler):
 
         plotter.fv_pv()
 
-        for prop_settings in user_settings['calculate']:
-            idx = prop_settings['prop']
+        for idx in user_settings['calculate']:
             if idx in ['F', 'G', 'H', 'U']:
                 attr_name = calculation_option[idx] + '_' + user_settings['energy_unit']
                 file_name = attr_name + '.txt'
