@@ -546,3 +546,7 @@ $RECYCLE.BIN/
 # User settings
 **/output*
 **/results/*
+bin
+include
+pip-selfcheck.json
+pyvenv.cfg
