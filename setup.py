@@ -58,12 +58,11 @@ setup(name='qha',
       packages=[
           'qha',
           'qha.multi_configurations',
+          'qha.cli',
           'qha.readers',
       ],
       entry_points={
           'console_scripts': [
-              'qha-run=qha.run:main',
-              'qha-convert=qha.convert:main',
-              'qha-plot=qha.plot:main'
+              'qha=qha.cli:main'
           ],
       })
