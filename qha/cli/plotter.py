@@ -31,8 +31,7 @@ class QHAPlotter(QHACommandHandler):
                 continue
 
         if not os.path.exists(user_settings['output_directory']):
-            print("There is no results folder, please run: `qha-run` first! ")
-            exit(1)
+            raise FileNotFoundError("There is no results folder, please run: `qha-run` first! ")
 
         plotter = Plotter(user_settings)
 
