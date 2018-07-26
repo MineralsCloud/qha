@@ -1,8 +1,8 @@
-Prepare input command: ``qha-convert``
+Prepare input command: ``qha convert``
 **************************************
 
 If you have used `Quantum ESPRESSO <https://www.quantum-espresso.org>`_,
-you might have the phonon frequency file from `matdyn.x`. If you want
+you might have the phonon frequency file from ``matdyn.x``. If you want
 to use it to generate a valid input data file for ``qha``, you need
 two more files:
 
