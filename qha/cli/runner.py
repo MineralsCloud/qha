@@ -29,7 +29,7 @@ class QHARunner(QHACommandHandler):
         settings = from_yaml(file_settings)
 
         for key in ('input', 'calculation',
-                    'calculate', 'static_only', 'energy_unit',
+                    'thermodynamic_properties', 'static_only', 'energy_unit',
                     'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                     'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                     'volume_ratio', 'order', 'p_min_modifier',

@@ -24,7 +24,7 @@ class QHAPlotter(QHACommandHandler):
         settings = from_yaml(file_settings)
 
         for key in ('energy_unit', 'NT', 'DT', 'DT_SAMPLE', 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                    'calculate', 'T4FV', 'output_directory'):
+                    'thermodynamic_properties', 'T4FV', 'output_directory'):
             try:
                 user_settings.update({key: settings[key]})
             except KeyError:

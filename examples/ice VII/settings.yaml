@@ -8,7 +8,7 @@ NTV: 701
 DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
 order: 3
-# static_only: true
+static_only: False
 input:
     input_01: 6
     input_02: 96
@@ -62,7 +62,7 @@ input:
     input_50: 96
     input_51: 24
     input_52: 24
-calculate:
+thermodynamic_properties:
     - F
     - G
     - U
