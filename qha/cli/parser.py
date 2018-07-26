@@ -44,12 +44,8 @@ class QHAArgumentParser:
             version="current qha version: {0}".format(__version__),
             help='The current release version of ``qha``.'
         )
-        self.parser.add_argument(
-            '-h', '--help',
-            action='help',
-        )
 
-    def add_handler(self, command: str, handler: QHACommandHandler, *aliases):
+    def register_handler(self, command: str, handler: QHACommandHandler, *aliases):
         """
         Each handler corresponds to one sub-command. All sub-commands now available are:
 
@@ -64,6 +60,12 @@ class QHAArgumentParser:
         :param aliases: The aliases of the sub-command. It can be an iterable. For example, ``convert`` sub-command
             has an alias that is ``cv``.
         """
+        if not isinstance(command, str):
+            raise TypeError("Argument *command* should be a string!")
+
+        if not isinstance(handler, QHACommandHandler):
+            raise TypeError("Argument *handler* should be a ``QHACommandHandler`` instance!")
+
         new_parser = self.subparsers.add_parser(command, aliases=list(aliases))
         self.handlers.update(
             dict.fromkeys(
@@ -95,7 +97,11 @@ class QHAArgumentParser:
 
         :param namespace: The namespace returned by ``parse_args`` method.
         """
-        command: str = namespace.command
+        try:
+            command: str = getattr(namespace, 'command')
+        except AttributeError:
+            raise AttributeError("Argument *namespace* does not have an ``command`` attribute!")
+
         try:
             handler: QHACommandHandler = self.handlers[command].handler
             handler.run(namespace)
@@ -109,4 +115,4 @@ class QHAArgumentParser:
         for plugin in pkg_resources.iter_entry_points(group='qha.plugins'):
             klass = plugin.load()
             aliases = klass.aliases if 'aliases' in dir(klass) else None
-            self.add_handler(plugin.name, klass(), *aliases)
+            self.register_handler(plugin.name, klass(), *aliases)
