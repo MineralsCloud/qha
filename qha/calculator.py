@@ -340,7 +340,7 @@ class Calculator:
 
     @LazyProperty
     def cp_tp_au(self):
-        return pressure_specific_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return pressure_specific_heat_capacity(self.temperature_array, self.h_tp_ry)
 
     @LazyProperty
     def cp_tp_jmolk(self):
