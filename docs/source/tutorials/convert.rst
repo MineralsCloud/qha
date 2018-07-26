@@ -1,4 +1,4 @@
-Prepare input command: ``qha-convert``
+Prepare input command: ``qha convert``
 **************************************
 
 If you have used `Quantum ESPRESSO <https://www.quantum-espresso.org>`_,
