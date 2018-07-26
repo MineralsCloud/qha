@@ -29,7 +29,7 @@ Here are the keys that can be recognized in ``settings.yaml``:
 * ``static_only``: Whether to include vibrational contribution in the calculation. Allowed values are ``True`` (not include) or ``False`` (include, default).
 * ``order``: Order of Birch–Murnaghan equation of state fitting, can be ``3`` (default), ``4`` or ``5``.
 * ``energy_unit``: Energy unit in the output file can be ``ry`` (default) or ``ev``
-* ``thermodynamic properties``: Which thermodynamic properties will be calculated by ``qha``. Allowed values are
+* ``thermodynamic_properties`: Which thermodynamic properties will be calculated by ``qha``. Allowed values are
 
   * ``F``, Helmholtz free energy
   * ``G``, Gibbs free energy
