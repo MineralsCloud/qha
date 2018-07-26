@@ -1,6 +1,9 @@
 Run calculation command: ``qha run``
 ************************************
 
+.. contents:: Table of contents:
+   :local:
+
 How to write computational settings file
 ========================================
 
