@@ -45,7 +45,7 @@ class QHAArgumentParser:
             help='The current release version of ``qha``.'
         )
 
-    def add_handler(self, command: str, handler: QHACommandHandler, *aliases):
+    def register_handler(self, command: str, handler: QHACommandHandler, *aliases):
         """
         Each handler corresponds to one sub-command. All sub-commands now available are:
 
@@ -105,4 +105,4 @@ class QHAArgumentParser:
         for plugin in pkg_resources.iter_entry_points(group='qha.plugins'):
             klass = plugin.load()
             aliases = klass.aliases if 'aliases' in dir(klass) else None
-            self.add_handler(plugin.name, klass(), *aliases)
+            self.register_handler(plugin.name, klass(), *aliases)
