@@ -37,11 +37,11 @@ class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
         runtime_settings = dict()
 
-        allowed_keys = ('same_phonon_dos', 'input', 'volume_energies',
-                        'calculate', 'static_only', 'energy_unit',
+        allowed_keys = ('input', 'calculation',
+                        'thermodynamic_properties', 'static_only', 'energy_unit',
                         'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                        'calculate', 'volume_ratio', 'order', 'p_min_modifier',
+                        'volume_ratio', 'order', 'p_min_modifier',
                         'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
 
         for key in allowed_keys:
