@@ -65,7 +65,7 @@ class QHAPlotter(QHACommandHandler):
 
         plotter.fv_pv()
 
-        for idx in user_settings['calculate']:
+        for idx in user_settings['thermodynamic_properties']:
             if idx in ['F', 'G', 'H', 'U']:
                 attr_name = calculation_option[idx] + '_' + user_settings['energy_unit']
                 file_name = attr_name + '.txt'
