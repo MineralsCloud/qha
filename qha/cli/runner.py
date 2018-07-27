@@ -27,6 +27,7 @@ class QHARunner(QHACommandHandler):
         user_settings = {}
         file_settings = namespace.settings
         settings = from_yaml(file_settings)
+        print(settings)
 
         for key in ('input', 'calculation',
                     'thermodynamic_properties', 'static_only', 'energy_unit',
@@ -37,7 +38,7 @@ class QHARunner(QHACommandHandler):
             try:
                 user_settings.update({key: settings[key]})
             except KeyError:
-                continue
+                raise KeyError("Key '{0}' is not set in your settings!")
 
         if not os.path.exists(user_settings['output_directory']):
             os.makedirs(user_settings['output_directory'])

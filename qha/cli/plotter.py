@@ -28,7 +28,7 @@ class QHAPlotter(QHACommandHandler):
             try:
                 user_settings.update({key: settings[key]})
             except KeyError:
-                continue
+                raise KeyError("Key '{0}' is not set in your settings!")
 
         if not os.path.exists(user_settings['output_directory']):
             raise FileNotFoundError("There is no results folder, please run: `qha-run` first! ")

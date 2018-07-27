@@ -28,7 +28,7 @@ DEFAULT_SETTING: Dict[str, Any] = {
     'DELTA_P': 0.1,
     'DELTA_P_SAMPLE': 1,
     'static_only': False,
-    'same_phonon_dos': False,
+    'volume_ratio': 1.45,
     # output setting
     'output_directory': './results/',
     'T4FV': ['0', '300'],
@@ -48,15 +48,13 @@ class Settings(collections.ChainMap):
         DEFAULT_SETTING: Dict[str, Any] = {
             'energy_unit': 'ry',
             'length_unit': 'angstrom',
-            'order': 3,  # BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.
+            'order': 3,
             'p_min_modifier': 1.0,
             'target': 'parallel',
             'DT_SAMPLE': 10,
             'DELTA_P': 0.1,
             'DELTA_P_SAMPLE': 1,
             'static_only': False,
-            'same_phonon_dos': False,
-            # output setting
             'output_directory': './results/',
             'T4FV': ['0', '300'],
             'plot_results': False,
