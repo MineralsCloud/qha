@@ -5,6 +5,8 @@ import os
 import re
 from distutils.core import setup
 
+import setuptools
+
 # Referenced from `here <https://packaging.python.org/guides/single-sourcing-package-version/>`_.
 here = os.path.abspath(os.path.dirname(__file__))
 
