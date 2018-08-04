@@ -27,7 +27,6 @@ class QHARunner(QHACommandHandler):
         user_settings = {}
         file_settings = namespace.settings
         settings = from_yaml(file_settings)
-        print(settings)
 
         for key in ('input', 'calculation',
                     'thermodynamic_properties', 'static_only', 'energy_unit',
