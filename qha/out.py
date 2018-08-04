@@ -74,7 +74,6 @@ def make_ending_string(time_elapsed) -> str:
     return textwrap.dedent("""\
         ------------------------------------------------------------
         Total elapsed time is: {0:8.2f} seconds
-        All the files are saved in the './results/' directory.
         Thanks for using QHA code, have a nice one :)
         ============================================================
         """.format(time_elapsed))
