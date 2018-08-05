@@ -25,20 +25,22 @@ __all__ = ['FromQEOutput']
 
 class FromQEOutput:
     """
-    A class that can generate a standard "input" file for ``qha-run`` if you have data collected from Quantum
-    ESPRESSO.
+    A class that can generate a standard "input" file for the ``qha run`` command if the original data is given by
+    Quantum ESPRESSO.
 
-    :param inp_file_list: A YAML file that should contains 3 keys and values:
+    :param inp_file_list: A YAML file that should contain 3 keys and values:
 
-        1. ``formula_unit_number``: The number of formula unit in a cell.
-        2. ``comment``: Some heading you want to add to your "input".
+        1. ``formula_unit_number``: The number of formula units in a cell.
+        2. ``comment``: Comment that could be added as the first line of the ``input``,
+           which usually specifies the system which user wants to calculate.
         3. ``frequency_files``: A YAML list of strings specifying all the frequency files from Quantum ESPRESSO.
 
-        If you are not familiar with YAML syntax, please refer to
+        To get more familiar with YAML syntax, which is used in the "settings" file, please refer to
         `this documentation <http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html>`_.
-    :param inp_static: A text file specifying the static energies of each volume from electronic calculation.
-        The order of them should be the same as the ``frequency_files`` listing order.
-    :param inp_q_points: A text file specifying the q-points' coordinates and their weights in the Brillouin zone.
+    :param inp_static:A pure text file specifying the energies and pressures of each volume from the static calculation.
+        The order of these volumes should be the same as the ``frequency_files`` listing order.
+    :param inp_q_points: A pure text file specifying the q-points' coordinates and their corresponding weights in the
+        Brillouin zone.
     """
 
     def __init__(self, inp_file_list: str, inp_static: str, inp_q_points: str):
@@ -58,7 +60,7 @@ class FromQEOutput:
 
     def read_file_list(self) -> None:
         """
-        Read all the files' names for frequency files from Quantum ESPRESSO.
+        Read all the files' names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.
         """
         with open(self._inp_file_list, 'r') as f:
             d = yaml.load(f)

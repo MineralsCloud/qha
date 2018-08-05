@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+.. module cli.plotter
+   :platform: Unix, Windows, Mac, Linux
+.. moduleauthor:: Chenxing Luo <chenxing.luo@columbia.edu>
+.. moduleauthor:: Tian Qin <qinxx197@umn.edu>
+.. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
+"""
 
 import os
 import pathlib

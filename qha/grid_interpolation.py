@@ -26,15 +26,15 @@ __all__ = ['calc_eulerian_strain', 'from_eulerian_strain', 'interpolate_volumes'
 @vectorize([float64(float64, float64)], nopython=True)
 def calc_eulerian_strain(v0, v):
     """
-    Calculate Eulerian strain (:math:`f`) of a given volume vector *v* regarding to a reference *v0*, where
+    Calculate Eulerian strain (:math:`f`) of a given volume vector *v* regarding as a reference volume *v0*, where
 
     .. math::
 
-        f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).
+       f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).
 
-    :param v0: The volume set as reference for Eulerian strain calculation.
-    :param v: The volume to be calculated its strain W.R.T. *v0*.
-    :return: Calculated Eulerian strain.
+    :param v0: The volume set as the reference for the Eulerian strain calculation.
+    :param v: A volume vector, whose each item will be calculated Eulerian strain with respect to *v0*.
+    :return: A vector which contains the calculated Eulerian strain.
     """
     return 1 / 2 * ((v0 / v) ** (2 / 3) - 1)
 
@@ -42,16 +42,16 @@ def calc_eulerian_strain(v0, v):
 @vectorize([float64(float64, float64)], nopython=True)
 def from_eulerian_strain(v0, f):
     """
-    Calculate corresponding volume :math:`V` from given Eulerian strain (*f*) and reference volume *v0*. It is the
-    inverse of ``calc_eulerian_strain`` function, i.e.,
+    Calculate the corresponding volumes :math:`V` from a vector of given Eulerian strains (*f*)
+    and a reference volume *v0*. It is the inverse function of the ``calc_eulerian_strain`` function, i.e.,
 
     .. math::
 
         V = V_0 (2 f + 1)^{-3/2}.
 
-    :param v0: The volume set as reference for volume calculation.
-    :param f: Eulerian strain for :math:`V` W.R.T. :math:`V_0`.
-    :return: Calculated volume :math:`V`.
+    :param v0: The volume set as a reference for volume calculation, i.e., :math:`V_0` mentioned above.
+    :param f: A vector of Eulerian strains with respect to :math:`V_0`.
+    :return: A vector of calculated volume :math:`V`.
     """
     return v0 * (2 * f + 1) ** (-3 / 2)
 
@@ -59,12 +59,13 @@ def from_eulerian_strain(v0, f):
 @jit(UniTuple(float64[:], 2)(float64[:], int64, float64), nopython=True)
 def interpolate_volumes(in_volumes, out_volumes_num, ratio):
     """
-    Interpolate volumes on input, with *ratio* given.
-    For Eulerian strain, the larger the strain, the smaller the volume. So large volume corresponds to small strain.
+    Interpolate volumes on input volumes *in_volumes*, with *ratio* given.
+    For Eulerian strain, the larger the strain, the smaller the volume.
+    So larger volume corresponds to smaller strain.
 
-    :param in_volumes: The input sparse 1D array of volumes.
+    :param in_volumes: An input vector of volumes.
     :param out_volumes_num: Number of output volumes. It should be larger than the number of input volumes.
-    :param ratio: The ratio of the largest volume used in fitting W.R.T. the largest input volumes.
+    :param ratio: The ratio of the largest volume used in fitting with respect to the largest input volumes.
     :return: The interpolated strains in a finer grid, and corresponding volumes.
     """
     v_min, v_max = np.min(in_volumes), np.max(in_volumes)

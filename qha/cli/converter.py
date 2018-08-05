@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+.. module cli.converter
+   :platform: Unix, Windows, Mac, Linux
+.. moduleauthor:: Chenxing Luo <chenxing.luo@columbia.edu>
+.. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
+"""
 
 from qha.cli.handler import QHACommandHandler
 from qha.input_maker import FromQEOutput
