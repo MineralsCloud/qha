@@ -13,6 +13,5 @@ API reference
    v2p
    thermodynamics
    tools
-   eos
    settings
    unit_conversion
