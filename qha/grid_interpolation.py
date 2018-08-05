@@ -21,7 +21,7 @@ from qha.unit_conversion import gpa_to_ry_b3
 __all__ = [
     'calculate_eulerian_strain',
     'from_eulerian_strain',
-    'VolumesExpander',
+    'VolumeExpander',
     'FinerGrid'
 ]
 
@@ -59,7 +59,7 @@ def from_eulerian_strain(v0, fs):
     return v0 * (2 * fs + 1) ** (-3 / 2)
 
 
-class VolumesExpander:
+class VolumeExpander:
     """
     Interpolate volumes on input volumes *in_volumes*, with *ratio* given.
     For Eulerian strain, the larger the strain, the smaller the volume.
@@ -152,7 +152,7 @@ class VolumesExpander:
         class is created, unless user is clear what is being done.
         """
         v_min, v_max = np.min(self._in_volumes), np.max(self._in_volumes)
-        # :math:``r = v_upper / v_max = v_min / v_lower``
+        # r = v_upper / v_max = v_min / v_lower
         v_lower, v_upper = v_min / self._ratio, v_max * self._ratio
         # The *v_max* is a reference value here.
         s_upper, s_lower = calculate_eulerian_strain(v_max, v_lower), calculate_eulerian_strain(v_max, v_upper)
@@ -162,18 +162,23 @@ class VolumesExpander:
 
 class FinerGrid:
     """
-    A class that will do the Birch--Murnaghan finite-strain EoS fitting,
-    and evaluate the fitted function on a denser volume grid.
+    A class that will do the Birch--Murnaghan finite-strain equation of state fitting,
+    moreover, evaluate the free energies on the denser volume vector.
 
     :param desired_p_min: The desired minimum pressure to calculate for further steps.
-    :param nv: The number of volumes on a denser grid.
-    :param order: The order of the Birch--Murnaghan finite-strain EoS fitting.
+    :param dense_volumes_amount: The number of volumes on a denser grid.
+    :param order: The order of the Birch--Murnaghan finite-strain equation of state fitting.
     """
 
-    def __init__(self, desired_p_min: float, nv: int, order: Optional[int] = 3):
-        self.p_desire = float(desired_p_min)
-        self.dense_volumes_amount = int(nv)
+    def __init__(self, desired_p_min: float, dense_volumes_amount: int, order: Optional[int] = 3):
+        self.desired_p_min = float(desired_p_min)
+        self.dense_volumes_amount = int(dense_volumes_amount)
         self.option = int(order)
+        self._ratio = None
+
+    @property
+    def ratio(self) -> float:
+        return self._ratio
 
     def approach_to_best_ratio(self, volumes: Vector, free_energies: Vector, initial_ratio: float) -> float:
         """
@@ -184,13 +189,13 @@ class FinerGrid:
         :param initial_ratio: Initial ratio, a guess value, which can be set to a very large number.
         :return: The suitable `ratio` for further calculation.
         """
-        vr = VolumesExpander(volumes, self.dense_volumes_amount, initial_ratio)
+        vr = VolumeExpander(volumes, self.dense_volumes_amount, initial_ratio)
         vr.interpolate_volumes()
         strains, finer_volumes = vr.strains, vr.out_volumes
         eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
         _, f_v_tmax = polynomial_least_square_fitting(eulerian_strain, free_energies, strains, self.option)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
-        p_desire = gpa_to_ry_b3(self.p_desire)
+        p_desire = gpa_to_ry_b3(self.desired_p_min)
         # Find the index of the first pressure value that slightly smaller than p_desire.
         idx = np.argmin(p_v_tmax < p_desire)
         final_ratio = finer_volumes[idx] / max(volumes)
@@ -212,13 +217,16 @@ class FinerGrid:
         else:
             new_ratio = self.approach_to_best_ratio(volumes, free_energies[-1, :], 1.45)
             if new_ratio < 1.0:
-                # if the new_ratio is smaller than 1.0, which means the volumes calculated is large enough,
+                # If the ``new_ratio`` is smaller than 1.0, which means the volumes calculated is large enough,
                 # there is no need to expand the volumes.
                 new_ratio = 1.0
 
+        self._ratio = new_ratio
+
         eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
-        vr = VolumesExpander(volumes, self.dense_volumes_amount, new_ratio)
-        vr.interpolate_volumes()
-        strains, finer_volumes = vr.strains, vr.out_volumes
-        f_tv_bfm = birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energies, strains, self.option)
-        return finer_volumes, f_tv_bfm, new_ratio
+        vr = VolumeExpander(in_volumes=volumes, out_volumes_num=self.dense_volumes_amount, ratio=new_ratio)
+        vr.interpolate_volumes()  # As mentioned in ``VolumeExpander`` doc, call this method immediately.
+        strains, dense_volumes = vr.strains, vr.out_volumes
+        dense_free_energies = birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energies, strains,
+                                                                    self.option)
+        return dense_volumes, dense_free_energies, new_ratio
