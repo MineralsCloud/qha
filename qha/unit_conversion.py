@@ -9,7 +9,7 @@
 from numba import float64, vectorize
 from scipy.constants import physical_constants, electron_volt, angstrom, Avogadro
 
-from qha.settings import DEFAULT_SETTING
+from qha.settings import DEFAULT_SETTINGS
 
 # ===================== What can be exported? =====================
 __all__ = [
@@ -68,7 +68,7 @@ EV_K = physical_constants['electron volt-kelvin relationship'][0]
 RY_J = physical_constants['Rydberg constant times hc in J'][0]
 
 # ===================== Settings =====================
-_target = DEFAULT_SETTING['target']
+_target = DEFAULT_SETTINGS['target']
 
 
 # ===================== Functions =====================
@@ -76,7 +76,7 @@ _target = DEFAULT_SETTING['target']
 def j_to_ev(value):
     """
     The *value* in unit joule to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -87,7 +87,7 @@ def j_to_ev(value):
 def ev_to_j(value):
     """
     The *value* in unit electronvolt to joule.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -98,7 +98,7 @@ def ev_to_j(value):
 def gpa_to_megabar(value):
     """
     The *value* in unit gigapascal to megabar.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -109,7 +109,7 @@ def gpa_to_megabar(value):
 def megabar_to_gpa(value):
     """
     The *value* in unit megabar to gigapascal.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -131,7 +131,7 @@ def b3_to_a3(value):
 def a3_to_b3(value):
     """
     The *value* in unit cubic angstrom to what in cubic bohr radius.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -142,7 +142,7 @@ def a3_to_b3(value):
 def eh_to_ev(value):
     """
     The *value* in unit hartree to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -153,7 +153,7 @@ def eh_to_ev(value):
 def ev_to_eh(value):
     """
     The *value* in unit electronvolt to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -164,7 +164,7 @@ def ev_to_eh(value):
 def ry_to_ev(value):
     """
     The *value* in unit rydberg to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -175,7 +175,7 @@ def ry_to_ev(value):
 def ev_to_ry(value):
     """
     The *value* in unit electronvolt to rydberg.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -186,7 +186,7 @@ def ev_to_ry(value):
 def j_to_eh(value):
     """
     The *value* in unit joule to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -197,7 +197,7 @@ def j_to_eh(value):
 def eh_to_j(value):
     """
     The *value* in unit hartree to joule.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -208,7 +208,7 @@ def eh_to_j(value):
 def eh_to_hz(value):
     """
     The *value* in unit hartree to hertz.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -219,7 +219,7 @@ def eh_to_hz(value):
 def hz_to_eh(value):
     """
     The *value* in unit hertz to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -230,7 +230,7 @@ def hz_to_eh(value):
 def eh_to_k(value):
     """
     The *value* in unit hartree to kelvin.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -241,7 +241,7 @@ def eh_to_k(value):
 def k_to_eh(value):
     """
     The *value* in unit kelvin to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -252,7 +252,7 @@ def k_to_eh(value):
 def eh_to_m_inverse(value):
     """
     The *value* in unit hartree to :math:`\\text{m}^{-1}`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -263,7 +263,7 @@ def eh_to_m_inverse(value):
 def m_inverse_to_eh(value):
     """
     The *value* in unit :math:`\\text{m}^{-1}` to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -274,7 +274,7 @@ def m_inverse_to_eh(value):
 def eh_to_cm_inverse(value):
     """
     The *value* in unit hartree to :math:`\\text{cm}^{-1}`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -285,7 +285,7 @@ def eh_to_cm_inverse(value):
 def cm_inverse_to_eh(value):
     """
     The *value* in unit :math:`\\text{cm}^{-1}` to hartree.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -296,7 +296,7 @@ def cm_inverse_to_eh(value):
 def ev_to_m_inverse(value):
     """
     The *value* in unit electronvolt to :math:`\\text{m}^{-1}`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -307,7 +307,7 @@ def ev_to_m_inverse(value):
 def m_inverse_to_ev(value):
     """
     The *value* in unit :math:`\\text{m}^{-1}` to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -318,7 +318,7 @@ def m_inverse_to_ev(value):
 def ev_to_cm_inverse(value):
     """
     The *value* in unit electronvolt to :math:`\\text{cm}^{-1}`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -329,7 +329,7 @@ def ev_to_cm_inverse(value):
 def cm_inverse_to_ev(value):
     """
     The *value* in unit :math:`\\text{cm}^{-1}` to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -340,7 +340,7 @@ def cm_inverse_to_ev(value):
 def ev_to_k(value):
     """
     The *value* in unit electronvolt to kelvin.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -351,7 +351,7 @@ def ev_to_k(value):
 def k_to_ev(value):
     """
     The *value* in unit kelvin to electronvolt.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -362,7 +362,7 @@ def k_to_ev(value):
 def ry_to_j(value):
     """
     The *value* in unit rydberg to joule.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -373,9 +373,9 @@ def ry_to_j(value):
 def j_to_ry(value):
     """
     The *value* in unit joule to rydberg.
-    
+
     :param value: The value to be converted.
-    :return: The converted value. 
+    :return: The converted value.
     """
     return value / RY_J
 
@@ -384,7 +384,7 @@ def j_to_ry(value):
 def gpa_to_ev_a3(value):
     """
     The *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -395,7 +395,7 @@ def gpa_to_ev_a3(value):
 def ev_a3_to_gpa(value):
     """
     The *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }` to gigapascal.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -406,7 +406,7 @@ def ev_a3_to_gpa(value):
 def gpa_to_ev_b3(value):
     """
     The *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -417,7 +417,7 @@ def gpa_to_ev_b3(value):
 def ev_b3_to_gpa(value):
     """
     The *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }` to gigapascal.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -428,7 +428,7 @@ def ev_b3_to_gpa(value):
 def gpa_to_ry_b3(value):
     """
     The *value* in unit gigapascal to :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -439,7 +439,7 @@ def gpa_to_ry_b3(value):
 def ry_b3_to_gpa(value):
     """
     The *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }` to gigapascal.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -450,7 +450,7 @@ def ry_b3_to_gpa(value):
 def gpa_to_ha_b3(value):
     """
     The *value* in unit gigapascal to :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }`.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
@@ -461,7 +461,7 @@ def gpa_to_ha_b3(value):
 def ha_b3_to_gpa(value):
     """
     The *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }` to gigapascal.
-    
+
     :param value: The value to be converted.
     :return: The converted value.
     """
