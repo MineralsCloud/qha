@@ -30,12 +30,13 @@ HBAR = {'ha': 100 / pc['electron volt-inverse meter relationship'][0] / pc['Hart
 @vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
 def ho_free_energy(temperature, frequency):
     """
-    Helmholtz free energy for a single harmonic oscillator.
+    Calculate Helmholtz free energy of a single harmonic oscillator at a specific temperature.
+    This is a vectorized function so the argument *frequency* can be an array.
 
-    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If *omega* is less than or equal to
-        `0`, just return `0` as its free energy.
-    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is also OK.
-    :return: Helmholtz free energy for the harmonic oscillator, in unit 'electron volt'.
+    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is allowed.
+    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If the *frequency*
+        is less than or equal to :math:`0`, directly return ``0`` as its free energy.
+    :return: Helmholtz free energy of the harmonic oscillator, whose unit depends on user's settings.
     """
     if frequency <= 0:  # Contribution from Gamma point's acoustic frequencies is zero.
         return 0
@@ -48,12 +49,13 @@ def ho_free_energy(temperature, frequency):
 @vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
 def subsystem_partition_function(temperature, frequency):
     """
-    Partition function for one oscillator.
+    Calculate the subsystem partition function of a single harmonic oscillator at a specific temperature.
+    This is a vectorized function so the argument *frequency* can be an array.
 
-    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If *omega* is less than or equal to
-        `0`, just return `1` as its subsystem_partition_function.
-    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is also OK.
-    :return: Partition function for the oscillator.
+    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is allowed.
+    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If the *frequency*
+        is less than or equal to :math:`0`, directly return ``1`` as its subsystem partition function value.
+    :return: The subsystem partition function of the harmonic oscillator.
     """
     if frequency <= 0:
         return 1
@@ -65,12 +67,13 @@ def subsystem_partition_function(temperature, frequency):
 @vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
 def log_subsystem_partition_function(temperature, frequency):
     """
-    A natural logarithm of ``subsystem_partition_function``.
+    Calculate the natural logarithm of the subsystem partition function of a single harmonic oscillator
+    at a specific temperature. This is a vectorized function so the argument *frequency* can be an array.
 
-    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is also OK.
-    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If *omega* is less than or equal to
-        `0`, just return `1` as its subsystem_partition_function.
-    :return: Natural logarithm of partition function for the oscillator.
+    :param temperature: The temperature, in unit 'Kelvin'. Zero-temperature is allowed.
+    :param frequency: The frequency of the harmonic oscillator, in unit 'per cm'. If the *frequency*
+        is less than or equal to :math:`0`, directly return ``0`` as a result.
+    :return: Natural logarithm of the subsystem partition function of the oscillator.
     """
     if frequency <= 0:
         return 0

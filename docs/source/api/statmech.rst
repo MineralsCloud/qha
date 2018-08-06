@@ -6,5 +6,7 @@ This module is used for calculating various thermodynamic properties using Helmh
 .. automodule:: qha
 
 .. automodule:: qha.statmech
-   :members:
-   :undoc-members:
+
+   .. autofunction:: ho_free_energy(temperature, frequency)
+   .. autofunction:: subsystem_partition_function(temperature, frequency)
+   .. autofunction:: log_subsystem_partition_function(temperature, frequency)
