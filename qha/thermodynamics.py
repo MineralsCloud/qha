@@ -30,11 +30,11 @@ __all__ = [
 
 def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
     """
-    Derivative of :math:`\\frac{ df(x) }{ dx }`.
+    Calculate the derivative of :math:`f(x)`, i.e., :math:`\\frac{ df(x) }{ dx }`.
 
-    :param xs: 1D vector, of length nx.
-    :param fs: 2D matrix, of shape (nx, _).
-    :return: 2D matrix, of shape (nx, _).
+    :param xs: 1D vector, with length :math:`N_x`.
+    :param fs: 2D matrix, with shape (nx, _).
+    :return: 2D matrix, with shape (nx, _).
     """
     if xs.ndim > 1 or fs.ndim < 2:
         raise ValueError('*xs* should be one-dimensional array and *ys* should be two-dimensional array!')
