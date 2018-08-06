@@ -14,7 +14,7 @@ from qha.statmech import ho_free_energy
 from qha.type_aliases import Scalar, Vector, Matrix, Array3D
 
 # ===================== What can be exported? =====================
-__all__ = ['ho_free_energy', 'free_energy', 'HOFreeEnergySampler']
+__all__ = ['free_energy', 'HOFreeEnergySampler']
 
 
 @jit(float64[:](float64, float64[:], float64[:], float64[:, :, :], boolean), cache=True)
