@@ -23,15 +23,15 @@ def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector,
     """
     The total free energy at a certain temperature.
 
-    :param temperature: A ``float`` that represents the temperature at which  the total free energy is calculated. This
+    :param temperature: A ``float`` that represents the temperature at which the total free energy is calculated. This
         value is in unit 'Kelvin'.
-    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in doing Brillouin zone
-        sampling. The can be non-normalized, since normalized will be done in the function.
+    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in Brillouin zone
+        sampling. This vector can be non-normalized since a normalization will be done internally.
     :param static_energies: An :math:`n \\times 1` vector that represents the static energy of the system with
-        :math:`n` different volumes. This should be the same unit as user defined in ``settings.yaml``.
+        :math:`n` different volumes. This should be the same unit as user-defined in the "settings" file.
     :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequency read from file.
-    :param static_only: Just return the static energies, which is got from *static_energies* parameter. This is useful
-        when user just wants to see static energies result while keep all other functions the same.
+    :param static_only: If ``True``, directly return the static energies, i.e., the *static_energies* parameter itself.
+        This is useful when the user just wants to see static result while keeping all other functions unchanged.
     :return: An :math:`n \\times 1` vector that represents the total free energy of the system with :math:`n` different
         volumes. The default unit is the same as in function ``ho_free_energy``.
     """
@@ -48,21 +48,20 @@ def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector,
 
 class HOFreeEnergySampler:
     """
-    A harmonic oscillator energy sampler. The differences between ``free_energy`` and ``HOFreeEnergySampler`` are
+    A harmonic oscillator free energy sampler. The differences between ``free_energy`` and ``HOFreeEnergySampler`` are
 
-    - ``HOFreeEnergySampler`` provides you with several ways to compute free energies on different q-point, band or
-        volume, which could be used to check the correctness of the data.
-    - ``HOFreeEnergySampler`` can make calculation lazy, so we can apply it onto a grid, rather than directly
-            calculates the values immediately.
+    - ``HOFreeEnergySampler`` provides several ways to compute free energies on different q-points, bands or
+        volumes, which could be used to check the correctness of the data.
+    - ``HOFreeEnergySampler`` can make calculation lazy, rather than directly calculates the values immediately.
     - ``free_energy`` is usually enough for computing the final free energy results. ``HOFreeEnergySampler``
-      only calculates its vibrational part, static energies is not counted.
+      only calculates its vibrational part, static energies are not taken into account.
 
-    :param temperature: A ``float`` that represents the temperature at which  the total free energy is calculated. This
+    :param temperature: A ``float`` that represents the temperature at which the total free energy is calculated. This
         value is in unit 'Kelvin'.
-    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in doing Brillouin zone
-        sampling. The can be non-normalized, since normalized will be done in the class.
-    :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequencies read from file,
-        usually may be in unit :math:`\text{cm}^{-1}`.
+    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in Brillouin zone
+        sampling. This vector can be non-normalized since a normalization will be done internally.
+    :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequencies read from a file,
+        usually in unit :math:`\\text{cm}^{-1}`.
     """
 
     def __init__(self, temperature: float, q_weights: Vector, frequencies: Array3D):
@@ -76,7 +75,7 @@ class HOFreeEnergySampler:
 
     def on_q_point(self, i: int) -> Matrix:  # E1(i,m)
         """
-        Used for checking.
+        Sample free energy on the :math:`i` th q-point.
 
         :param i: An integer labeling :math:`i` th q-point.
         :return: The accumulated free energy on the :math:`i` th q-point.
@@ -85,7 +84,7 @@ class HOFreeEnergySampler:
 
     def on_band(self, i: int) -> Matrix:
         """
-        Used for checking.
+        Sample free energy on the :math:`i` th band.
 
         :param i: An integer labeling :math:`i` th band.
         :return: The accumulated free energy on the :math:`i`th q-point.
@@ -94,7 +93,7 @@ class HOFreeEnergySampler:
 
     def on_volume(self, i: int) -> Scalar:
         """
-        Sample free energies on :math:`i` th volume.
+        Sample free energy on the :math:`i` th volume.
 
         :param i: An integer labeling :math:`i` th volume.
         :return: The accumulated free energy on the :math:`i` th volume.
@@ -106,8 +105,8 @@ class HOFreeEnergySampler:
         """
         Sample free energies on every volume.
 
-        :return: A vector with length equals to the number of volumes. Each element is the free energy of
-            corresponding volume.
+        :return: A vector with length equals the number of volumes. Each element is the free energy of
+            one volume.
         """
         # First calculate free energies on a 3D array, then sum along the third axis (bands),
         # at last contract weights and free energies on all q-points.
