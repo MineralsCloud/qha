@@ -232,7 +232,7 @@ class Calculator:
 
     @LazyProperty
     def p_tv_au(self):
-        return pressure_tv(self.finer_volumes_bohr3, self.f_tv_ry)
+        return pressures(self.finer_volumes_bohr3, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
@@ -304,7 +304,7 @@ class Calculator:
 
     @LazyProperty
     def v_tp_bohr3(self):
-        return volume_tp(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
+        return volumes(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
 
     @LazyProperty
     def v_tp_ang3(self):
