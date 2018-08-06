@@ -75,7 +75,7 @@ _target = DEFAULT_SETTINGS['target']
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_ev(value):
     """
-    The *value* in unit joule to electronvolt.
+    Convert the *value* in unit joule to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -86,7 +86,7 @@ def j_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_j(value):
     """
-    The *value* in unit electronvolt to joule.
+    Convert the *value* in unit electronvolt to joule.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -97,7 +97,7 @@ def ev_to_j(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_megabar(value):
     """
-    The *value* in unit gigapascal to megabar.
+    Convert the *value* in unit gigapascal to megabar.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -108,7 +108,7 @@ def gpa_to_megabar(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def megabar_to_gpa(value):
     """
-    The *value* in unit megabar to gigapascal.
+    Convert the *value* in unit megabar to gigapascal.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -119,7 +119,7 @@ def megabar_to_gpa(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def b3_to_a3(value):
     """
-    The *value* in unit cubic bohr radius to what in cubic angstrom.
+    Convert the *value* in unit cubic bohr radius to what in cubic angstrom.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -130,7 +130,7 @@ def b3_to_a3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def a3_to_b3(value):
     """
-    The *value* in unit cubic angstrom to what in cubic bohr radius.
+    Convert the *value* in unit cubic angstrom to what in cubic bohr radius.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -141,7 +141,7 @@ def a3_to_b3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_ev(value):
     """
-    The *value* in unit hartree to electronvolt.
+    Convert the *value* in unit hartree to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -152,7 +152,7 @@ def eh_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_eh(value):
     """
-    The *value* in unit electronvolt to hartree.
+    Convert the *value* in unit electronvolt to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -163,7 +163,7 @@ def ev_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_ev(value):
     """
-    The *value* in unit rydberg to electronvolt.
+    Convert the *value* in unit rydberg to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -174,7 +174,7 @@ def ry_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_ry(value):
     """
-    The *value* in unit electronvolt to rydberg.
+    Convert the *value* in unit electronvolt to rydberg.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -185,7 +185,7 @@ def ev_to_ry(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_eh(value):
     """
-    The *value* in unit joule to hartree.
+    Convert the *value* in unit joule to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -196,7 +196,7 @@ def j_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_j(value):
     """
-    The *value* in unit hartree to joule.
+    Convert the *value* in unit hartree to joule.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -207,7 +207,7 @@ def eh_to_j(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_hz(value):
     """
-    The *value* in unit hartree to hertz.
+    Convert the *value* in unit hartree to hertz.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -218,7 +218,7 @@ def eh_to_hz(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def hz_to_eh(value):
     """
-    The *value* in unit hertz to hartree.
+    Convert the *value* in unit hertz to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -229,7 +229,7 @@ def hz_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_k(value):
     """
-    The *value* in unit hartree to kelvin.
+    Convert the *value* in unit hartree to kelvin.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -240,7 +240,7 @@ def eh_to_k(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def k_to_eh(value):
     """
-    The *value* in unit kelvin to hartree.
+    Convert the *value* in unit kelvin to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -251,7 +251,7 @@ def k_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_m_inverse(value):
     """
-    The *value* in unit hartree to :math:`\\text{m}^{-1}`.
+    Convert the *value* in unit hartree to :math:`\\text{m}^{-1}`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -262,7 +262,7 @@ def eh_to_m_inverse(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def m_inverse_to_eh(value):
     """
-    The *value* in unit :math:`\\text{m}^{-1}` to hartree.
+    Convert the *value* in unit :math:`\\text{m}^{-1}` to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -273,7 +273,7 @@ def m_inverse_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_cm_inverse(value):
     """
-    The *value* in unit hartree to :math:`\\text{cm}^{-1}`.
+    Convert the *value* in unit hartree to :math:`\\text{cm}^{-1}`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -284,7 +284,7 @@ def eh_to_cm_inverse(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def cm_inverse_to_eh(value):
     """
-    The *value* in unit :math:`\\text{cm}^{-1}` to hartree.
+    Convert the *value* in unit :math:`\\text{cm}^{-1}` to hartree.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -295,7 +295,7 @@ def cm_inverse_to_eh(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_m_inverse(value):
     """
-    The *value* in unit electronvolt to :math:`\\text{m}^{-1}`.
+    Convert the *value* in unit electronvolt to :math:`\\text{m}^{-1}`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -306,7 +306,7 @@ def ev_to_m_inverse(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def m_inverse_to_ev(value):
     """
-    The *value* in unit :math:`\\text{m}^{-1}` to electronvolt.
+    Convert the *value* in unit :math:`\\text{m}^{-1}` to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -317,7 +317,7 @@ def m_inverse_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_cm_inverse(value):
     """
-    The *value* in unit electronvolt to :math:`\\text{cm}^{-1}`.
+    Convert the *value* in unit electronvolt to :math:`\\text{cm}^{-1}`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -328,7 +328,7 @@ def ev_to_cm_inverse(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def cm_inverse_to_ev(value):
     """
-    The *value* in unit :math:`\\text{cm}^{-1}` to electronvolt.
+    Convert the *value* in unit :math:`\\text{cm}^{-1}` to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -339,7 +339,7 @@ def cm_inverse_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_k(value):
     """
-    The *value* in unit electronvolt to kelvin.
+    Convert the *value* in unit electronvolt to kelvin.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -350,7 +350,7 @@ def ev_to_k(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def k_to_ev(value):
     """
-    The *value* in unit kelvin to electronvolt.
+    Convert the *value* in unit kelvin to electronvolt.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -361,7 +361,7 @@ def k_to_ev(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_j(value):
     """
-    The *value* in unit rydberg to joule.
+    Convert the *value* in unit rydberg to joule.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -372,7 +372,7 @@ def ry_to_j(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_ry(value):
     """
-    The *value* in unit joule to rydberg.
+    Convert the *value* in unit joule to rydberg.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -383,7 +383,7 @@ def j_to_ry(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ev_a3(value):
     """
-    The *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }`.
+    Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -394,7 +394,7 @@ def gpa_to_ev_a3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_a3_to_gpa(value):
     """
-    The *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }` to gigapascal.
+    Convert the *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }` to gigapascal.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -405,7 +405,7 @@ def ev_a3_to_gpa(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ev_b3(value):
     """
-    The *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }`.
+    Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -416,7 +416,7 @@ def gpa_to_ev_b3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_b3_to_gpa(value):
     """
-    The *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }` to gigapascal.
+    Convert the *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }` to gigapascal.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -427,7 +427,7 @@ def ev_b3_to_gpa(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ry_b3(value):
     """
-    The *value* in unit gigapascal to :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }`.
+    Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -438,7 +438,7 @@ def gpa_to_ry_b3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_b3_to_gpa(value):
     """
-    The *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }` to gigapascal.
+    Convert the *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }` to gigapascal.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -449,7 +449,7 @@ def ry_b3_to_gpa(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ha_b3(value):
     """
-    The *value* in unit gigapascal to :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }`.
+    Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }`.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -460,7 +460,7 @@ def gpa_to_ha_b3(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ha_b3_to_gpa(value):
     """
-    The *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }` to gigapascal.
+    Convert the *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }` to gigapascal.
 
     :param value: The value to be converted.
     :return: The converted value.
@@ -472,7 +472,7 @@ def ha_b3_to_gpa(value):
 def ry_b_to_ev_a(value):
     """
     The atomic force.
-    The *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius} }` to
+    Convert the *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius} }` to
     :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom} }`.
 
     :param value: The value to be converted.
@@ -485,7 +485,7 @@ def ry_b_to_ev_a(value):
 def ha_b_to_ev_a(value):
     """
     The atomic force.
-    The *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius} }` to
+    Convert the *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius} }` to
     :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom} }`.
 
     :param value: The value to be converted.
@@ -497,7 +497,7 @@ def ha_b_to_ev_a(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_kj_mol(value):
     """
-    The *value* is in unit Rydberg, the converted value is in unit
+    Convert the *value* is in unit Rydberg, the converted value is in unit
     :math:`\\frac{ \\text{k J} }{ \\text{mol} }`.
 
     :param value: The value to be converted.
@@ -509,7 +509,7 @@ def ry_to_kj_mol(value):
 @vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_j_mol(value):
     """
-    The *value* is in unit Rydberg, the converted value is in unit
+    Convert the *value* is in unit Rydberg, the converted value is in unit
     :math:`\\frac{ \\text{k J} }{ \\text{mol} }`.
 
     :param value: The value to be converted.
