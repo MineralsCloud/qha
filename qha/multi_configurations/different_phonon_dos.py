@@ -36,23 +36,23 @@ class PartitionFunction:
 
        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
 
-    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for :math:`j` th
-    configuration.
+    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for the
+    :math:`j` th configuration.
 
-    :param temperature: The temperature at which partition function is calculated.
-    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
-        Should be all positive integers.
+    :param temperature: The temperature at which the partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the
+        calculation. They should all be positive integers.
     :param q_weights: The weights of all q-points that are sampled, can be a 2D matrix so each configuration can have
-        a little bit different q-weights, but the number of q-points of each configuration must be the same.
+        a little bit different q-point weights, but the number of q-points of each configuration must be the same.
     :param static_energies: The static energy of each configuration of each volume.
-    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each
+    :param volumes: A matrix of volumes of each configuration, should have the same values for each
         configuration.
     :param frequencies: A 4D array that specifies the frequency on each configuration, volume, q-point and mode.
-    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,
-        by default is ``False``.
+    :param static_only: Whether the calculation only takes static contribution and does not consider
+        the vibrational contribution, by default, is ``False``.
     :param precision: The precision of a big float number to represent the partition function since it is a very large
-        number, by default is ``500``.
-    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.
+        value, by default, is ``500``.
+    :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
@@ -87,10 +87,10 @@ class PartitionFunction:
     @LazyProperty
     def unaligned_free_energies_for_each_configuration(self):
         """
-        If your input free energy is not aligned for each configuration, at first just calculate the "raw"
+        If the input free energy is not aligned for each configuration, first just calculate the "raw"
         free energy on each volume and each configuration.
 
-        :return: A matrix of raw free energy of each configuration of each volume.
+        :return: A matrix, the "raw" free energy of each configuration of each volume.
         """
         configurations_amount, _ = self.volumes.shape
         return np.array([free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
@@ -99,9 +99,9 @@ class PartitionFunction:
     @LazyProperty
     def aligned_free_energies_for_each_configuration(self):
         """
-        Then do a fitting to align all these free energy.
+        Then do a fitting to align all these free energies.
 
-        :return: A matrix of aligned free energy of each configuration of each volume.
+        :return: A matrix, the aligned free energy of each configuration of each volume.
         """
         return calibrate_energy_on_reference(self.volumes, self.unaligned_free_energies_for_each_configuration,
                                              self.order)
@@ -115,13 +115,12 @@ class PartitionFunction:
 
            Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
 
-        :return: A matrix of partition function of each configuration of each volume.
+        :return: A matrix, the partition function of each configuration of each volume.
         """
         try:
             import bigfloat
         except ImportError:
-            raise ImportError(
-                "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
             return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
@@ -130,19 +129,18 @@ class PartitionFunction:
 
     def get_free_energies(self):
         """
-        The free energy calculated from partition function :math:`Z_{\\text{all configs}}(T, V)` by
+        The free energy calculated from the partition function :math:`Z_{\\text{all configs}}(T, V)` by
 
         .. math::
 
            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
 
-        :return: The free energy on a temperature-volume mesh.
+        :return: The free energy on a temperature-volume grid.
         """
         try:
             import bigfloat
         except ImportError:
-            raise ImportError(
-                "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
             log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)

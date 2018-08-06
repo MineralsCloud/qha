@@ -152,12 +152,12 @@ class FreeEnergy:
         calculation. They should all be positive integers.
     :param q_weights: The weights of all q-points that are sampled, should be a vector since all configurations should
         have the same q-point weights.
-    :param static_energies: The static energies of each configuration of each volume.
-    :param volumes: A matrix of volumes of each configurations, should have the same number for each
+    :param static_energies: The static energy of each configuration of each volume.
+    :param volumes: A matrix of volumes of each configurations, should have the same values for each
         configuration.
     :param frequencies: It is a 3D array that specifies the frequency on each volume, q-point and mode.
         It is not 4D since we have all configurations sharing the same phonon density of states.
-    :param static_only: If the calculation only takes static contribution and does not consider
+    :param static_only: Whether the calculation only takes static contribution and does not consider
         the vibrational contribution, by default, is ``False``.
     :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.
     """
@@ -192,7 +192,7 @@ class FreeEnergy:
         If the input static energies are not aligned for each configuration, then do a
         fitting to align all static energies.
 
-        :return: A matrix of aligned static energies of each configuration of each volume.
+        :return: A matrix of aligned static energy of each configuration of each volume.
         """
         return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
 
