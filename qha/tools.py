@@ -224,7 +224,7 @@ def is_monotonic_increasing(array: Vector) -> bool:
         False
 
     :param array: The array to be evaluated.
-    :return: ``True`` if *array* is monotonic increasing, otherwise ``False``.
+    :return: ``True`` if the argument *array* is monotonic increasing, otherwise ``False``.
     """
     dx = np.diff(array)
     return np.all(dx >= 0)
