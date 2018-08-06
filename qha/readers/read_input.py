@@ -23,12 +23,16 @@ __all__ = ['read_input']
 
 def read_input(inp: Union[str, pathlib.PurePath]) -> Tuple[int, Vector, Vector, Array3D, Vector]:
     """
-    Can be a string directing to a file, or the file's content directly.
+    Read the standard "input" file for ``qha``.
 
-    :param inp: The filename or file's path.
-    :return: The input data. They are the number of formula unit in a cell,
-        number of volumes in *inp*, static energies of each volume, frequencies of each volume of each q-point and mode,
-        an array of weights of each q-point, respectively.
+    :param inp: The filename or its path.
+    :return: The input data. They are
+
+        - the number of formula unit in a unit cell,
+        - the number of volumes in *inp*,
+        - the static energies of each volume,
+        - a 3D array, i.e., the frequencies of each volume of each q-point of each mode, and
+        - a vector of weights of each q-point, respectively.
     """
     text_stream = TextStream(pathlib.Path(inp))
     gen: Iterator[str] = text_stream.generator_telling_position()
