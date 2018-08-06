@@ -7,10 +7,10 @@ Run calculation command: ``qha run``
 How to write computational settings file
 ========================================
 
-First you need to prepare a standard input file and a YAML file specifying
-your computational settings, which is referred to ``settings.yaml`` here.
+First one needs to prepare a standard input file and a YAML file specifying
+the computational settings, which is referred to ``settings.yaml`` here.
 Please refer to `this website <https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html>`_
-if you are not familiar with YAML syntax.
+if not familiar with YAML syntax.
 
 Here are the keys that can be recognized in ``settings.yaml``:
 
@@ -18,33 +18,33 @@ Here are the keys that can be recognized in ``settings.yaml``:
 * ``NT``: Number of temperatures on the grid
 * ``DT``: The interval between two nearest temperatures on the grid
 * ``NTV``: Number of volumes (or equivalently, pressure) on the gird
-* ``DELTA_P``: The interval between two pressures on the grid, default value is :math:`0.1` GPa
-* ``DELTA_P_SAMPLE``: Pressure-sampling interval, used for output, default value is :math:`1` GPa
+* ``DELTA_P``: The interval between two pressures on the grid, the default value is :math:`0.1` GPa
+* ``DELTA_P_SAMPLE``: Pressure-sampling interval, used for output, the default value is :math:`1` GPa
 * ``P_MIN``: Desired minimum pressure to calculate, in GPa
 * ``input``: Name(s) of the input file(s).
 
   * In the single-configuration calculation, only the path of the file is needed,
   * In the multi-configuration calculation, the names of the inputs files and the corresponding configuration degeneracy are given in a `YAML dictionary syntax <https://docs.ansible.com/ansible/latest/plugins/lookup/dict.html>`_.
 
-* ``static_only``: Whether to include vibrational contribution in the calculation. Allowed values are ``True`` (not include) or ``False`` (include, default).
+* ``static_only``: Whether to include the vibrational contribution in the calculation. Allowed values are ``True`` (not include) or ``False`` (include, default).
 * ``order``: Order of Birch–Murnaghan equation of state fitting, can be ``3`` (default), ``4`` or ``5``.
 * ``energy_unit``: Energy unit in the output file can be ``ry`` (default) or ``ev``
-* ``thermodynamic_properties`: Which thermodynamic properties will be calculated by ``qha``. Allowed values are
+* ``thermodynamic_properties``: Which thermodynamic properties will be calculated by ``qha``. Allowed values are
 
-  * ``F``, Helmholtz free energy
-  * ``G``, Gibbs free energy
-  * ``U``, internal energy
-  * ``H``, enthalpy
-  * ``V``, volume
-  * ``Cp``, pressure specific heat capacity
-  * ``Cv``, volumetric specific heat capacity
-  * ``Bt``, isothermal bulk modulus
-  * ``Btp``, derivative of the isothermal bulk modulus with respect to pressure
-  * ``Bs``, adiabatic bulk modulus
-  * ``alpha``, thermal expansion coefficient
-  * ``gamma``, Grüneisen parameter
+  * ``F``: the Helmholtz free energy
+  * ``G``: the Gibbs free energy
+  * ``U``: the internal energy
+  * ``H``: the enthalpy
+  * ``V``: the volume
+  * ``Cp``: the pressure specific heat capacity
+  * ``Cv``: the volumetric specific heat capacity
+  * ``Bt``: the isothermal bulk modulus
+  * ``Btp``: the derivative of the isothermal bulk modulus with respect to pressure
+  * ``Bs``: the adiabatic bulk modulus
+  * ``alpha``: the thermal expansion coefficient
+  * ``gamma``: the Grüneisen parameter
 
-* ``target``: Default value is ``parallel``. 
+* ``target``: The default value is ``parallel``.
   This is a Numba package option. Allowed options are ``cpu`` (used on single-threaded CPU), ``parallel`` (used on multi-core CPU), and ``cuda`` (used on CUDA GPU).
   See its `official documentation <http://numba.pydata.org/numba-doc/0.39.0/reference/jit-compilation.html#numba.vectorize>`_ for help.
 * ``results_folder``: The path to store all calculated values, the default value is ``./results``, which is a directory named `results` in
@@ -62,15 +62,15 @@ The input format is as below:
    :width: 800 px
    :align: center
 
-After you have prepared ``settings.yaml`` and ``input`` in the same directory,
+After one has prepared ``settings.yaml`` and ``input`` in the same directory,
 just open the terminal, redirect to that directory and run::
 
    $ qha run ./settings.yaml
 
 then the results will be generated in the directory specified
 in ``results_folder`` option in ``settings.yaml``.
-If the ``settings.yaml`` is not in the same directory as your input file, you have to explicitly specify the
-path of it on your computer.
+If the ``settings.yaml`` is not in the same directory as the input file, one has to explicitly specify the
+path of it on his/her computer.
 
 
 Output
