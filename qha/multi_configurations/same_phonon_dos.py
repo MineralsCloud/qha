@@ -2,7 +2,6 @@
 """
 .. module same_phonon_dos
    :platform: Unix, Windows, Mac, Linux
-   :synopsis:
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
@@ -34,13 +33,13 @@ class PartitionFunction:
 
     .. math::
 
-        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}
-        \\bigg\{
-        g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)
-        \prod_{\mathbf{q}s} \\bigg(
-        \\frac{\exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big)}
-        \\bigg)
-        \\bigg\}.
+       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}
+       \\bigg\{
+       g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)
+       \prod_{\mathbf{q}s} \\bigg(
+       \\frac{\exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big)}
+       \\bigg)
+       \\bigg\}.
 
     :param temperature: The temperature at which partition function is calculated.
     :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
@@ -120,7 +119,7 @@ class PartitionFunction:
 
         .. math::
 
-             F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+           F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
 
         :return: Free energy on the temperature-volume mesh.
         """
@@ -142,11 +141,11 @@ class FreeEnergy:
 
     .. math::
 
-        F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)
-        = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)
-        + \sum_{\mathbf{ q }s} \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
-            + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)
-        \\bigg\}.
+       F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)
+       = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)
+       + \sum_{\mathbf{ q }s} \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
+           + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)
+       \\bigg\}.
 
     :param temperature: The temperature at which partition function is calculated.
     :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.

@@ -2,9 +2,8 @@
 """
 .. module different_phonon_dos
    :platform: Unix, Windows, Mac, Linux
-   :synopsis:
-.. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
+.. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
 from typing import Optional
@@ -35,7 +34,7 @@ class PartitionFunction:
 
     .. math::
 
-        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
+       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
 
     where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for :math:`j` th
     configuration.
@@ -114,7 +113,7 @@ class PartitionFunction:
 
         .. math::
 
-             Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
+           Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
 
         :return: A matrix of partition function of each configuration of each volume.
         """
@@ -135,7 +134,7 @@ class PartitionFunction:
 
         .. math::
 
-            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+           F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
 
         :return: The free energy on a temperature-volume mesh.
         """
