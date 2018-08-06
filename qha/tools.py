@@ -23,7 +23,7 @@ __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 
 
 def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
-    A fourth-order Lagrange polynomial function. Given 4 points for interpolation:
+    A third-order Lagrange polynomial function. Given 4 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
     `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
@@ -56,7 +56,7 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
 
 def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
-    A third-order Lagrange polynomial function. Given 3 points for interpolation:
+    A second-order Lagrange polynomial function. Given 3 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_2, y_2)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
     `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 

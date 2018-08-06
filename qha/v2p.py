@@ -20,7 +20,7 @@ __all__ = ['v2p']
 @numba.jit(nopython=True, parallel=True)
 def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     """
-    A fourth-order Lagrange polynomial function. Given 4 points for interpolation:
+    A third-order Lagrange polynomial function. Given 4 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.
 
     :param x: The x-coordinate of the point to be evaluated.
