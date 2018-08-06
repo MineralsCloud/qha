@@ -18,12 +18,12 @@ __all__ = ['polynomial_least_square_fitting', 'birch_murnaghan_finite_strain_fit
 
 def polynomial_least_square_fitting(x, y, new_x, order: Optional[int] = 3):
     """
-    Free Energy is expanded to the ``order``:math:`^\mathrm{th}` order in strain.
+    Free energy is expanded to the *order*th order in strain.
 
     Check the `Wolfram Mathworld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_
     to find the method of calculating the coefficients.
 
-    :param x: Eulerian strain of calculated volumes (sparse).
+    :param x: The Eulerian strain of calculated volumes (sparse).
     :param y: Free energy of these calculated volumes (sparse).
     :param new_x: Eulerian strain at a greater dense vector.
     :param order: The order chose to fit Birch--Murnaghan EoS, default is ``3``, i.e., third-order Birch--Murnaghan

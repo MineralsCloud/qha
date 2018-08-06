@@ -29,14 +29,15 @@ __all__ = [
 @vectorize([float64(float64, float64)], nopython=True)
 def calculate_eulerian_strain(v0, vs):
     """
-    Calculate Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*, where
+    Calculate the Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*,
+    where
 
     .. math::
 
        f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).
 
     :param v0: The volume set as the reference for the Eulerian strain calculation.
-    :param vs: A volume vector, whose each component will be calculated Eulerian strain with respect to *v0*.
+    :param vs: A volume vector, each item of which will be calculated the Eulerian strain with respect to *v0*.
     :return: A vector of the calculated Eulerian strain.
     """
     return 1 / 2 * ((v0 / vs) ** (2 / 3) - 1)
@@ -62,7 +63,7 @@ def from_eulerian_strain(v0, fs):
 class VolumeExpander:
     """
     Interpolate volumes on input volumes *in_volumes*, with *ratio* given.
-    For Eulerian strain, the larger the strain, the smaller the volume.
+    For the Eulerian strain, the larger the strain, the smaller the volume.
     So larger volume corresponds to smaller strain.
 
     Algorithm:
