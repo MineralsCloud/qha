@@ -28,29 +28,29 @@ K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
 
 class PartitionFunction:
     """
-    A class that represents the partition function of multiple configurations with same phonon density of states.
+    A class that represents the partition function of multiple configurations with the same phonon density of states.
     In mathematics, it is represented as
 
     .. math::
 
-       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}
+       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j}
        \\bigg\{
-       g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)
-       \prod_{\mathbf{q}s} \\bigg(
-       \\frac{\exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big)}
-       \\bigg)
+         \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)
+         \prod_{\mathbf{q}s} \\bigg(
+           \\tfrac{\exp \\big(-\\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ 2 k_B T }\\big)}{1 - \exp \\big(-\\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ k_B T }\\big)}
+         \\bigg)^{w_{\mathbf{ q }}^j}
        \\bigg\}.
 
-    :param temperature: The temperature at which partition function is calculated.
-    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
-        Should be all positive integers.
-    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should
-        have the same q-weights.
-    :param static_energies: The static energy of each configuration of each volume.
-    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point
-        and mode.
+    :param temperature: The temperature at which the partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the
+        calculation. They should all be positive integers.
+    :param q_weights: The weights of all q-points that are sampled, should be a vector since all configurations should
+        have the same q-point weights.
+    :param static_energies: The static energies of each configuration of each volume.
+    :param frequencies: It is a 3D array that specifies the frequency on each volume, q-point and mode.
+        It is not 4D since we have all configurations sharing the same phonon density of states.
     :param precision: The precision of a big float number to represent the partition function since it is a very large
-        number, by default is ``500``.
+        value, by default, is ``500``.
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
@@ -79,9 +79,9 @@ class PartitionFunction:
     @property
     def _static_part(self) -> Vector:
         """
-        Static contribution to the partition function.
+        Calculate the static contribution to the partition function.
 
-        :return: Static contribution on the temperature-volume mesh.
+        :return: The static contribution on the temperature-volume grid.
         """
         try:
             import bigfloat
@@ -96,9 +96,9 @@ class PartitionFunction:
     @property
     def _harmonic_part(self) -> Vector:
         """
-        Harmonic contribution to the partition function.
+        Calculate the harmonic contribution to the partition function.
 
-        :return: Harmonic contribution on the temperature-volume mesh.
+        :return: The harmonic contribution on the temperature-volume grid.
         """
         log_product_modes: Matrix = np.sum(
             log_subsystem_partition_function(self.temperature, self.frequencies), axis=2, dtype=float)
@@ -107,27 +107,26 @@ class PartitionFunction:
     @LazyProperty
     def total(self) -> Vector:
         """
-        Total partition function.
+        Calculate the total partition function.
 
-        :return: Partition function on the temperature-volume mesh.
+        :return: The partition function on the temperature-volume grid.
         """
         return np.multiply(self._static_part, self._harmonic_part)  # (vol, 1), product element-wise
 
     def get_free_energies(self):
         """
-        Give free energy by
+        Give the free energy by
 
         .. math::
 
            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
 
-        :return: Free energy on the temperature-volume mesh.
+        :return: The free energy on the temperature-volume grid.
         """
         try:
             import bigfloat
         except ImportError:
-            raise ImportError(
-                "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
             log_z = np.array([bigfloat.log(d) for d in self.total], dtype=float)
@@ -136,30 +135,31 @@ class PartitionFunction:
 
 class FreeEnergy:
     """
-    A class that represents the free energy of multiple configurations with same phonon density of states.
+    A class that represents the free energy of multiple configurations with the same phonon density of states.
     In mathematics, it is represented as
 
     .. math::
 
        F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)
        = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)
-       + \sum_{\mathbf{ q }s} \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
-           + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)
-       \\bigg\}.
+         + \sum_{\mathbf{ q }s} w_\mathbf{ q }
+             \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
+             + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)
+         \\bigg\}.
 
-    :param temperature: The temperature at which partition function is calculated.
-    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.
-        Should be all positive integers.
-    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should
-        have the same q-weights.
-    :param static_energies: The static energy of each configuration of each volume.
-    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each
+    :param temperature: The temperature at which the partition function is calculated.
+    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the
+        calculation. They should all be positive integers.
+    :param q_weights: The weights of all q-points that are sampled, should be a vector since all configurations should
+        have the same q-point weights.
+    :param static_energies: The static energies of each configuration of each volume.
+    :param volumes: A matrix of volumes of each configurations, should have the same number for each
         configuration.
-    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point
-        and mode.
-    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,
-        by default is ``False``.
-    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.
+    :param frequencies: It is a 3D array that specifies the frequency on each volume, q-point and mode.
+        It is not 4D since we have all configurations sharing the same phonon density of states.
+    :param static_only: If the calculation only takes static contribution and does not consider
+        the vibrational contribution, by default, is ``False``.
+    :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
@@ -189,19 +189,19 @@ class FreeEnergy:
     @LazyProperty
     def aligned_static_energies_for_each_configuration(self):
         """
-        If your input static energy is not aligned for each configuration, then do a
-        fitting to align all these static energy.
+        If the input static energies are not aligned for each configuration, then do a
+        fitting to align all static energies.
 
-        :return: A matrix of aligned static energy of each configuration of each volume.
+        :return: A matrix of aligned static energies of each configuration of each volume.
         """
         return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
 
     @LazyProperty
     def static_part(self) -> Vector:
         """
-        Static contribution to the free energy.
+        Calculate the static contribution to the free energy.
 
-        :return: Static contribution on the temperature-volume mesh.
+        :return: The static contribution on the temperature-volume grid.
         """
         kt: float = K * self.temperature  # k_B T
         inside_exp: Matrix = -self.aligned_static_energies_for_each_configuration.T / kt  # exp( E_n(V) / k_B / T )
@@ -210,9 +210,9 @@ class FreeEnergy:
     @LazyProperty
     def harmonic_part(self) -> Vector:
         """
-        Harmonic contribution to the free energy.
+        Calculate the harmonic contribution to the free energy.
 
-        :return: Harmonic contribution on the temperature-volume mesh.
+        :return: The harmonic contribution on the temperature-volume grid.
         """
         sum_modes = np.sum(ho_free_energy(self.temperature, self.frequencies), axis=2)
         return np.dot(sum_modes, self._scaled_q_weights)
@@ -220,19 +220,19 @@ class FreeEnergy:
     @LazyProperty
     def total(self) -> Vector:
         """
-        Total partition function. Static part plus harmonic part.
+        Calculate the total partition function, which is the static part plus the harmonic part.
 
-        :return: Total free energy on the temperature-volume mesh.
+        :return: Total free energy on the temperature-volume grid.
         """
         return self.static_part + self.harmonic_part
 
     def get_free_energies(self):
         """
-        If you specify ``static_only = True`` in class initialization, then here only static contribution will
-        be returned, this is equivalent to the ``static_part`` property. If not, then this is equivalent to
+        If ``static_only = True`` is specified in class instantiation, then only the static contribution will
+        be counted. Then it is equivalent to the ``static_part`` property. If not, then this is equivalent to
         the ``total`` property.
 
-        :return: Free energy on the temperature-volume mesh.
+        :return: The free energy on the temperature-volume grid.
         """
         if self.static_only:
             return self.static_part
