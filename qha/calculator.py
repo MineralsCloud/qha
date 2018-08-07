@@ -232,7 +232,7 @@ class Calculator:
 
     @LazyProperty
     def p_tv_au(self):
-        return pressures(self.finer_volumes_bohr3, self.f_tv_ry)
+        return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
@@ -304,7 +304,7 @@ class Calculator:
 
     @LazyProperty
     def v_tp_bohr3(self):
-        return volumes(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
+        return volume(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
 
     @LazyProperty
     def v_tp_ang3(self):
@@ -316,7 +316,7 @@ class Calculator:
 
     @LazyProperty
     def cv_tv_au(self):
-        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_ry)
+        return volumetric_heat_capacity(self.temperature_array, self.u_tv_ry)
 
     @LazyProperty
     def cv_tp_au(self):
@@ -340,11 +340,11 @@ class Calculator:
 
     @LazyProperty
     def cp_tp_au(self):
-        return pressure_specific_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
     @LazyProperty
     def cp_tp_jmolk(self):
-        return pressure_specific_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
 
 class DifferentPhDOSCalculator(Calculator):
