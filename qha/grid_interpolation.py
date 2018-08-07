@@ -13,7 +13,7 @@ from typing import Optional, Tuple
 import numpy as np
 from numba import vectorize, float64
 
-from qha.fitting import polynomial_least_square_fitting, birch_murnaghan_finite_strain_fitting
+from qha.fitting import polynomial_least_square_fitting, apply_finite_strain_fitting
 from qha.type_aliases import Vector, Matrix
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -228,6 +228,6 @@ class FinerGrid:
         vr = VolumeExpander(in_volumes=volumes, out_volumes_num=self.dense_volumes_amount, ratio=new_ratio)
         vr.interpolate_volumes()  # As mentioned in ``VolumeExpander`` doc, call this method immediately.
         strains, dense_volumes = vr.strains, vr.out_volumes
-        dense_free_energies = birch_murnaghan_finite_strain_fitting(eulerian_strain, free_energies, strains,
-                                                                    self.option)
+        dense_free_energies = apply_finite_strain_fitting(eulerian_strain, free_energies, strains,
+                                                          self.option)
         return dense_volumes, dense_free_energies, new_ratio
