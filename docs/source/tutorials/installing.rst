@@ -35,7 +35,7 @@ Notes:
 
 .. [#b] ``GMP`` and ``MPFR`` libraries are required to use ``bigfloat`` package. On macOS,
     install these libraries via ``brew install mpfr``; on Linux, install ``libmpfr-dev`` ,
-    for example, on Ubuntu use ``[sudo] apt-get install libmpfr-dev``;
+    for example, on Ubuntu use ``apt-get install libmpfr-dev``;
     on Windows, ``bigfloat`` can be installed from the binary file, please check
     `Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_
 
