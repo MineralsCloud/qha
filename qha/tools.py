@@ -25,7 +25,7 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
     A third-order Lagrange polynomial function. Given 4 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
-    `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
+    `Wolfram MathWorld <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
     :param xs: A vector of the x-coordinates' of the 4 points.
     :param ys: A vector of the y-coordinates' of the 4 points.
@@ -58,7 +58,7 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
     A second-order Lagrange polynomial function. Given 3 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_2, y_2)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
-    `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
+    `Wolfram MathWorld also <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
     .. doctest::
 
@@ -104,7 +104,7 @@ def find_nearest(array: Vector, value: Scalar) -> int:
     and ``array[j+1]``. The *array* must be monotonic increasing. ``j=-1`` or ``j=len(array)`` is returned
     to indicate that *value* is out of range below and above respectively.
     If *array* is unsorted, consider first using an :math:`O(n \log n)` sort and then use this function.
-    Referenced from `here <https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array>`_.
+    Referenced from `Stack Overflow <https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array>`_.
 
     :param array: An array of monotonic increasing real numbers.
     :param value: The value which user wants to find between two of the consecutive elements in *array*.

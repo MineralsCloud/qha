@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-.. module different_phonon_dos
+.. module multi_configurations.different_phonon_dos
    :platform: Unix, Windows, Mac, Linux
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
