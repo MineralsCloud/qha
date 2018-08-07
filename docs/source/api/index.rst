@@ -8,11 +8,10 @@ API reference
    statmech
    single_configuration
    multi_configurations
-   fitting
    grid_interpolation
+   fitting
    v2p
    thermodynamics
    tools
-   eos
    settings
    unit_conversion

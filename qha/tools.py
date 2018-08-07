@@ -23,12 +23,14 @@ __all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 
 
 def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
-    Fourth-order Lagrange interpolation, referenced from
-    `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
+    A third-order Lagrange polynomial function. Given 4 points for interpolation:
+    :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
+    `Wolfram MathWorld <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
-    :param xs:
-    :param ys:
-    :return:
+    :param xs: A vector of the x-coordinates' of the 4 points.
+    :param ys: A vector of the y-coordinates' of the 4 points.
+    :return: A function that can evaluate the value of an x-coordinate within the range of
+        :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
     """
     if not len(xs) == len(ys) == 4:
         raise ValueError('The *xs* and *ys* must both have length 4!')
@@ -39,10 +41,10 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     @vectorize(["float64(float64)"], target='parallel')
     def f(x: float) -> float:
         """
-        A helper which function only does the evaluation.
+        A helper function that only does the evaluation.
 
-        :param x: The variable on which the 4th-order Lagrange polynomial is going to be applied.
-        :return: The value of the 4th-order Lagrange polynomial :math:`L(x)`.
+        :param x: The variable on which the Lagrange polynomial is going to be applied.
+        :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
         """
         return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
                (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
@@ -54,8 +56,9 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
 
 def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     """
-    Third-order Lagrange interpolation, referenced from
-    `here <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
+    A second-order Lagrange polynomial function. Given 3 points for interpolation:
+    :math:`(x_0, y_0), \ldots, (x_2, y_2)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
+    `Wolfram MathWorld also <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
 
     .. doctest::
 
@@ -65,9 +68,10 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
         >>> f(2.5)
         5.125
 
-    :param xs:
-    :param ys:
-    :return:
+    :param xs: A vector of the x-coordinates' of the 3 points.
+    :param ys: A vector of the y-coordinates' of the 3 points.
+    :return: A function that can evaluate the value of an x-coordinate within the range of
+        :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
     """
     if not len(xs) == len(ys) == 3:
         raise ValueError('The *xs* and *ys* must both have length 3!')
@@ -81,10 +85,10 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     @vectorize(["float64(float64)"], target='parallel')
     def f(x: float) -> float:
         """
-        A helper which function only does the evaluation.
+        A helper function that only does the evaluation.
 
-        :param x: The variable on which the 3rd-order Lagrange polynomial is going to be applied.
-        :return: The value of the 3rd-order Lagrange polynomial :math:`L(x)`.
+        :param x: The variable on which the Lagrange polynomial is going to be applied.
+        :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
         """
         return (x - x1) * (x - x2) / (x0 - x1) / (x0 - x2) * y0 + \
                (x - x0) * (x - x2) / (x1 - x0) / (x1 - x2) * y1 + \
@@ -100,11 +104,11 @@ def find_nearest(array: Vector, value: Scalar) -> int:
     and ``array[j+1]``. The *array* must be monotonic increasing. ``j=-1`` or ``j=len(array)`` is returned
     to indicate that *value* is out of range below and above respectively.
     If *array* is unsorted, consider first using an :math:`O(n \log n)` sort and then use this function.
-    Referenced from `here <https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array>`_.
+    Referenced from `Stack Overflow <https://stackoverflow.com/questions/2566412/find-nearest-value-in-numpy-array>`_.
 
-    :param array: An array of monotonic increasing reals filled.
-    :param value: The value which you want to find between two of the consecutive elements in *array*.
-    :return: The index, see above.
+    :param array: An array of monotonic increasing real numbers.
+    :param value: The value which user wants to find between two of the consecutive elements in *array*.
+    :return: The index mentioned above.
 
     .. doctest::
 
@@ -141,10 +145,10 @@ def vectorized_find_nearest(array: Vector, values: Vector, result: Vector):
     """
     A vectorized version of function ``find_nearest``.
 
-    :param array: An array of monotonic increasing reals filled.
+    :param array: An array of monotonic increasing real numbers.
     :param values: An array of values, each of which is one between two of the consecutive elements in *array*.
-    :param result: An array of indices.
-    :return: The *result* array.
+    :param result: An array of indices. It is suggested to generate a vector of zeros by ``numpy`` package.
+    :return: The *result*, an array of indices mentioned above.
     """
     n: int = len(array)
 
@@ -178,7 +182,7 @@ def arange(start: Scalar, num: int, step: Scalar) -> Vector:
 
     :param start: The starting point of the array, which is included in this array.
     :param num: The total number of elements in this array.
-    :param step: The difference between any of the two elements.
+    :param step: A number specifying the difference between any of the two elements.
     :return: An arithmetic progression.
     """
     return np.array([start + step * n for n in range(int(num))])
@@ -187,8 +191,8 @@ def arange(start: Scalar, num: int, step: Scalar) -> Vector:
 def is_monotonic_decreasing(array: Vector) -> bool:
     """
     Check whether the *array* is monotonic decreasing or not.
-    For example, in QHA calculation, the volumes should be listed as decreasing array,
-    and the pressures should be monotonic increasing.
+    For example, in QHA calculation, the volumes should be listed as a decreasing array,
+    while the pressures should be monotonic increasing.
     This function can be used to check whether the volumes are in the right order.
 
     .. doctest::
@@ -199,7 +203,7 @@ def is_monotonic_decreasing(array: Vector) -> bool:
         True
 
     :param array: The array to be evaluated.
-    :return: ``True`` if *array* is monotonic decreasing, otherwise ``False``.
+    :return: ``True`` if the argument *array* is monotonic decreasing, otherwise ``False``.
     """
     dx = np.diff(array)
     return np.all(dx <= 0)
@@ -220,7 +224,7 @@ def is_monotonic_increasing(array: Vector) -> bool:
         False
 
     :param array: The array to be evaluated.
-    :return: ``True`` if *array* is monotonic increasing, otherwise ``False``.
+    :return: ``True`` if the argument *array* is monotonic increasing, otherwise ``False``.
     """
     dx = np.diff(array)
     return np.all(dx >= 0)
@@ -229,14 +233,15 @@ def is_monotonic_increasing(array: Vector) -> bool:
 def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_before_calibration: Matrix,
                                   order: Optional[int] = 3):
     """
-    In multi-configuration system calculation, volume set of each calculation may varies a little,
-    This function would make the volume set  of configuration 1 (normally, the most populated configuration)
+    In multi-configuration system calculation, the volume set of each calculation may vary a little,
+    This function would make the volume set of the first configuration (normally, the most populated configuration)
     as a reference volume set, then calibrate the energies of all configurations to this reference volume set.
 
     :param volumes_before_calibration: Original volume sets of all configurations
-    :param energies_before_calibration: Free energies of all configurations on the corresponding volume sets.
+    :param energies_before_calibration: Free energies of all configurations on the original volume sets.
     :param order: The order of Birch--Murnaghan EOS fitting.
-    :return: Free energies of each configuration on referenced volumes (usually the volumes of the first configuration).
+    :return: Free energies of each configuration on the
+        referenced volumes (usually the volumes of the first configuration).
     """
     configurations_amount, _ = volumes_before_calibration.shape
     volumes_for_reference: Vector = volumes_before_calibration[0]

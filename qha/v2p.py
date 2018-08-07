@@ -20,7 +20,7 @@ __all__ = ['v2p']
 @numba.jit(nopython=True, parallel=True)
 def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     """
-    A fourth-order Lagrange polynomial function. Given 4 points for interpolation:
+    A third-order Lagrange polynomial function. Given 4 points for interpolation:
     :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.
 
     :param x: The x-coordinate of the point to be evaluated.
@@ -42,10 +42,12 @@ def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
 
 def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Matrix:
     """
-    Obtain :math:`f(T, P)` given :math:`f(T, V)` and :math:`P(T, V)`. Do a fourth-order Lagrangian interpolation.
+    Obtain :math:`f(T, P)` given :math:`f(T, V)` and :math:`P(T, V)` by doing a fourth-order Lagrangian interpolation.
 
-    :param func_of_t_v: Any function :math:`f` on :math:`(T, V)` grid, it is of shape (# temperature, # volumes).
-    :param p_of_t_v: Pressures on :math:`(T, V)` grid.
+    :param func_of_t_v: Any function :math:`f` on :math:`(T, V)` grid, which has
+        shape: (number of temperature, number of volumes).
+    :param p_of_t_v: Pressures on :math:`(T, V)` grid, which has
+        shape: (number of temperature, number of volumes).
     :param desired_pressures: A vector of pressures which user wants to apply.
     :return: The interpolated function :math:`f` on :math:`(T, P)` grid.
     """

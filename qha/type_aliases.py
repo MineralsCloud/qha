@@ -2,13 +2,14 @@
 """
 .. module type_aliases
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: This module defines several data type that will be useful in the whole calculation.
-    The ``Scalar`` type is just a Numba type;
-    the ``Vector`` type is a 1D-array type, can be list, tuple, or ``numpy.ndarray`` of ``float`` numbers;
-    the ``Matrix`` type is a 2D-array type, containing 2 dimensions of ``float`` numbers;
-    the ``Array3D`` type is a 3D-array type, containing 3 dimensions of ``float`` numbers;
-    and the ``Array4D`` type is a 4D-array type, containing 4 dimensions of ``float`` numbers.
-    Those types will not have effect on the code, just telling the users what is inside the developers' minds
+   :synopsis: This module defines several data types that will remind the user what input should be given
+    throughout the calculation.
+    The ``Scalar`` type is just a number type;
+    the ``Vector`` type is a 1D-array type, can be a list, a tuple, or a ``numpy`` array of floating-point numbers;
+    the ``Matrix`` type is a 2D-array type, containing two dimensions of floating-point numbers;
+    the ``Array3D`` type is a 3D-array type, containing three dimensions of floating-point numbers;
+    and the ``Array4D`` type is a 4D-array type, containing four dimensions of floating-point numbers.
+    These types will not affect the code, they are defined to tell the users what is inside the developers' minds
     when they are coding.
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
