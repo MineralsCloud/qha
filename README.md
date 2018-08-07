@@ -1,4 +1,4 @@
-# `qha`: Powerful Python toolkit for quasi-harmonic approximation
+# qha: A Powerful Python toolkit for quasi-harmonic approximation
 
 [TOC]
 
