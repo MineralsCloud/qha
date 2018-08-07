@@ -228,6 +228,5 @@ class FinerGrid:
         vr = VolumeExpander(in_volumes=volumes, out_volumes_num=self.dense_volumes_amount, ratio=new_ratio)
         vr.interpolate_volumes()  # As mentioned in ``VolumeExpander`` doc, call this method immediately.
         strains, dense_volumes = vr.strains, vr.out_volumes
-        dense_free_energies = apply_finite_strain_fitting(eulerian_strain, free_energies, strains,
-                                                          self.option)
+        dense_free_energies = apply_finite_strain_fitting(eulerian_strain, free_energies, strains, self.option)
         return dense_volumes, dense_free_energies, new_ratio
