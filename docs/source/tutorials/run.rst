@@ -16,6 +16,7 @@ Here are the keys that can be recognized in ``settings.yaml``:
 
 * ``calculation``: The calculation type user wants to perform. Allowed values are ``single``, ``same phonon dos`` and ``different phonon dos``.
 * ``NT``: Number of temperatures on the grid
+* ``T_MIN``: Desired minimum temperature to calculate, in Kelvin, default value is 0 K.
 * ``DT``: The interval between two nearest temperatures on the grid
 * ``NTV``: Number of volumes (or equivalently, pressure) on the gird
 * ``DELTA_P``: The interval between two pressures on the grid, the default value is :math:`0.1` GPa
