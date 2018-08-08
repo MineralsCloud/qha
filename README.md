@@ -21,8 +21,6 @@ Please do not use Python 3.7.x at this moment, since it contains breaking change
 
 ### Where to get it
 
-**Note**: Currently, there is no available online installation (on PyPI), check the section [“Installation from the source code”](#installation-from-sources) to install it from the source code.
-
 Binary installers for the latest released version are available at the PyPI and on conda.
 
 ```shell
