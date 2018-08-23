@@ -209,7 +209,7 @@ class FinerGrid:
         Avoid to use a too large volume grid to obtain data, which might lose accuracy.
 
         :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).
-        :param volumes: Volumes of these calculations were perform (sparse).
+        :param volumes: Volumes of these calculations were performed (sparse).
         :param ratio: This ratio is used to get a larger volume grid
         :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation
         """
