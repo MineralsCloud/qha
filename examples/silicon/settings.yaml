@@ -1,3 +1,5 @@
+calculation: single
+T_MIN: 0
 NT: 101
 DT: 10
 DT_SAMPLE: 10
@@ -6,8 +8,8 @@ DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
 input: input
 P_MIN: 0
-high_verbosity: true
-calculate:
+high_verbosity: True
+thermodynamic_properties:
     - F
     - G
     - U
@@ -21,5 +23,5 @@ calculate:
     - Btp
     - Bs
 energy_unit: ry
-# plot_results: true
+plot_results: False
 output_directory: ./results/

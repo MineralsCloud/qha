@@ -1,19 +1,29 @@
-Prepare input command: ``qha-convert``
-**************************************
+Prepare the input: ``qha convert``
+**********************************
 
-If you have used `Quantum ESPRESSO <https://www.quantum-espresso.org>`_,
-you might have the phonon frequency file from `matdyn.x`. If you want
-to use it to generate a valid input data file for ``qha``, you need
-two more files:
+If the user has used `Quantum ESPRESSO <https://www.quantum-espresso.org>`_,
+he/she might have the phonon frequency file(s) from the program ``matdyn.x``.
+To generate a valid input data file for ``qha``, three  files are needed:
 
-1. A ``inp_q_points`` file that specifies all the q-points you want to sample
-   in the Brillouin zone. The first three columns are their coordinates, and
-   the last column is the weights of each q-point.
-2. A ``inp_static`` file that contains the static energies and volumes for
+1. ``filelist.yaml`` file:
+
+* the description of the system in ``comment`` key: a string,
+* the number of formula unit in ``formula_unit_number`` key: an integer,
+* A YAML list of files containing frequencies ``*.freq`` in ``frequency_files`` key: a YAML list of strings.
+
+  If you have trouble writing YAML, please refer to its syntax `here <http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html>`_.
+
+2. An ``static`` file that contains the static energies and volumes for
    each configuration.
+3. An ``q_points`` file that specifies all the q-points to sample
+   the Brillouin zone. The first three columns are the q-points' coordinates in 3D space, and
+   the last column is their weights.
 
-When you have all of these files, put them in them same directory and run::
 
-   $ qha-convert <inp_file_list> <inp_static> <inp_q_points>
+Please check the ``/examples/silicon/make_input`` as an example.
 
-and the a file named ``input`` will be generated in the same directory.
+When all these files are obtained, put them in them same directory and run::
+
+   $ qha-convert filelist.yaml static q_points
+
+then a file named ``input`` will be generated in the same directory.

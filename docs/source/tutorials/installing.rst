@@ -9,7 +9,9 @@ Getting started
 Compatibility
 -------------
 
-qha is compatible with Python 3.5 or later, and Numpy versions 1.7 to 1.14.
+``qha`` is compatible with Python 3.6.x.
+Please do not use Python 3.7.x at this moment, since it contains breaking changes
+and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future.
 
 Our supported platforms are:
 
@@ -17,7 +19,6 @@ Our supported platforms are:
 * Windows 7 and later (32-bit and 64-bit)
 * OS X 10.9 and later (64-bit)
 * NVIDIA GPUs of compute capability 2.0 and later
-* AMD APUs supported by the HSA 1.0 final runtime (Kaveri, Carrizo)
 
 Dependencies
 ------------
@@ -36,11 +37,13 @@ Notes:
 
 .. [#b] ``GMP`` and ``MPFR`` libraries are required to use ``bigfloat`` package. On macOS,
     install these libraries via ``brew install mpfr``; on Linux, install ``libmpfr-dev`` ,
-    for example, on Ubuntu use ``[sudo] apt-get install libmpfr-dev``;
+    for example, on Ubuntu use ``apt-get install libmpfr-dev``;
     on Windows, ``bigfloat`` can be installed from the binary file, please check
-    `Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_
+    `Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_,
+    download the version suitable for the system, for example,for a 64-bit system,
+    use pip to install it ``pip(3) install /the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl``;
 
-.. [#m] For some system, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
+.. [#m] For some systems, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
 
 Installing the ``qha`` package
 ------------------------------
@@ -86,10 +89,10 @@ Checking your installation
 You should be able to import Numba from the Python prompt::
 
    $ python
-   Python 3.6.4 (default, Mar  9 2018, 23:15:03)
-   [GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.39.2)] on darwin
+   Python 3.6.5 (default, Jun 18 2018, 22:40:57)
+   [GCC 4.2.1 Compatible Apple LLVM 9.1.0 (clang-902.0.39.2)] on darwin
    Type "help", "copyright", "credits" or "license" for more information.
    >>> import qha
    >>> qha.__version__
-   '1.0.9'
+   '1.0.12'
 

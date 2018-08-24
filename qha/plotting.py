@@ -7,11 +7,13 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
 import pandas as pd
 import seaborn as sns
 import pathlib
+import numpy as np
 
 # ===================== What can be exported? =====================
 __all__ = ['Plotter']
@@ -159,21 +161,31 @@ class Plotter:
         v_f_min = []
 
         f_fitted_volume = self.user_settings['f_tv_fitted']
-        volume = pd.read_csv(f_fitted_volume, sep='\s+', index_col='V(A^3)\T(K)')
-        volume_t = volume[temperature_sample]
+        volume_tv = pd.read_csv(f_fitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        volume_tv.index = volume_tv.index.map(str)
+        volume_vt = volume_tv.T
+        volume_vt.index = volume_vt.index.map(float)
+        volume_t = volume_vt[temperature_sample]
+        volume_v_grid = np.asarray(volume_vt.index, float)
 
         f_nonfitted_volume = self.user_settings['f_tv_non_fitted']
-        volume_nonfitted = pd.read_csv(f_nonfitted_volume, sep='\s+', index_col='V(A^3)\T(K)')
-        volume_nonfitted_t = volume_nonfitted[temperature_sample]
+        volume_nonfitted_tv = pd.read_csv(f_nonfitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        volume_nonfitted_tv.index = volume_nonfitted_tv.index.map(str)
+        volume_nonfitted_vt = volume_nonfitted_tv.T
+        volume_nonfitted_vt.index = volume_nonfitted_vt.index.map(float)
+        volume_nonfitted_t = volume_nonfitted_vt[temperature_sample]
 
         f_p_volume = self.user_settings['p_tv_gpa']
-        p_volume = pd.read_csv(f_p_volume, sep='\s+', index_col='V(A^3)\T(K)')
-        p_volume_t = p_volume[temperature_sample]
+        p_volume_tv = pd.read_csv(f_p_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        p_volume_tv.index = p_volume_tv.index.map(str)
+        p_volume_vt = p_volume_tv.T
+        p_volume_vt.index = p_volume_vt.index.map(float)
+        p_volume_t = p_volume_vt[temperature_sample]
 
         # Get the 'V0' and 'E0' for selected Temperatures
         for t in temperature_sample:
-            f_min.append(float(volume[t].min()))
-            v_f_min.append(float(volume[t].idxmin()))
+            f_min.append(float(volume_vt[t].min()))
+            v_f_min.append(float(volume_vt[t].idxmin()))
 
         self.plot_to_file()
 
@@ -185,10 +197,10 @@ class Plotter:
         axes[0].set_xlabel(r'Volume ($\AA$)')
         axes[0].set_ylabel('Helmholtz Free Energy (eV)')
         axes[0].legend().set_visible(False)
-        axes[0].set_xlim(volume.index.min(), volume.index.max())
+        axes[0].set_xlim(volume_v_grid.min(), volume_v_grid.max())
         for t in temperature_sample:
-            x, y = 1.002 * volume.index.max(), volume[t].tolist()[0]
-            axes[0].text(x, y, t + ' K', fontsize=8)
+            x, y = 1.002 * float(volume_v_grid.max()), volume_vt[t].tolist()[0]
+            axes[0].text(x, y, str(t) + ' K', fontsize=8)
 
         axes[1].axhline(y=self.user_settings['DESIRED_PRESSURES_GPa'][0], color='whitesmoke')
         axes[1].axhline(y=self.user_settings['DESIRED_PRESSURES_GPa'][-1], color='whitesmoke')
@@ -197,7 +209,7 @@ class Plotter:
         axes[1].set_xlabel(r'Volume ($\AA$)')
         axes[1].set_ylabel('Pressure (GPa)')
         axes[1].legend().set_visible(False)
-        axes[1].set_xlim(volume.index.min(), volume.index.max())
+        axes[1].set_xlim(volume_v_grid.min(), volume_v_grid.max())
 
         fig.tight_layout(w_pad=3.2, h_pad=0)
         fig_name_pdf = str(self.results_folder / 'FVT_PVT.pdf')

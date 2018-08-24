@@ -1,65 +1,68 @@
+calculation: different phonon dos
 NT: 401
 DT: 1
-DT_SAMPLE: 10
+DT_SAMPLE: 1
 P_MIN: 0
+T_MIN: 0
 NTV: 701
 DELTA_P: 0.1
 DELTA_P_SAMPLE: 1
 order: 3
+static_only: False
 input:
-    input_conf01: 6
-    input_conf02: 96
-    input_conf03: 96
-    input_conf04: 96
-    input_conf05: 384
-    input_conf06: 96
-    input_conf07: 48
-    input_conf08: 24
-    input_conf09: 96
-    input_conf10: 96
-    input_conf11: 6
-    input_conf12: 96
-    input_conf13: 384
-    input_conf14: 384
-    input_conf15: 192
-    input_conf16: 48
-    input_conf17: 192
-    input_conf18: 192
-    input_conf19: 384
-    input_conf20: 192
-    input_conf21: 192
-    input_conf22: 384
-    input_conf23: 48
-    input_conf24: 192
-    input_conf25: 384
-    input_conf26: 192
-    input_conf27: 384
-    input_conf28: 96
-    input_conf29: 96
-    input_conf30: 384
-    input_conf31: 384
-    input_conf32: 192
-    input_conf33: 384
-    input_conf34: 192
-    input_conf35: 96
-    input_conf36: 48
-    input_conf37: 48
-    input_conf38: 24
-    input_conf39: 192
-    input_conf40: 96
-    input_conf41: 384
-    input_conf42: 96
-    input_conf43: 192
-    input_conf44: 24
-    input_conf45: 24
-    input_conf46: 96
-    input_conf47: 24
-    input_conf48: 12
-    input_conf49: 48
-    input_conf50: 48
-    input_conf51: 24
-    input_conf52: 12
-calculate:
+    input_01: 6
+    input_02: 96
+    input_03: 96
+    input_04: 24
+    input_05: 24
+    input_06: 192
+    input_07: 384
+    input_08: 24
+    input_09: 384
+    input_10: 96
+    input_11: 192
+    input_12: 384
+    input_13: 48
+    input_14: 96
+    input_15: 48
+    input_16: 96
+    input_17: 96
+    input_18: 384
+    input_19: 384
+    input_20: 48
+    input_21: 384
+    input_22: 96
+    input_23: 384
+    input_24: 96
+    input_25: 192
+    input_26: 192
+    input_27: 192
+    input_28: 384
+    input_29: 192
+    input_30: 192
+    input_31: 96
+    input_32: 192
+    input_33: 192
+    input_34: 384
+    input_35: 384
+    input_36: 192
+    input_37: 24
+    input_38: 48
+    input_39: 96
+    input_40: 48
+    input_41: 384
+    input_42: 12
+    input_43: 96
+    input_44: 48
+    input_45: 192
+    input_46: 12
+    input_47: 96
+    input_48: 48
+    input_49: 6
+    input_50: 96
+    input_51: 24
+    input_52: 24
+thermodynamic_properties:
     - F
     - G
     - U

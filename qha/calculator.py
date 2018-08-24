@@ -20,7 +20,7 @@ from lazy_property import LazyProperty
 import qha.multi_configurations.different_phonon_dos as different_phonon_dos
 import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 import qha.tools
-from qha.grid_interpolation import RefineGrid
+from qha.grid_interpolation import FinerGrid
 from qha.out import save_to_output
 from qha.readers import read_input
 from qha.single_configuration import free_energy
@@ -37,11 +37,11 @@ class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
         runtime_settings = dict()
 
-        allowed_keys = ('same_phonon_dos', 'input', 'volume_energies',
-                        'calculate', 'static_only', 'energy_unit',
-                        'NT', 'DT', 'DT_SAMPLE',
+        allowed_keys = ('input', 'calculation',
+                        'thermodynamic_properties', 'static_only', 'energy_unit',
+                        'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                        'calculate', 'volume_ratio', 'order', 'p_min_modifier',
+                        'volume_ratio', 'order', 'p_min_modifier',
                         'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
 
         for key in allowed_keys:
@@ -144,7 +144,11 @@ class Calculator:
         """
         # Normally, the last 2 temperature points in Cp are not accurate.
         # Here 4 more points are added for calculation, but they will be removed at the output files.
-        return qha.tools.arange(0, self.settings['NT'] + 4, self.settings['DT'])
+        minimum_temperature = self.settings['T_MIN']
+        if minimum_temperature < 0:
+            raise ValueError("Minimum temperature should be no less than 0!")
+
+        return qha.tools.arange(minimum_temperature, self.settings['NT'] + 4, self.settings['DT'])
 
     def refine_grid(self):
         d = self.settings
@@ -154,7 +158,7 @@ class Calculator:
         except KeyError:
             raise KeyError("All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!")
 
-        r = RefineGrid(p_min - p_min_modifier, ntv, order=order)
+        r = FinerGrid(p_min - p_min_modifier, ntv, order=order)
 
         if 'volume_ratio' in d:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
@@ -228,7 +232,7 @@ class Calculator:
 
     @LazyProperty
     def p_tv_au(self):
-        return pressure_tv(self.finer_volumes_bohr3, self.f_tv_ry)
+        return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
 
     @LazyProperty
     def f_tv_ev(self):
@@ -300,7 +304,7 @@ class Calculator:
 
     @LazyProperty
     def v_tp_bohr3(self):
-        return volume_tp(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
+        return volume(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
 
     @LazyProperty
     def v_tp_ang3(self):
@@ -312,7 +316,7 @@ class Calculator:
 
     @LazyProperty
     def cv_tv_au(self):
-        return volume_specific_heat_capacity(self.temperature_array, self.u_tv_ry)
+        return volumetric_heat_capacity(self.temperature_array, self.u_tv_ry)
 
     @LazyProperty
     def cv_tp_au(self):
@@ -336,11 +340,11 @@ class Calculator:
 
     @LazyProperty
     def cp_tp_au(self):
-        return pressure_specific_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
     @LazyProperty
     def cp_tp_jmolk(self):
-        return pressure_specific_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
 
 
 class DifferentPhDOSCalculator(Calculator):

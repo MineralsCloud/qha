@@ -25,20 +25,23 @@ __all__ = ['FromQEOutput']
 
 class FromQEOutput:
     """
-    A class that can generate a standard "input" file for ``qha-run`` if you have data collected from Quantum
-    ESPRESSO.
+    A class that can generate a standard "input" file for the ``qha run`` command if the original data is given by
+    Quantum ESPRESSO.
 
-    :param inp_file_list: A YAML file that should contains 3 keys and values:
+    :param inp_file_list: A YAML file that contains three keys and values:
 
-        1. ``formula_unit_number``: The number of formula unit in a cell.
-        2. ``comment``: Some heading you want to add to your "input".
-        3. ``frequency_files``: A YAML list of strings specifying all the frequency files from Quantum ESPRESSO.
+        1. ``formula_unit_number``: The number of formula units in a unit cell.
+        2. ``comment``: Comment that could be added as the first line of the ``input``,
+           which usually specifies the system which user wants to calculate.
+        3. ``frequency_files``: A YAML list of strings specifying all the frequency files given by Quantum ESPRESSO
+           ``matdyn.x``.
 
-        If you are not familiar with YAML syntax, please refer to
+        To become more familiar with YAML syntax, which is used in the "settings" file, please refer to
         `this documentation <http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html>`_.
-    :param inp_static: A text file specifying the static energies of each volume from electronic calculation.
-        The order of them should be the same as the ``frequency_files`` listing order.
-    :param inp_q_points: A text file specifying the q-points' coordinates and their weights in the Brillouin zone.
+    :param inp_static: A pure text file specifying the energies and pressures of each volume from the
+        static calculation. The order of these volumes must be the same as the ``frequency_files`` listing order.
+    :param inp_q_points: A pure text file specifying the q-points' coordinates and their corresponding weights in the
+        Brillouin zone.
     """
 
     def __init__(self, inp_file_list: str, inp_static: str, inp_q_points: str):
@@ -58,7 +61,7 @@ class FromQEOutput:
 
     def read_file_list(self) -> None:
         """
-        Read all the files' names for frequency files from Quantum ESPRESSO.
+        Read all the files' names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.
         """
         with open(self._inp_file_list, 'r') as f:
             d = yaml.load(f)
@@ -69,9 +72,8 @@ class FromQEOutput:
 
     def read_static(self) -> None:
         """
-        Read static information, including pressures (will not be used in calculation),
-        optimized volumes, and minimized static energies. These information is from electronic
-        calculation.
+        Read static information, including pressures (which will not be used in calculation by now),
+        optimized volumes, and static energies.
         """
         pressures = []
         volumes = []
@@ -98,9 +100,9 @@ class FromQEOutput:
 
     def read_q_points(self) -> None:
         """
-        Read q-points' coordinates and their weights in Brillouin zone. The q-points are assumed to be 3-dimensional.
-        No other information should be given. If you want, write lines that start with '#', they will be ignored when
-        reading.
+        Read q-points' coordinates and their weights in the Brillouin zone. The q-points' coordinates are supposed to be
+        three-dimensional. No other information should be given. If user still wants to,
+        write lines that start with ``#``, and then they will be ignored when reading.
         """
         q_coordinates = []
         q_weights = []
@@ -134,7 +136,7 @@ class FromQEOutput:
         one file.
 
         :param inp: The name or path of the file.
-        :return: The q-space coordinates of each q-point in the file, and corresponding frequencies for each
+        :return: The q-space coordinates of each q-point in the file and corresponding frequencies for each
             q-point on each band.
         """
         text_stream = TextStream(pathlib.Path(inp))
@@ -191,7 +193,8 @@ class FromQEOutput:
 
     def read_frequency_files(self) -> None:
         """
-        Read the phonon frequencies for all files, using ``read_frequency_file`` method for each file.
+        Read the phonon frequencies for all files (which are specified in the
+        ``frequency_files`` key of the settings file).
         """
         frequencies_for_all_files = []
 
@@ -213,7 +216,7 @@ class FromQEOutput:
 
     def write_to_file(self, outfile='input') -> None:
         """
-        Write collected data to a file *outfile*.
+        Write all data to a file *outfile*, which will be regarded as standard input file for ``qha``.
 
         :param outfile: The path or name of the output file, by default is ``'input'`` (for further calculation).
         """

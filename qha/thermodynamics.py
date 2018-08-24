@@ -2,7 +2,7 @@
 """
 .. module thermodynamics
    :platform: Unix, Windows, Mac, Linux
-   :synopsis: Calculate the basic thermodynamics for system: S, U, H, G, Cv on a (T,V) grid.
+   :synopsis: Calculate the basic thermodynamic properties for a system: S, U, H, G, Cv on a (T,V) grid.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
@@ -14,178 +14,233 @@ from qha.v2p import v2p
 
 # ===================== What can be exported? =====================
 __all__ = [
-    'pressure_tv',
+    'pressure',
     'entropy',
     'thermodynamic_potentials',
-    'volume_tp',
+    'volume',
     'thermal_expansion_coefficient',
     'gruneisen_parameter',
     'isothermal_bulk_modulus',
     'adiabatic_bulk_modulus',
     'bulk_modulus_derivative',
-    'pressure_specific_heat_capacity',
-    'volume_specific_heat_capacity'
+    'isobaric_heat_capacity',
+    'volumetric_heat_capacity'
 ]
 
 
 def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
     """
-    Derivative of :math:`\\frac{ df(x) }{ dx }`.
+    Calculate the derivative of :math:`f(x)`, i.e., :math:`\\frac{ df(x) }{ dx }`.
 
-    :param xs: 1D vector, of length nx.
-    :param fs: 2D matrix, of shape (nx, _).
-    :return: 2D matrix, of shape (nx, _).
+    :param xs: A 1D vector, with length :math:`N_x`.
+    :param fs: A matrix, with shape :math:`(N_x, _)`.
+    :return: A matrix, with shape :math:`(N_x, _)`.
     """
     if xs.ndim > 1 or fs.ndim < 2:
-        raise ValueError('*xs* should be one-dimensional array and *ys* should be two-dimensional array!')
+        raise ValueError('The argument *xs* should be a 1D array and *ys* should be a 2D array!')
 
     return np.gradient(fs, axis=0) / np.gradient(xs)[:, None]  # df(x)/dx.
 
 
-def pressure_tv(v_vector: Vector, free_energies: Matrix) -> Matrix:
+def pressure(vs: Vector, free_energies: Matrix) -> Matrix:
     """
-    Equation used to calculate pressure: :math:`P = - \\left ( \\frac{ \\partial F }{ \\partial V } \\right )_T`
+    Calculate the pressure as a function of temperature and volume, i.e.,
 
-    :param v_vector: fine volumes vector
-    :param free_energies: :math:`F(T,V)`
-    :return: pressure, :math:`P(T,V)`
+    .. math::
+
+       P = - \\bigg( \\frac{ \\partial F(T, V) }{ \\partial V } \\bigg)_T.
+
+    :param vs: A vector of volumes.
+    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.
+    :return: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T,V)`.
     """
-    return -np.gradient(free_energies, axis=1) / np.gradient(v_vector)
+    return -np.gradient(free_energies, axis=1) / np.gradient(vs)
 
 
-def entropy(ts: Vector, free_energies: Matrix) -> Matrix:
+def entropy(temperature: Vector, free_energies: Matrix) -> Matrix:
     """
-    Equation used to calculate entropy: :math:`S = - \\left ( \\frac{ \\partial F }{ \\partial T } \\right )_V`
+    Calculate the entropy as a function of temperature and volume, i.e.,
 
-    :param ts: temperature vector
-    :param free_energies: :math:`F(T,V)`
-    :return: entropy, :math:`S(T,V)`
+    .. math::
+
+       S = - \\bigg( \\frac{ \\partial F(T, V) }{ \\partial T } \\bigg)_V.
+
+    :param temperature: A vector of temperature.
+    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.
+    :return: A matrix, the entropy as a function of temperature and volume, i.e., :math:`S(T,V)`.
     """
-    return -calculate_derivatives(ts, free_energies)
+    return -calculate_derivatives(temperature, free_energies)
 
 
-def thermodynamic_potentials(ts: Vector, v_vector: Vector, free_energies: Matrix, p_tv: Matrix):
+def thermodynamic_potentials(temperature: Vector, vs: Vector, free_energies: Matrix, ps: Matrix):
     """
-    Calculate :math:`H`, :math:`U`, and :math:`G` on :math:`(T,V)` grid from :math:`F`;
+    Calculate the enthalpy :math:`H(T, V)`, the internal energy :math:`U(T, V)`,
+    and the Gibbs free energy :math:`G` on a :math:`(T, V)` grid from Helmholtz free energy :math:`F(T, V)` by
 
-    :math:`U = F + TS, H = U + PV, G = F + PV`
+    .. math::
 
-    input: nt, and F, which is Helmholtz Free Energy, are needed.
+       U(T, V) &= F(T, V) + T S(T, V), \\\\
+       H(T, V) &= U(T, V) + P(T, V) V, \\\\
+       G(T, V) &= F(T, V) + P(T, V) V.
 
-
-    :param free_energies: :math:`F(T,V)`
-    :param p_tv: pressure, :math:`P(T,V)`
-    :param ts: temperature vector
-    :param v_vector: fine volumes vector
-    :return: :math:`U`, :math:`H`, :math:`G` on :math:`(T,V)` grid
+    :param temperature: A vector of temperature.
+    :param vs: A vector of volumes.
+    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.
+    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T, V)`.
+    :return: A dictionary that contains the enthalpy :math:`H(T, V)`, the internal energy :math:`U(T, V)`,
+        and the Gibbs free energy :math:`G` on a :math:`(T, V)` grid. They can be retrieved by ``'U'``, ``'H'``, or
+        ``'G'`` keys, respectively.
     """
-    g: Matrix = free_energies + p_tv * v_vector  # G(T,V) = F(T,V) + V * P(T,V)
+    g: Matrix = free_energies + ps * vs  # G(T,V) = F(T,V) + V * P(T,V)
 
-    u: Matrix = free_energies + entropy(ts, free_energies) * ts.reshape(-1, 1)  # U(T,V) = F(T,V) + T * S(T,V)
+    u: Matrix = free_energies + entropy(temperature, free_energies) * temperature.reshape(-1, 1)  # U(T,V) = F(T,V) + T * S(T,V)
 
-    h: Matrix = u + p_tv * v_vector  # H(T,V) = U(T,V) + V * P(T,V)
+    h: Matrix = u + ps * vs  # H(T,V) = U(T,V) + V * P(T,V)
 
     return {'U': u, 'H': h, 'G': g}
 
 
-def volume_tp(v_vector: Vector, p_vector: Vector, p_tv: Matrix) -> Matrix:
+def volume(vs: Vector, desired_ps: Vector, ps: Matrix) -> Matrix:
     """
-    Convert volume as function of :math:`(T,P)`
+    Convert the volumes as a function of temperature and pressure, i.e., on a :math:`(T, P)` grid.
 
-    :param v_vector: fine volumes vector
-    :param p_vector: desired pressure vector
-    :param p_tv: P(T,V) in au.
-    :return: volume, V(T,P)
+    :param vs: A vector of volumes.
+    :param desired_ps: A vector of desired pressures.
+    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T,V)`, in atomic unit.
+    :return: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.
     """
-    nt, ntv = p_tv.shape
-    v_tv = v_vector.reshape(1, -1).repeat(nt, axis=0)
-    v_tp = v2p(v_tv, p_tv, p_vector)
-    return v_tp
+    nt, ntv = ps.shape
+    vs = vs.reshape(1, -1).repeat(nt, axis=0)
+    return v2p(vs, ps, desired_ps)
 
 
-def thermal_expansion_coefficient(ts: Vector, v_tp: Matrix) -> Matrix:
+def thermal_expansion_coefficient(temperature: Vector, vs: Matrix) -> Matrix:
     """
-    Thermal expansion: :math:`\\alpha = \\frac{ 1 }{ V }  \\left ( \\frac{ \\partial V }{ \\partial T } \\right )`
+    Calculate the thermal expansion coefficient by
 
-    :param ts: temperature vector
-    :param v_tp: volume, :math:`V(T,P)`
-    :return: thermal expansion coefficient, :math:`\\alpha(T,P)`
+    .. math::
+
+       \\alpha = \\frac{ 1 }{ V }  \\bigg( \\frac{ \\partial V }{ \\partial T } \\bigg)_P.
+
+    :param temperature: A vector of temperature.
+    :param vs: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.
+    :return: A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+        i.e., :math:`\\alpha(T, P)`.
     """
     # Division is done by element-wise.
-    return calculate_derivatives(ts, v_tp) / v_tp
+    return calculate_derivatives(temperature, vs) / vs
 
 
-def gruneisen_parameter(v_tp: Matrix, bt_tp: Matrix, alpha_tp: Matrix, cv_tp: Matrix) -> Matrix:
+def gruneisen_parameter(vs: Matrix, bt: Matrix, alpha: Matrix, cv: Matrix) -> Matrix:
     """
-    Equation used to calculate thermodynamic Gruneisen parameter: :math:`\\gamma = \\alpha B_{t} V / Cv`
+    Calculate the Grüneisen parameter by
 
-    :param v_tp: volume, :math:`V(T,P)`
-    :param bt_tp:isothermal bulk modulus :math:`Bt(T,P)`
-    :param alpha_tp: thermal expansion coefficient, :math:`\\alpha(T,P)`
-    :param cv_tp: volume specific heat capacity, :math:`Cv(T,P)`
-    :return: thermodynamic gruneisen parameter, :math:`\\gamma(T,P)`
+    .. math::
+
+       \\gamma = \\frac{ \\alpha B_T V }{ C_V }.
+
+    :param vs: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.
+    :param bt: A matrix, the isothermal bulk modulus as a function of temperature and pressure,
+        i.e., :math:`B_T(T, P)`.
+    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+        i.e., :math:`\\alpha(T, P)`.
+    :param cv: A matrix, the volumetric heat capacity as a function of temperature and pressure,
+        i.e., :math:`C_V(T, P)`.
+    :return: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+        i.e., :math:`\\gamma(T, P)`.
     """
-    gamma = np.empty([v_tp.shape[0], v_tp.shape[1]])
+    gamma = np.empty([vs.shape[0], vs.shape[1]])
     gamma[0] = 0.0
-    gamma[1:, :] = v_tp[1:] * bt_tp[1:] * alpha_tp[1:] / cv_tp[1:]
-    # return v_tp * bt_tp_au * alpha_tp / cv_tp_au
+    gamma[1:, :] = vs[1:] * bt[1:] * alpha[1:] / cv[1:]
+    # return vs * bt * alpha / cv
     return gamma
 
 
-def isothermal_bulk_modulus(v_vector: Vector, p_tv: Matrix) -> Matrix:
+def isothermal_bulk_modulus(vs: Vector, ps: Matrix) -> Matrix:
     """
-    Equation used to calculate isothermal bulk modulus: :math:`Bt = - V  \\left ( \\frac{ \\partial P }{ \\partial V } \\right )`
+    Calculate the isothermal bulk modulus by
 
-    :param v_vector: fine volume vector
-    :param p_tv: pressure, :math:`P(T,V)`
-    :return: isothermal bulk modulus, :math:`Bt(T,V)`
+    .. math::
+
+       B_T = - V \\bigg( \\frac{ \\partial P }{ \\partial V } \\bigg)_T.
+
+    :param vs: A vector of volumes.
+    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T, V)`.
+    :return: A matrix, the isothermal bulk modulus, as a function of temperature and volume, i.e., :math:`B_T(T, V)`.
     """
-    return -np.gradient(p_tv, axis=1) / np.gradient(v_vector) * v_vector
+    return -np.gradient(ps, axis=1) / np.gradient(vs) * vs
 
 
-def adiabatic_bulk_modulus(bt_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts: Vector) -> Matrix:
+def adiabatic_bulk_modulus(bt: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector) -> Matrix:
     """
-    Equation used to calculate adiabatic bulk modulus: :math:`Bs = Bt \\left ( 1 + \\alpha \\gamma T \\right )`
+    Calculate the adiabatic bulk modulus by
 
-    :param bt_tp: isothermal bulk modulus, :math:`Bt(T,P)`
-    :param alpha_tp: thermal expansion coefficient, :math:`\\alpha(T,P)`
-    :param gamma_tp: thermodynamic gruneisen parameter, :math:`\\gamma(T,P)`
-    :param ts: temperature vector
-    :return: adiabatic bulk modulus, :math:`Bs(T,P)`
+    .. math::
+
+       B_S = B_T \\big( 1 + \\alpha \\gamma T \\big).
+
+    :param bt: A matrix, the isothermal bulk modulus, as a function of temperature and pressure,
+        i.e., :math:`B_T(T, P)`.
+    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+        i.e., :math:`\\alpha(T, P)`.
+    :param gamma: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+        i.e., :math:`\\gamma(T, P)`.
+    :param temperature: A vector of temperature.
+    :return: A matrix, the adiabatic bulk modulus, as a function of temperature and pressure,
+        i.e., :math:`B_S(T,P)`.
     """
-    return bt_tp * (1.0 + alpha_tp * gamma_tp * ts[:, None])
+    return bt * (1.0 + alpha * gamma * temperature[:, None])
 
 
-def bulk_modulus_derivative(p_vector: Vector, bt_tp: Matrix) -> Matrix:
+def bulk_modulus_derivative(ps: Vector, bt: Matrix) -> Matrix:
     """
-    Equation used: :math:`Bt' = \\left ( \\frac{ \\partial Bt }{ \\partial P } \\right )`
+    Calculate the first-order derivative of bulk modulus with respect to pressure by
 
-    :param p_vector: desired pressure vector
-    :param bt_tp: isothermal_bulk_modulus, :math:`Bt(T,P)`
-    :return: :math:`Bt'(T,P)`
+    .. math::
+
+       B_T' = \\bigg( \\frac{ \\partial B_T }{ \\partial P } \\bigg).
+
+    :param ps: A vector of pressures.
+    :param bt: A matrix, the isothermal bulk modulus, as a function of temperature and pressure,
+        i.e., :math:`B_T(T, P)`.
+    :return: A matrix, the isothermal bulk modulus, as a function of temperature and pressure, i.e.,
+        :math:`B_T'(T, P)`.
     """
-    return calculate_derivatives(p_vector, bt_tp.T).T
+    return calculate_derivatives(ps, bt.T).T
 
 
-def pressure_specific_heat_capacity(cv_tp: Matrix, alpha_tp: Matrix, gamma_tp: Matrix, ts: Vector) -> Matrix:
+def isobaric_heat_capacity(cv: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector) -> Matrix:
     """
-    Equation used: :math:`Cp = Bt \\left ( 1 + \\alpha \\gamma T \\right )`
+    Calculate the isobaric heat capacity by
 
-    :param cv_tp: volume specific heat capacity, :math:`Cv(T,P)`
-    :param alpha_tp: thermal expansion coefficient, :math:`\\alpha(T,P)`
-    :param gamma_tp: thermodynamic gruneisen parameter, :math:`\\gamma(T,P)`
-    :param ts: temperature vector
-    :return: pressure specific heat capacity, :math:`Cp(T,P)`
+    .. math::
+
+       C_P = C_V \\big( 1 + \\alpha \\gamma T \\big).
+
+    :param cv: A matrix, the volumetric heat capacity, :math:`C_V(T, P)`.
+    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+        i.e., :math:`\\alpha(T, P)`.
+    :param gamma: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+        i.e., :math:`\\gamma(T, P)`.
+    :param temperature: A vector of temperature.
+    :return: A matrix, the isobaric specific heat capacity as a function of temperature and pressure,
+        i.e., :math:`C_P(T,P)`.
     """
-    return cv_tp * (1.0 + alpha_tp * gamma_tp * ts[:, None])
+    return cv * (1.0 + alpha * gamma * temperature[:, None])
 
 
-def volume_specific_heat_capacity(ts: Vector, internal_energies: Matrix) -> Matrix:
+def volumetric_heat_capacity(temperature: Vector, internal_energies: Matrix) -> Matrix:
     """
-    Equation used: :math:`Cv = \\left ( \\frac{ \\partial U }{ \\partial T } \\right )`
+    Calculate the volumetric heat capacity by
 
-    :param ts: temperature vector
-    :param internal_energies: :math:`U(T,V)`
-    :return: volume specific heat capacity, :math:`Cv(T,V)`
+    .. math::
+
+       C_V = \\bigg( \\frac{ \\partial U }{ \\partial T } \\bigg).
+
+    :param temperature: A vector of temperature.
+    :param internal_energies: A matrix, the internal energy as a function of temperature and volume,
+        i.e., :math:`U(T, V)`.
+    :return: A matrix, the volumetric heat capacity as a function of temperature and volume,
+        i.e., :math:`C_V(T, V)`.
     """
-    return calculate_derivatives(ts, internal_energies)
+    return calculate_derivatives(temperature, internal_energies)
