@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -118,7 +118,7 @@
 <span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">Array3D</span>
 
 <span class="c1"># ===================== What can be exported? =====================</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ho_free_energy&#39;</span><span class="p">,</span> <span class="s1">&#39;free_energy&#39;</span><span class="p">,</span> <span class="s1">&#39;HOFreeEnergySampler&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;free_energy&#39;</span><span class="p">,</span> <span class="s1">&#39;HOFreeEnergySampler&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="free_energy"><a class="viewcode-back" href="../../api/single_configuration.html#qha.single_configuration.free_energy">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">float64</span><span class="p">[:](</span><span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">[:],</span> <span class="n">float64</span><span class="p">[:],</span> <span class="n">float64</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">boolean</span><span class="p">),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -127,15 +127,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The total free energy at a certain temperature.</span>
 
-<span class="sd">    :param temperature: A ``float`` that represents the temperature at which  the total free energy is calculated. This</span>
+<span class="sd">    :param temperature: A ``float`` that represents the temperature at which the total free energy is calculated. This</span>
 <span class="sd">        value is in unit &#39;Kelvin&#39;.</span>
-<span class="sd">    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in doing Brillouin zone</span>
-<span class="sd">        sampling. The can be non-normalized, since normalized will be done in the function.</span>
+<span class="sd">    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in Brillouin zone</span>
+<span class="sd">        sampling. This vector can be non-normalized since a normalization will be done internally.</span>
 <span class="sd">    :param static_energies: An :math:`n \\times 1` vector that represents the static energy of the system with</span>
-<span class="sd">        :math:`n` different volumes. This should be the same unit as user defined in ``settings.yaml``.</span>
+<span class="sd">        :math:`n` different volumes. This should be the same unit as user-defined in the &quot;settings&quot; file.</span>
 <span class="sd">    :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequency read from file.</span>
-<span class="sd">    :param static_only: Just return the static energies, which is got from *static_energies* parameter. This is useful</span>
-<span class="sd">        when user just wants to see static energies result while keep all other functions the same.</span>
+<span class="sd">    :param static_only: If ``True``, directly return the static energies, i.e., the *static_energies* parameter itself.</span>
+<span class="sd">        This is useful when the user just wants to see static result while keeping all other functions unchanged.</span>
 <span class="sd">    :return: An :math:`n \\times 1` vector that represents the total free energy of the system with :math:`n` different</span>
 <span class="sd">        volumes. The default unit is the same as in function ``ho_free_energy``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -152,21 +152,20 @@
 
 <div class="viewcode-block" id="HOFreeEnergySampler"><a class="viewcode-back" href="../../api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler">[docs]</a><span class="k">class</span> <span class="nc">HOFreeEnergySampler</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A harmonic oscillator energy sampler. The differences between ``free_energy`` and ``HOFreeEnergySampler`` are</span>
+<span class="sd">    A harmonic oscillator free energy sampler. The differences between ``free_energy`` and ``HOFreeEnergySampler`` are</span>
 
-<span class="sd">    - ``HOFreeEnergySampler`` provides you with several ways to compute free energies on different q-point, band or</span>
-<span class="sd">        volume, which could be used to check the correctness of the data.</span>
-<span class="sd">    - ``HOFreeEnergySampler`` can make calculation lazy, so we can apply it onto a grid, rather than directly</span>
-<span class="sd">            calculates the values immediately.</span>
+<span class="sd">    - ``HOFreeEnergySampler`` provides several ways to compute free energies on different q-points, bands or</span>
+<span class="sd">        volumes, which could be used to check the correctness of the data.</span>
+<span class="sd">    - ``HOFreeEnergySampler`` can make calculation lazy, rather than directly calculates the values immediately.</span>
 <span class="sd">    - ``free_energy`` is usually enough for computing the final free energy results. ``HOFreeEnergySampler``</span>
-<span class="sd">      only calculates its vibrational part, static energies is not counted.</span>
+<span class="sd">      only calculates its vibrational part, static energies are not taken into account.</span>
 
-<span class="sd">    :param temperature: A ``float`` that represents the temperature at which  the total free energy is calculated. This</span>
+<span class="sd">    :param temperature: A ``float`` that represents the temperature at which the total free energy is calculated. This</span>
 <span class="sd">        value is in unit &#39;Kelvin&#39;.</span>
-<span class="sd">    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in doing Brillouin zone</span>
-<span class="sd">        sampling. The can be non-normalized, since normalized will be done in the class.</span>
-<span class="sd">    :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequencies read from file,</span>
-<span class="sd">        usually may be in unit :math:`\text{cm}^{-1}`.</span>
+<span class="sd">    :param q_weights: An :math:`m \\times 1` vector that represents the weight of each q-point in Brillouin zone</span>
+<span class="sd">        sampling. This vector can be non-normalized since a normalization will be done internally.</span>
+<span class="sd">    :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequencies read from a file,</span>
+<span class="sd">        usually in unit :math:`\\text{cm}^{-1}`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">q_weights</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">:</span> <span class="n">Array3D</span><span class="p">):</span>
@@ -180,7 +179,7 @@
 
 <div class="viewcode-block" id="HOFreeEnergySampler.on_q_point"><a class="viewcode-back" href="../../api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_q_point">[docs]</a>    <span class="k">def</span> <span class="nf">on_q_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>  <span class="c1"># E1(i,m)</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used for checking.</span>
+<span class="sd">        Sample free energy on the :math:`i` th q-point.</span>
 
 <span class="sd">        :param i: An integer labeling :math:`i` th q-point.</span>
 <span class="sd">        :return: The accumulated free energy on the :math:`i` th q-point.</span>
@@ -189,7 +188,7 @@
 
 <div class="viewcode-block" id="HOFreeEnergySampler.on_band"><a class="viewcode-back" href="../../api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_band">[docs]</a>    <span class="k">def</span> <span class="nf">on_band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used for checking.</span>
+<span class="sd">        Sample free energy on the :math:`i` th band.</span>
 
 <span class="sd">        :param i: An integer labeling :math:`i` th band.</span>
 <span class="sd">        :return: The accumulated free energy on the :math:`i`th q-point.</span>
@@ -198,7 +197,7 @@
 
 <div class="viewcode-block" id="HOFreeEnergySampler.on_volume"><a class="viewcode-back" href="../../api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_volume">[docs]</a>    <span class="k">def</span> <span class="nf">on_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scalar</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sample free energies on :math:`i` th volume.</span>
+<span class="sd">        Sample free energy on the :math:`i` th volume.</span>
 
 <span class="sd">        :param i: An integer labeling :math:`i` th volume.</span>
 <span class="sd">        :return: The accumulated free energy on the :math:`i` th volume.</span>
@@ -210,8 +209,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample free energies on every volume.</span>
 
-<span class="sd">        :return: A vector with length equals to the number of volumes. Each element is the free energy of</span>
-<span class="sd">            corresponding volume.</span>
+<span class="sd">        :return: A vector with length equals the number of volumes. Each element is the free energy of</span>
+<span class="sd">            one volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># First calculate free energies on a 3D array, then sum along the third axis (bands),</span>
         <span class="c1"># at last contract weights and free energies on all q-points.</span>
@@ -230,7 +229,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

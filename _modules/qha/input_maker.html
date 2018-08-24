@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -129,20 +129,23 @@
 
 <div class="viewcode-block" id="FromQEOutput"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput">[docs]</a><span class="k">class</span> <span class="nc">FromQEOutput</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class that can generate a standard &quot;input&quot; file for ``qha-run`` if you have data collected from Quantum</span>
-<span class="sd">    ESPRESSO.</span>
+<span class="sd">    A class that can generate a standard &quot;input&quot; file for the ``qha run`` command if the original data is given by</span>
+<span class="sd">    Quantum ESPRESSO.</span>
 
-<span class="sd">    :param inp_file_list: A YAML file that should contains 3 keys and values:</span>
+<span class="sd">    :param inp_file_list: A YAML file that contains three keys and values:</span>
 
-<span class="sd">        1. ``formula_unit_number``: The number of formula unit in a cell.</span>
-<span class="sd">        2. ``comment``: Some heading you want to add to your &quot;input&quot;.</span>
-<span class="sd">        3. ``frequency_files``: A YAML list of strings specifying all the frequency files from Quantum ESPRESSO.</span>
+<span class="sd">        1. ``formula_unit_number``: The number of formula units in a unit cell.</span>
+<span class="sd">        2. ``comment``: Comment that could be added as the first line of the ``input``,</span>
+<span class="sd">           which usually specifies the system which user wants to calculate.</span>
+<span class="sd">        3. ``frequency_files``: A YAML list of strings specifying all the frequency files given by Quantum ESPRESSO</span>
+<span class="sd">           ``matdyn.x``.</span>
 
-<span class="sd">        If you are not familiar with YAML syntax, please refer to</span>
+<span class="sd">        To become more familiar with YAML syntax, which is used in the &quot;settings&quot; file, please refer to</span>
 <span class="sd">        `this documentation &lt;http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html&gt;`_.</span>
-<span class="sd">    :param inp_static: A text file specifying the static energies of each volume from electronic calculation.</span>
-<span class="sd">        The order of them should be the same as the ``frequency_files`` listing order.</span>
-<span class="sd">    :param inp_q_points: A text file specifying the q-points&#39; coordinates and their weights in the Brillouin zone.</span>
+<span class="sd">    :param inp_static: A pure text file specifying the energies and pressures of each volume from the</span>
+<span class="sd">        static calculation. The order of these volumes must be the same as the ``frequency_files`` listing order.</span>
+<span class="sd">    :param inp_q_points: A pure text file specifying the q-points&#39; coordinates and their corresponding weights in the</span>
+<span class="sd">        Brillouin zone.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp_file_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp_static</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp_q_points</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -162,7 +165,7 @@
 
 <div class="viewcode-block" id="FromQEOutput.read_file_list"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput.read_file_list">[docs]</a>    <span class="k">def</span> <span class="nf">read_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read all the files&#39; names for frequency files from Quantum ESPRESSO.</span>
+<span class="sd">        Read all the files&#39; names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inp_file_list</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -173,9 +176,8 @@
 
 <div class="viewcode-block" id="FromQEOutput.read_static"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput.read_static">[docs]</a>    <span class="k">def</span> <span class="nf">read_static</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read static information, including pressures (will not be used in calculation),</span>
-<span class="sd">        optimized volumes, and minimized static energies. These information is from electronic</span>
-<span class="sd">        calculation.</span>
+<span class="sd">        Read static information, including pressures (which will not be used in calculation by now),</span>
+<span class="sd">        optimized volumes, and static energies.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pressures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">volumes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -202,9 +204,9 @@
 
 <div class="viewcode-block" id="FromQEOutput.read_q_points"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput.read_q_points">[docs]</a>    <span class="k">def</span> <span class="nf">read_q_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read q-points&#39; coordinates and their weights in Brillouin zone. The q-points are assumed to be 3-dimensional.</span>
-<span class="sd">        No other information should be given. If you want, write lines that start with &#39;#&#39;, they will be ignored when</span>
-<span class="sd">        reading.</span>
+<span class="sd">        Read q-points&#39; coordinates and their weights in the Brillouin zone. The q-points&#39; coordinates are supposed to be</span>
+<span class="sd">        three-dimensional. No other information should be given. If user still wants to,</span>
+<span class="sd">        write lines that start with ``#``, and then they will be ignored when reading.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">q_weights</span> <span class="o">=</span> <span class="p">[]</span>
@@ -238,7 +240,7 @@
 <span class="sd">        one file.</span>
 
 <span class="sd">        :param inp: The name or path of the file.</span>
-<span class="sd">        :return: The q-space coordinates of each q-point in the file, and corresponding frequencies for each</span>
+<span class="sd">        :return: The q-space coordinates of each q-point in the file and corresponding frequencies for each</span>
 <span class="sd">            q-point on each band.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">text_stream</span> <span class="o">=</span> <span class="n">TextStream</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
@@ -295,7 +297,8 @@
 
 <div class="viewcode-block" id="FromQEOutput.read_frequency_files"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput.read_frequency_files">[docs]</a>    <span class="k">def</span> <span class="nf">read_frequency_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read the phonon frequencies for all files, using ``read_frequency_file`` method for each file.</span>
+<span class="sd">        Read the phonon frequencies for all files (which are specified in the</span>
+<span class="sd">        ``frequency_files`` key of the settings file).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">frequencies_for_all_files</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -317,7 +320,7 @@
 
 <div class="viewcode-block" id="FromQEOutput.write_to_file"><a class="viewcode-back" href="../../api/input_maker.html#qha.input_maker.FromQEOutput.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;input&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write collected data to a file *outfile*.</span>
+<span class="sd">        Write all data to a file *outfile*, which will be regarded as standard input file for ``qha``.</span>
 
 <span class="sd">        :param outfile: The path or name of the output file, by default is ``&#39;input&#39;`` (for further calculation).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -361,7 +364,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>1.5. Multi-configurations free energy &#8212; qha 1.0.10 documentation</title>
+    <title>2.5. Multi-configurations free energy &#8212; qha 1.0.10 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -18,8 +18,8 @@
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="1.6. Fitting Birch–Murnaghan equation of state" href="fitting.html" />
-    <link rel="prev" title="1.4. Single configuration free energy" href="single_configuration.html" />
+    <link rel="next" title="2.6. Interpolate on a dense volume mesh" href="grid_interpolation.html" />
+    <link rel="prev" title="2.4. Single configuration free energy" href="single_configuration.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -54,8 +54,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -70,9 +70,9 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">1.5. Multi-configurations free energy</a><ul>
-<li><a class="reference internal" href="#module-qha">1.5.1. Same phonon density of states</a></li>
-<li><a class="reference internal" href="#module-qha">1.5.2. Different phonon density of states</a></li>
+<li><a class="reference internal" href="#">2.5. Multi-configurations free energy</a><ul>
+<li><a class="reference internal" href="#module-qha">2.5.1. Same phonon density of states</a></li>
+<li><a class="reference internal" href="#module-qha">2.5.2. Different phonon density of states</a></li>
 </ul>
 </li>
 </ul>
@@ -84,11 +84,11 @@
               
                 
   <li>
-    <a href="single_configuration.html" title="Previous Chapter: 1.4. Single configuration free energy"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 1.4. Single c...</span>
+    <a href="single_configuration.html" title="Previous Chapter: 2.4. Single configuration free energy"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 2.4. Single c...</span>
     </a>
   </li>
   <li>
-    <a href="fitting.html" title="Next Chapter: 1.6. Fitting Birch–Murnaghan equation of state"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">1.6. Fitting ... &raquo;</span>
+    <a href="grid_interpolation.html" title="Next Chapter: 2.6. Interpolate on a dense volume mesh"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">2.6. Interpol... &raquo;</span>
     </a>
   </li>
               
@@ -123,37 +123,37 @@
     <div class="col-md-12 content">
       
   <div class="section" id="multi-configurations-free-energy">
-<h1>1.5. Multi-configurations free energy<a class="headerlink" href="#multi-configurations-free-energy" title="Permalink to this headline">¶</a></h1>
+<h1>2.5. Multi-configurations free energy<a class="headerlink" href="#multi-configurations-free-energy" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-qha">
-<span id="same-phonon-density-of-states"></span><h2>1.5.2. Same phonon density of states<a class="headerlink" href="#module-qha" title="Permalink to this headline">¶</a></h2>
+<span id="same-phonon-density-of-states"></span><h2>2.5.2. Same phonon density of states<a class="headerlink" href="#module-qha" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-qha.multi_configurations"></span><span class="target" id="module-qha.multi_configurations.same_phonon_dos"></span><dl class="class">
 <dt id="qha.multi_configurations.same_phonon_dos.PartitionFunction">
 <em class="property">class </em><code class="descclassname">qha.multi_configurations.same_phonon_dos.</code><code class="descname">PartitionFunction</code><span class="sig-paren">(</span><em>temperature</em>, <em>degeneracies</em>, <em>q_weights</em>, <em>static_energies</em>, <em>frequencies</em>, <em>precision=500</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#PartitionFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.PartitionFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that represents the partition function of multiple configurations with same phonon density of states.
+<dd><p>A class that represents the partition function of multiple configurations with the same phonon density of states.
 In mathematics, it is represented as</p>
 <div class="math notranslate nohighlight">
-\[Z_{\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}
+\[Z_{\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j}
 \bigg\{
-g_{j} \exp \Big( -\frac{ E_j(V) }{ k_B T } \Big)
-\prod_{\mathbf{q}s} \bigg(
-\frac{\exp \Big( -\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \Big( -\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \Big)}
-\bigg)
+  \exp \Big( -\frac{ E_j(V) }{ k_B T } \Big)
+  \prod_{\mathbf{q}s} \bigg(
+    \tfrac{\exp \big(-\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ 2 k_B T }\big)}{1 - \exp \big(-\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ k_B T }\big)}
+  \bigg)^{w_{\mathbf{ q }}^j}
 \bigg\}.\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which partition function is calculated.</li>
-<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configurations, which will not be normalized in calculation.
-Should be all positive integers.</li>
-<li><strong>q_weights</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – The weights of all q-points that are sampled, can be an array so each configuration should
-have the same q-weights.</li>
-<li><strong>static_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – The static energy of each configuration of each volume.</li>
-<li><strong>frequencies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>3d</em><em>, </em><em>A</em><em>)</em>) – A 3D array that specifies the frequency on the specified configuration, volume, q-point
-and mode.</li>
-<li><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The precision of a big float number to represent the partition function since it is a very large
-number, by default is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</li>
+<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which the partition function is calculated.</li>
+<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configuration, which will not be normalized in the
+calculation. They should all be positive integers.</li>
+<li><strong>q_weights</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – The weights of all q-points that are sampled, should be a vector since all configurations should
+have the same q-point weights.</li>
+<li><strong>static_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – The static energies of each configuration of each volume.</li>
+<li><strong>frequencies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>3d</em><em>, </em><em>A</em><em>)</em>) – It is a 3D array that specifies the frequency on each volume, q-point and mode.
+It is not 4D since we have all configurations sharing the same phonon density of states.</li>
+<li><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The precision of a big float number to represent the partition function since it is a very large
+value, by default, is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -162,14 +162,14 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="method">
 <dt id="qha.multi_configurations.same_phonon_dos.PartitionFunction.get_free_energies">
 <code class="descname">get_free_energies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#PartitionFunction.get_free_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.PartitionFunction.get_free_energies" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give free energy by</p>
+<dd><p>Give the free energy by</p>
 <div class="math notranslate nohighlight">
 \[F_{\text{all configs}}(T, V) = - k_B T \ln Z_{\text{all configs}}(T, V).\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Free energy on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The free energy on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -178,12 +178,12 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="attribute">
 <dt id="qha.multi_configurations.same_phonon_dos.PartitionFunction.total">
 <code class="descname">total</code><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#PartitionFunction.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.PartitionFunction.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total partition function.</p>
+<dd><p>Calculate the total partition function.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Partition function on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The partition function on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -194,32 +194,33 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="class">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy">
 <em class="property">class </em><code class="descclassname">qha.multi_configurations.same_phonon_dos.</code><code class="descname">FreeEnergy</code><span class="sig-paren">(</span><em>temperature</em>, <em>degeneracies</em>, <em>q_weights</em>, <em>static_energies</em>, <em>volumes</em>, <em>frequencies</em>, <em>static_only=False</em>, <em>order=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that represents the free energy of multiple configurations with same phonon density of states.
+<dd><p>A class that represents the free energy of multiple configurations with the same phonon density of states.
 In mathematics, it is represented as</p>
 <div class="math notranslate nohighlight">
 \[F_{\text{all configs}}(T, V) = - k_B T \ln Z_{\text{all configs}}(T, V)
 = - k_B T \ln \bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \Big( -\frac{ E_j(V) }{ k_B T } \Big) \bigg)
-+ \sum_{\mathbf{ q }s} \bigg\{ \frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
-    + k_B \ln \bigg( 1 - \exp \Big( -\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \Big) \bigg)
-\bigg\}.\]</div>
+  + \sum_{\mathbf{ q }s} w_\mathbf{ q }
+      \bigg\{ \frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }
+      + k_B \ln \bigg( 1 - \exp \Big( -\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \Big) \bigg)
+  \bigg\}.\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which partition function is calculated.</li>
-<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configurations, which will not be normalized in calculation.
-Should be all positive integers.</li>
-<li><strong>q_weights</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – The weights of all q-points that are sampled, can be an array so each configuration should
-have the same q-weights.</li>
+<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which the partition function is calculated.</li>
+<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configuration, which will not be normalized in the
+calculation. They should all be positive integers.</li>
+<li><strong>q_weights</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – The weights of all q-points that are sampled, should be a vector since all configurations should
+have the same q-point weights.</li>
 <li><strong>static_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – The static energy of each configuration of each volume.</li>
-<li><strong>volumes</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix of array of volumes of each configurations, should have the same number for each
+<li><strong>volumes</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix of volumes of each configurations, should have the same values for each
 configuration.</li>
-<li><strong>frequencies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>3d</em><em>, </em><em>A</em><em>)</em>) – A 3D array that specifies the frequency on the specified configuration, volume, q-point
-and mode.</li>
-<li><strong>static_only</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – If the calculation only takes static energy and does not consider vibrational contribution,
-by default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</li>
-<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The order of Birch–Murnaghan equation of state fitting, by default is <code class="docutils literal notranslate"><span class="pre">3</span></code>.</li>
+<li><strong>frequencies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>3d</em><em>, </em><em>A</em><em>)</em>) – It is a 3D array that specifies the frequency on each volume, q-point and mode.
+It is not 4D since we have all configurations sharing the same phonon density of states.</li>
+<li><strong>static_only</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – Whether the calculation only takes static contribution and does not consider
+the vibrational contribution, by default, is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The order of Birch–Murnaghan equation of state fitting, by default, is <code class="docutils literal notranslate"><span class="pre">3</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -228,8 +229,8 @@ by default is <code class="docutils literal notranslate"><span class="pre">False
 <dl class="attribute">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy.aligned_static_energies_for_each_configuration">
 <code class="descname">aligned_static_energies_for_each_configuration</code><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy.aligned_static_energies_for_each_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy.aligned_static_energies_for_each_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>If your input static energy is not aligned for each configuration, then do a
-fitting to align all these static energy.</p>
+<dd><p>If the input static energies are not aligned for each configuration, then do a
+fitting to align all static energies.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -243,14 +244,14 @@ fitting to align all these static energy.</p>
 <dl class="method">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy.get_free_energies">
 <code class="descname">get_free_energies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy.get_free_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy.get_free_energies" title="Permalink to this definition">¶</a></dt>
-<dd><p>If you specify <code class="docutils literal notranslate"><span class="pre">static_only</span> <span class="pre">=</span> <span class="pre">True</span></code> in class initialization, then here only static contribution will
-be returned, this is equivalent to the <code class="docutils literal notranslate"><span class="pre">static_part</span></code> property. If not, then this is equivalent to
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">static_only</span> <span class="pre">=</span> <span class="pre">True</span></code> is specified in class instantiation, then only the static contribution will
+be counted. Then it is equivalent to the <code class="docutils literal notranslate"><span class="pre">static_part</span></code> property. If not, then this is equivalent to
 the <code class="docutils literal notranslate"><span class="pre">total</span></code> property.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Free energy on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The free energy on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -259,12 +260,12 @@ the <code class="docutils literal notranslate"><span class="pre">total</span></c
 <dl class="attribute">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy.harmonic_part">
 <code class="descname">harmonic_part</code><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy.harmonic_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy.harmonic_part" title="Permalink to this definition">¶</a></dt>
-<dd><p>Harmonic contribution to the free energy.</p>
+<dd><p>Calculate the harmonic contribution to the free energy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Harmonic contribution on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The harmonic contribution on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -273,12 +274,12 @@ the <code class="docutils literal notranslate"><span class="pre">total</span></c
 <dl class="attribute">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy.static_part">
 <code class="descname">static_part</code><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy.static_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy.static_part" title="Permalink to this definition">¶</a></dt>
-<dd><p>Static contribution to the free energy.</p>
+<dd><p>Calculate the static contribution to the free energy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Static contribution on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The static contribution on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -287,12 +288,12 @@ the <code class="docutils literal notranslate"><span class="pre">total</span></c
 <dl class="attribute">
 <dt id="qha.multi_configurations.same_phonon_dos.FreeEnergy.total">
 <code class="descname">total</code><a class="reference internal" href="../_modules/qha/multi_configurations/same_phonon_dos.html#FreeEnergy.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.same_phonon_dos.FreeEnergy.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total partition function. Static part plus harmonic part.</p>
+<dd><p>Calculate the total partition function, which is the static part plus the harmonic part.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Total free energy on the temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Total free energy on the temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -302,7 +303,7 @@ the <code class="docutils literal notranslate"><span class="pre">total</span></c
 
 </div>
 <div class="section" id="module-qha">
-<span id="different-phonon-density-of-states"></span><h2>1.5.2. Different phonon density of states<a class="headerlink" href="#module-qha" title="Permalink to this headline">¶</a></h2>
+<span id="different-phonon-density-of-states"></span><h2>2.5.2. Different phonon density of states<a class="headerlink" href="#module-qha" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-qha.multi_configurations"></span><span class="target" id="module-qha.multi_configurations.different_phonon_dos"></span><dl class="class">
 <dt id="qha.multi_configurations.different_phonon_dos.PartitionFunction">
 <em class="property">class </em><code class="descclassname">qha.multi_configurations.different_phonon_dos.</code><code class="descname">PartitionFunction</code><span class="sig-paren">(</span><em>temperature</em>, <em>degeneracies</em>, <em>q_weights</em>, <em>static_energies</em>, <em>volumes</em>, <em>frequencies</em>, <em>static_only=False</em>, <em>precision=500</em>, <em>order=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/different_phonon_dos.html#PartitionFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.different_phonon_dos.PartitionFunction" title="Permalink to this definition">¶</a></dt>
@@ -310,27 +311,27 @@ the <code class="docutils literal notranslate"><span class="pre">total</span></c
 In mathematics, it is represented as</p>
 <div class="math notranslate nohighlight">
 \[Z_{\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),\]</div>
-<p>where <span class="math notranslate nohighlight">\(N_{c}\)</span> stands for the number of configurations and <span class="math notranslate nohighlight">\(g_{j}\)</span> stands for degeneracy for <span class="math notranslate nohighlight">\(j\)</span> th
-configuration.</p>
+<p>where <span class="math notranslate nohighlight">\(N_{c}\)</span> stands for the number of configurations and <span class="math notranslate nohighlight">\(g_{j}\)</span> stands for degeneracy for the
+<span class="math notranslate nohighlight">\(j\)</span> th configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which partition function is calculated.</li>
-<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configurations, which will not be normalized in calculation.
-Should be all positive integers.</li>
+<li><strong>temperature</strong> (<em>float64</em>) – The temperature at which the partition function is calculated.</li>
+<li><strong>degeneracies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – An array of degeneracies of each configuration, which will not be normalized in the
+calculation. They should all be positive integers.</li>
 <li><strong>q_weights</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – The weights of all q-points that are sampled, can be a 2D matrix so each configuration can have
-a little bit different q-weights, but the number of q-points of each configuration must be the same.</li>
+a little bit different q-point weights, but the number of q-points of each configuration must be the same.</li>
 <li><strong>static_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – The static energy of each configuration of each volume.</li>
-<li><strong>volumes</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix of array of volumes of each configurations, should have the same number for each
+<li><strong>volumes</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix of volumes of each configuration, should have the same values for each
 configuration.</li>
 <li><strong>frequencies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>4d</em><em>, </em><em>A</em><em>)</em>) – A 4D array that specifies the frequency on each configuration, volume, q-point and mode.</li>
-<li><strong>static_only</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – If the calculation only takes static energy and does not consider vibrational contribution,
-by default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</li>
-<li><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The precision of a big float number to represent the partition function since it is a very large
-number, by default is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</li>
-<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The order of Birch–Murnaghan equation of state fitting, by default is <code class="docutils literal notranslate"><span class="pre">3</span></code>.</li>
+<li><strong>static_only</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – Whether the calculation only takes static contribution and does not consider
+the vibrational contribution, by default, is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</li>
+<li><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The precision of a big float number to represent the partition function since it is a very large
+value, by default, is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The order of Birch–Murnaghan equation of state fitting, by default, is <code class="docutils literal notranslate"><span class="pre">3</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -339,12 +340,12 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="attribute">
 <dt id="qha.multi_configurations.different_phonon_dos.PartitionFunction.aligned_free_energies_for_each_configuration">
 <code class="descname">aligned_free_energies_for_each_configuration</code><a class="reference internal" href="../_modules/qha/multi_configurations/different_phonon_dos.html#PartitionFunction.aligned_free_energies_for_each_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.different_phonon_dos.PartitionFunction.aligned_free_energies_for_each_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Then do a fitting to align all these free energy.</p>
+<dd><p>Then do a fitting to align all these free energies.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix of aligned free energy of each configuration of each volume.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix, the aligned free energy of each configuration of each volume.</td>
 </tr>
 </tbody>
 </table>
@@ -353,14 +354,14 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="method">
 <dt id="qha.multi_configurations.different_phonon_dos.PartitionFunction.get_free_energies">
 <code class="descname">get_free_energies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/multi_configurations/different_phonon_dos.html#PartitionFunction.get_free_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.different_phonon_dos.PartitionFunction.get_free_energies" title="Permalink to this definition">¶</a></dt>
-<dd><p>The free energy calculated from partition function <span class="math notranslate nohighlight">\(Z_{\text{all configs}}(T, V)\)</span> by</p>
+<dd><p>The free energy calculated from the partition function <span class="math notranslate nohighlight">\(Z_{\text{all configs}}(T, V)\)</span> by</p>
 <div class="math notranslate nohighlight">
 \[F_{\text{all configs}}(T, V) = - k_B T \ln Z_{\text{all configs}}(T, V).\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The free energy on a temperature-volume mesh.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The free energy on a temperature-volume grid.</td>
 </tr>
 </tbody>
 </table>
@@ -376,7 +377,7 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix of partition function of each configuration of each volume.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix, the partition function of each configuration of each volume.</td>
 </tr>
 </tbody>
 </table>
@@ -385,13 +386,13 @@ number, by default is <code class="docutils literal notranslate"><span class="pr
 <dl class="attribute">
 <dt id="qha.multi_configurations.different_phonon_dos.PartitionFunction.unaligned_free_energies_for_each_configuration">
 <code class="descname">unaligned_free_energies_for_each_configuration</code><a class="reference internal" href="../_modules/qha/multi_configurations/different_phonon_dos.html#PartitionFunction.unaligned_free_energies_for_each_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.multi_configurations.different_phonon_dos.PartitionFunction.unaligned_free_energies_for_each_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>If your input free energy is not aligned for each configuration, at first just calculate the “raw”
+<dd><p>If the input free energy is not aligned for each configuration, first just calculate the “raw”
 free energy on each volume and each configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix of raw free energy of each configuration of each volume.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A matrix, the “raw” free energy of each configuration of each volume.</td>
 </tr>
 </tbody>
 </table>
@@ -415,7 +416,7 @@ free energy on each volume and each configuration.</p>
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

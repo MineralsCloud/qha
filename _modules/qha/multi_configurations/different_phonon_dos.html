@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -104,11 +104,10 @@
   <h1>Source code for qha.multi_configurations.different_phonon_dos</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">.. module different_phonon_dos</span>
+<span class="sd">.. module multi_configurations.different_phonon_dos</span>
 <span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
-<span class="sd">   :synopsis:</span>
-<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
 <span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
@@ -139,25 +138,25 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),</span>
+<span class="sd">       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),</span>
 
-<span class="sd">    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for :math:`j` th</span>
-<span class="sd">    configuration.</span>
+<span class="sd">    where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for the</span>
+<span class="sd">    :math:`j` th configuration.</span>
 
-<span class="sd">    :param temperature: The temperature at which partition function is calculated.</span>
-<span class="sd">    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.</span>
-<span class="sd">        Should be all positive integers.</span>
+<span class="sd">    :param temperature: The temperature at which the partition function is calculated.</span>
+<span class="sd">    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the</span>
+<span class="sd">        calculation. They should all be positive integers.</span>
 <span class="sd">    :param q_weights: The weights of all q-points that are sampled, can be a 2D matrix so each configuration can have</span>
-<span class="sd">        a little bit different q-weights, but the number of q-points of each configuration must be the same.</span>
+<span class="sd">        a little bit different q-point weights, but the number of q-points of each configuration must be the same.</span>
 <span class="sd">    :param static_energies: The static energy of each configuration of each volume.</span>
-<span class="sd">    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each</span>
+<span class="sd">    :param volumes: A matrix of volumes of each configuration, should have the same values for each</span>
 <span class="sd">        configuration.</span>
 <span class="sd">    :param frequencies: A 4D array that specifies the frequency on each configuration, volume, q-point and mode.</span>
-<span class="sd">    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,</span>
-<span class="sd">        by default is ``False``.</span>
+<span class="sd">    :param static_only: Whether the calculation only takes static contribution and does not consider</span>
+<span class="sd">        the vibrational contribution, by default, is ``False``.</span>
 <span class="sd">    :param precision: The precision of a big float number to represent the partition function since it is a very large</span>
-<span class="sd">        number, by default is ``500``.</span>
-<span class="sd">    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.</span>
+<span class="sd">        value, by default, is ``500``.</span>
+<span class="sd">    :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">degeneracies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">q_weights</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">static_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
@@ -192,10 +191,10 @@
 <div class="viewcode-block" id="PartitionFunction.unaligned_free_energies_for_each_configuration"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.different_phonon_dos.PartitionFunction.unaligned_free_energies_for_each_configuration">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">unaligned_free_energies_for_each_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        If your input free energy is not aligned for each configuration, at first just calculate the &quot;raw&quot;</span>
+<span class="sd">        If the input free energy is not aligned for each configuration, first just calculate the &quot;raw&quot;</span>
 <span class="sd">        free energy on each volume and each configuration.</span>
 
-<span class="sd">        :return: A matrix of raw free energy of each configuration of each volume.</span>
+<span class="sd">        :return: A matrix, the &quot;raw&quot; free energy of each configuration of each volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">configurations_amount</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">free_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_energies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -204,9 +203,9 @@
 <div class="viewcode-block" id="PartitionFunction.aligned_free_energies_for_each_configuration"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.different_phonon_dos.PartitionFunction.aligned_free_energies_for_each_configuration">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">aligned_free_energies_for_each_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Then do a fitting to align all these free energy.</span>
+<span class="sd">        Then do a fitting to align all these free energies.</span>
 
-<span class="sd">        :return: A matrix of aligned free energy of each configuration of each volume.</span>
+<span class="sd">        :return: A matrix, the aligned free energy of each configuration of each volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">calibrate_energy_on_reference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unaligned_free_energies_for_each_configuration</span><span class="p">,</span>
                                              <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
@@ -218,15 +217,14 @@
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">             Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).</span>
+<span class="sd">           Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).</span>
 
-<span class="sd">        :return: A matrix of partition function of each configuration of each volume.</span>
+<span class="sd">        :return: A matrix, the partition function of each configuration of each volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">bigfloat</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
         <span class="k">with</span> <span class="n">bigfloat</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bigfloat</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span>  <span class="c1"># shape = (# of volumes for each configuration, 1)</span>
@@ -235,19 +233,18 @@
 
 <div class="viewcode-block" id="PartitionFunction.get_free_energies"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.different_phonon_dos.PartitionFunction.get_free_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_free_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The free energy calculated from partition function :math:`Z_{\\text{all configs}}(T, V)` by</span>
+<span class="sd">        The free energy calculated from the partition function :math:`Z_{\\text{all configs}}(T, V)` by</span>
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">            F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).</span>
+<span class="sd">           F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).</span>
 
-<span class="sd">        :return: The free energy on a temperature-volume mesh.</span>
+<span class="sd">        :return: The free energy on a temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">bigfloat</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
         <span class="k">with</span> <span class="n">bigfloat</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
             <span class="n">log_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bigfloat</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_functions_for_each_configuration</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -266,7 +263,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

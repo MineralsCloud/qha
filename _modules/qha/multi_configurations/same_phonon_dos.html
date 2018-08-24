@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -104,9 +104,8 @@
   <h1>Source code for qha.multi_configurations.same_phonon_dos</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">.. module same_phonon_dos</span>
+<span class="sd">.. module multi_configurations.same_phonon_dos</span>
 <span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
-<span class="sd">   :synopsis:</span>
 <span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -133,29 +132,29 @@
 
 <div class="viewcode-block" id="PartitionFunction"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.PartitionFunction">[docs]</a><span class="k">class</span> <span class="nc">PartitionFunction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class that represents the partition function of multiple configurations with same phonon density of states.</span>
+<span class="sd">    A class that represents the partition function of multiple configurations with the same phonon density of states.</span>
 <span class="sd">    In mathematics, it is represented as</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}}</span>
-<span class="sd">        \\bigg\{</span>
-<span class="sd">        g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)</span>
-<span class="sd">        \prod_{\mathbf{q}s} \\bigg(</span>
-<span class="sd">        \\frac{\exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 k_B T } \Big)}{1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big)}</span>
-<span class="sd">        \\bigg)</span>
-<span class="sd">        \\bigg\}.</span>
+<span class="sd">       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j}</span>
+<span class="sd">       \\bigg\{</span>
+<span class="sd">         \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big)</span>
+<span class="sd">         \prod_{\mathbf{q}s} \\bigg(</span>
+<span class="sd">           \\tfrac{\exp \\big(-\\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ 2 k_B T }\\big)}{1 - \exp \\big(-\\tfrac{ \hbar \omega_{\mathbf{ q }s}^j(V) }{ k_B T }\\big)}</span>
+<span class="sd">         \\bigg)^{w_{\mathbf{ q }}^j}</span>
+<span class="sd">       \\bigg\}.</span>
 
-<span class="sd">    :param temperature: The temperature at which partition function is calculated.</span>
-<span class="sd">    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.</span>
-<span class="sd">        Should be all positive integers.</span>
-<span class="sd">    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should</span>
-<span class="sd">        have the same q-weights.</span>
-<span class="sd">    :param static_energies: The static energy of each configuration of each volume.</span>
-<span class="sd">    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point</span>
-<span class="sd">        and mode.</span>
+<span class="sd">    :param temperature: The temperature at which the partition function is calculated.</span>
+<span class="sd">    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the</span>
+<span class="sd">        calculation. They should all be positive integers.</span>
+<span class="sd">    :param q_weights: The weights of all q-points that are sampled, should be a vector since all configurations should</span>
+<span class="sd">        have the same q-point weights.</span>
+<span class="sd">    :param static_energies: The static energies of each configuration of each volume.</span>
+<span class="sd">    :param frequencies: It is a 3D array that specifies the frequency on each volume, q-point and mode.</span>
+<span class="sd">        It is not 4D since we have all configurations sharing the same phonon density of states.</span>
 <span class="sd">    :param precision: The precision of a big float number to represent the partition function since it is a very large</span>
-<span class="sd">        number, by default is ``500``.</span>
+<span class="sd">        value, by default, is ``500``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">degeneracies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">q_weights</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">static_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
@@ -184,9 +183,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_static_part</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Static contribution to the partition function.</span>
+<span class="sd">        Calculate the static contribution to the partition function.</span>
 
-<span class="sd">        :return: Static contribution on the temperature-volume mesh.</span>
+<span class="sd">        :return: The static contribution on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">bigfloat</span>
@@ -201,9 +200,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_harmonic_part</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Harmonic contribution to the partition function.</span>
+<span class="sd">        Calculate the harmonic contribution to the partition function.</span>
 
-<span class="sd">        :return: Harmonic contribution on the temperature-volume mesh.</span>
+<span class="sd">        :return: The harmonic contribution on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log_product_modes</span><span class="p">:</span> <span class="n">Matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
             <span class="n">log_subsystem_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -212,27 +211,26 @@
 <div class="viewcode-block" id="PartitionFunction.total"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.PartitionFunction.total">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Total partition function.</span>
+<span class="sd">        Calculate the total partition function.</span>
 
-<span class="sd">        :return: Partition function on the temperature-volume mesh.</span>
+<span class="sd">        :return: The partition function on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_static_part</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_harmonic_part</span><span class="p">)</span>  <span class="c1"># (vol, 1), product element-wise</span></div>
 
 <div class="viewcode-block" id="PartitionFunction.get_free_energies"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.PartitionFunction.get_free_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_free_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Give free energy by</span>
+<span class="sd">        Give the free energy by</span>
 
 <span class="sd">        .. math::</span>
 
-<span class="sd">             F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).</span>
+<span class="sd">           F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).</span>
 
-<span class="sd">        :return: Free energy on the temperature-volume mesh.</span>
+<span class="sd">        :return: The free energy on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">bigfloat</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
         <span class="k">with</span> <span class="n">bigfloat</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
             <span class="n">log_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bigfloat</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -241,30 +239,31 @@
 
 <div class="viewcode-block" id="FreeEnergy"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy">[docs]</a><span class="k">class</span> <span class="nc">FreeEnergy</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class that represents the free energy of multiple configurations with same phonon density of states.</span>
+<span class="sd">    A class that represents the free energy of multiple configurations with the same phonon density of states.</span>
 <span class="sd">    In mathematics, it is represented as</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)</span>
-<span class="sd">        = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)</span>
-<span class="sd">        + \sum_{\mathbf{ q }s} \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }</span>
-<span class="sd">            + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)</span>
-<span class="sd">        \\bigg\}.</span>
+<span class="sd">       F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V)</span>
+<span class="sd">       = - k_B T \ln \\bigg( \sum_{j = 1}^{N_{c}} g_{j} \exp \\Big( -\\frac{ E_j(V) }{ k_B T } \\Big) \\bigg)</span>
+<span class="sd">         + \sum_{\mathbf{ q }s} w_\mathbf{ q }</span>
+<span class="sd">             \\bigg\{ \\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ 2 }</span>
+<span class="sd">             + k_B \ln \\bigg( 1 - \exp \\Big( -\\frac{ \hbar \omega_{\mathbf{ q }s}(V) }{ k_B T } \\Big) \\bigg)</span>
+<span class="sd">         \\bigg\}.</span>
 
-<span class="sd">    :param temperature: The temperature at which partition function is calculated.</span>
-<span class="sd">    :param degeneracies: An array of degeneracies of each configurations, which will not be normalized in calculation.</span>
-<span class="sd">        Should be all positive integers.</span>
-<span class="sd">    :param q_weights: The weights of all q-points that are sampled, can be an array so each configuration should</span>
-<span class="sd">        have the same q-weights.</span>
+<span class="sd">    :param temperature: The temperature at which the partition function is calculated.</span>
+<span class="sd">    :param degeneracies: An array of degeneracies of each configuration, which will not be normalized in the</span>
+<span class="sd">        calculation. They should all be positive integers.</span>
+<span class="sd">    :param q_weights: The weights of all q-points that are sampled, should be a vector since all configurations should</span>
+<span class="sd">        have the same q-point weights.</span>
 <span class="sd">    :param static_energies: The static energy of each configuration of each volume.</span>
-<span class="sd">    :param volumes: A matrix of array of volumes of each configurations, should have the same number for each</span>
+<span class="sd">    :param volumes: A matrix of volumes of each configurations, should have the same values for each</span>
 <span class="sd">        configuration.</span>
-<span class="sd">    :param frequencies: A 3D array that specifies the frequency on the specified configuration, volume, q-point</span>
-<span class="sd">        and mode.</span>
-<span class="sd">    :param static_only: If the calculation only takes static energy and does not consider vibrational contribution,</span>
-<span class="sd">        by default is ``False``.</span>
-<span class="sd">    :param order: The order of Birch--Murnaghan equation of state fitting, by default is ``3``.</span>
+<span class="sd">    :param frequencies: It is a 3D array that specifies the frequency on each volume, q-point and mode.</span>
+<span class="sd">        It is not 4D since we have all configurations sharing the same phonon density of states.</span>
+<span class="sd">    :param static_only: Whether the calculation only takes static contribution and does not consider</span>
+<span class="sd">        the vibrational contribution, by default, is ``False``.</span>
+<span class="sd">    :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">degeneracies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">q_weights</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">static_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
@@ -294,8 +293,8 @@
 <div class="viewcode-block" id="FreeEnergy.aligned_static_energies_for_each_configuration"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.aligned_static_energies_for_each_configuration">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">aligned_static_energies_for_each_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        If your input static energy is not aligned for each configuration, then do a</span>
-<span class="sd">        fitting to align all these static energy.</span>
+<span class="sd">        If the input static energies are not aligned for each configuration, then do a</span>
+<span class="sd">        fitting to align all static energies.</span>
 
 <span class="sd">        :return: A matrix of aligned static energy of each configuration of each volume.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -304,9 +303,9 @@
 <div class="viewcode-block" id="FreeEnergy.static_part"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.static_part">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">static_part</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Static contribution to the free energy.</span>
+<span class="sd">        Calculate the static contribution to the free energy.</span>
 
-<span class="sd">        :return: Static contribution on the temperature-volume mesh.</span>
+<span class="sd">        :return: The static contribution on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">K</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span>  <span class="c1"># k_B T</span>
         <span class="n">inside_exp</span><span class="p">:</span> <span class="n">Matrix</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">aligned_static_energies_for_each_configuration</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">kt</span>  <span class="c1"># exp( E_n(V) / k_B / T )</span>
@@ -315,9 +314,9 @@
 <div class="viewcode-block" id="FreeEnergy.harmonic_part"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.harmonic_part">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">harmonic_part</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Harmonic contribution to the free energy.</span>
+<span class="sd">        Calculate the harmonic contribution to the free energy.</span>
 
-<span class="sd">        :return: Harmonic contribution on the temperature-volume mesh.</span>
+<span class="sd">        :return: The harmonic contribution on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sum_modes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ho_free_energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sum_modes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_q_weights</span><span class="p">)</span></div>
@@ -325,19 +324,19 @@
 <div class="viewcode-block" id="FreeEnergy.total"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.total">[docs]</a>    <span class="nd">@LazyProperty</span>
     <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Total partition function. Static part plus harmonic part.</span>
+<span class="sd">        Calculate the total partition function, which is the static part plus the harmonic part.</span>
 
-<span class="sd">        :return: Total free energy on the temperature-volume mesh.</span>
+<span class="sd">        :return: Total free energy on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_part</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">harmonic_part</span></div>
 
 <div class="viewcode-block" id="FreeEnergy.get_free_energies"><a class="viewcode-back" href="../../../api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.get_free_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_free_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        If you specify ``static_only = True`` in class initialization, then here only static contribution will</span>
-<span class="sd">        be returned, this is equivalent to the ``static_part`` property. If not, then this is equivalent to</span>
+<span class="sd">        If ``static_only = True`` is specified in class instantiation, then only the static contribution will</span>
+<span class="sd">        be counted. Then it is equivalent to the ``static_part`` property. If not, then this is equivalent to</span>
 <span class="sd">        the ``total`` property.</span>
 
-<span class="sd">        :return: Free energy on the temperature-volume mesh.</span>
+<span class="sd">        :return: The free energy on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_only</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">static_part</span>
@@ -357,7 +356,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

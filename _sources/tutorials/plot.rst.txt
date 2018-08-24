@@ -1,10 +1,6 @@
-Plot results command: ``qha-plot``
+Plot results command: ``qha plot``
 **********************************
 
-We have also provided a command which can plot
-the results after running ``qha-run`` for quick
-check.
-
-Just redirect to the folder where you run
-``qha-run`` and run ``qha-plot``, the plots will
-be in the same directory as previous results.
+To perform a quick check for the calculated results, command ``qha plot /path/to/settings.yaml`` can be used
+in the same folder to do the ``qha run`` calculation.
+All plots will be saved in the same result directory.

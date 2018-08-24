@@ -8,9 +8,11 @@ to get Helmholtz free energy on a denser volume mesh.
 
 .. automodule:: qha.grid_interpolation
 
-   .. autofunction:: calc_eulerian_strain(v0, v)
-   .. autofunction:: from_eulerian_strain(v0, f)
-   .. autofunction:: interpolate_volumes(in_volumes, out_volumes_num, ratio)
+   .. autofunction:: calculate_eulerian_strain
+   .. autofunction:: from_eulerian_strain
 
-   .. autoclass:: RefineGrid
+   .. autoclass:: VolumeExpander
+    :members:
+
+   .. autoclass:: FinerGrid
     :members:

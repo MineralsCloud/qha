@@ -53,8 +53,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -142,7 +142,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.aligned_static_energies_for_each_configuration">aligned_static_energies_for_each_configuration (qha.multi_configurations.same_phonon_dos.FreeEnergy attribute)</a>
 </li>
-      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.approach_to_best_ratio">approach_to_best_ratio() (qha.grid_interpolation.RefineGrid method)</a>
+      <li><a href="api/fitting.html#qha.fitting.apply_finite_strain_fitting">apply_finite_strain_fitting() (in module qha.fitting)</a>
+</li>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.FinerGrid.approach_to_best_ratio">approach_to_best_ratio() (qha.grid_interpolation.FinerGrid method)</a>
 </li>
       <li><a href="api/tools.html#qha.tools.arange">arange() (in module qha.tools)</a>
 </li>
@@ -154,18 +156,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.b3_to_a3">b3_to_a3() (in module qha.unit_conversion)</a>
 </li>
-      <li><a href="api/eos.html#qha.eos.Birch">Birch (class in qha.eos)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.birch">birch (in module qha.eos)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#qha.eos.birch_murnaghan3rd">birch_murnaghan3rd (in module qha.eos)</a>
-</li>
-      <li><a href="api/fitting.html#qha.fitting.birch_murnaghan_finite_strain_fitting">birch_murnaghan_finite_strain_fitting() (in module qha.fitting)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.BirchMurnaghan3rd">BirchMurnaghan3rd (class in qha.eos)</a>
-</li>
       <li><a href="api/thermodynamics.html#qha.thermodynamics.bulk_modulus_derivative">bulk_modulus_derivative() (in module qha.thermodynamics)</a>
 </li>
   </ul></td>
@@ -174,7 +166,7 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.calc_eulerian_strain">calc_eulerian_strain() (in module qha.grid_interpolation)</a>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.calculate_eulerian_strain">calculate_eulerian_strain() (in module qha.grid_interpolation)</a>
 </li>
       <li><a href="api/tools.html#qha.tools.calibrate_energy_on_reference">calibrate_energy_on_reference() (in module qha.tools)</a>
 </li>
@@ -204,8 +196,6 @@
 </li>
       <li><a href="api/thermodynamics.html#qha.thermodynamics.entropy">entropy() (in module qha.thermodynamics)</a>
 </li>
-      <li><a href="api/eos.html#qha.eos.EOS">EOS (class in qha.eos)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.ev_a3_to_gpa">ev_a3_to_gpa() (in module qha.unit_conversion)</a>
@@ -232,22 +222,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/tools.html#qha.tools.find_nearest">find_nearest (in module qha.tools)</a>
 </li>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.FinerGrid">FinerGrid (class in qha.grid_interpolation)</a>
+</li>
       <li><a href="api/single_configuration.html#qha.single_configuration.free_energy">free_energy (in module qha.single_configuration)</a>
 </li>
-      <li><a href="api/eos.html#qha.eos.Birch.free_energy_at">free_energy_at() (qha.eos.Birch method)</a>
-
-      <ul>
-        <li><a href="api/eos.html#qha.eos.BirchMurnaghan3rd.free_energy_at">(qha.eos.BirchMurnaghan3rd method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.EOS.free_energy_at">(qha.eos.EOS method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.Murnaghan.free_energy_at">(qha.eos.Murnaghan method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.PourierTarantola.free_energy_at">(qha.eos.PourierTarantola method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.Vinet.free_energy_at">(qha.eos.Vinet method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy">FreeEnergy (class in qha.multi_configurations.same_phonon_dos)</a>
@@ -296,9 +274,11 @@
 </li>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.ha_b_to_ev_a">ha_b_to_ev_a() (in module qha.unit_conversion)</a>
 </li>
+      <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.harmonic_part">harmonic_part (qha.multi_configurations.same_phonon_dos.FreeEnergy attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.harmonic_part">harmonic_part (qha.multi_configurations.same_phonon_dos.FreeEnergy attribute)</a>
+      <li><a href="api/statmech.html#qha.statmech.ho_free_energy">ho_free_energy() (in module qha.statmech)</a>
 </li>
       <li><a href="api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler">HOFreeEnergySampler (class in qha.single_configuration)</a>
 </li>
@@ -310,13 +290,17 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.interpolate_volumes">interpolate_volumes() (in module qha.grid_interpolation)</a>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.in_volumes">in_volumes (qha.grid_interpolation.VolumeExpander attribute)</a>
+</li>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.interpolate_volumes">interpolate_volumes() (qha.grid_interpolation.VolumeExpander method)</a>
 </li>
       <li><a href="api/tools.html#qha.tools.is_monotonic_decreasing">is_monotonic_decreasing() (in module qha.tools)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/tools.html#qha.tools.is_monotonic_increasing">is_monotonic_increasing() (in module qha.tools)</a>
+</li>
+      <li><a href="api/thermodynamics.html#qha.thermodynamics.isobaric_heat_capacity">isobaric_heat_capacity() (in module qha.thermodynamics)</a>
 </li>
       <li><a href="api/thermodynamics.html#qha.thermodynamics.isothermal_bulk_modulus">isothermal_bulk_modulus() (in module qha.thermodynamics)</a>
 </li>
@@ -358,6 +342,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/tools.html#qha.tools.lagrange4">lagrange4() (in module qha.tools)</a>
 </li>
+      <li><a href="api/statmech.html#qha.statmech.log_subsystem_partition_function">log_subsystem_partition_function() (in module qha.statmech)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -366,15 +352,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.m_inverse_to_eh">m_inverse_to_eh() (in module qha.unit_conversion)</a>
 </li>
-      <li><a href="api/unit_conversion.html#qha.unit_conversion.m_inverse_to_ev">m_inverse_to_ev() (in module qha.unit_conversion)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/unit_conversion.html#qha.unit_conversion.m_inverse_to_ev">m_inverse_to_ev() (in module qha.unit_conversion)</a>
+</li>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.megabar_to_gpa">megabar_to_gpa() (in module qha.unit_conversion)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.Murnaghan">Murnaghan (class in qha.eos)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.murnaghan">murnaghan (in module qha.eos)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -386,11 +368,15 @@
 </li>
       <li><a href="api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_band">on_band() (qha.single_configuration.HOFreeEnergySampler method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_q_point">on_q_point() (qha.single_configuration.HOFreeEnergySampler method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/single_configuration.html#qha.single_configuration.HOFreeEnergySampler.on_volume">on_volume() (qha.single_configuration.HOFreeEnergySampler method)</a>
+</li>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.out_volumes">out_volumes (qha.grid_interpolation.VolumeExpander attribute)</a>
+</li>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.out_volumes_num">out_volumes_num (qha.grid_interpolation.VolumeExpander attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -398,8 +384,6 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#qha.eos.parabola">parabola (in module qha.eos)</a>
-</li>
       <li><a href="api/multi_configurations.html#qha.multi_configurations.different_phonon_dos.PartitionFunction.partition_functions_for_each_configuration">partition_functions_for_each_configuration (qha.multi_configurations.different_phonon_dos.PartitionFunction attribute)</a>
 </li>
       <li><a href="api/multi_configurations.html#qha.multi_configurations.different_phonon_dos.PartitionFunction">PartitionFunction (class in qha.multi_configurations.different_phonon_dos)</a>
@@ -408,31 +392,11 @@
         <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.PartitionFunction">(class in qha.multi_configurations.same_phonon_dos)</a>
 </li>
       </ul></li>
-      <li><a href="api/fitting.html#qha.fitting.polynomial_least_square_fitting">polynomial_least_square_fitting() (in module qha.fitting)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.pourier_tarantola">pourier_tarantola (in module qha.eos)</a>
-</li>
-      <li><a href="api/eos.html#qha.eos.PourierTarantola">PourierTarantola (class in qha.eos)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#qha.eos.Birch.pressure_at">pressure_at() (qha.eos.Birch method)</a>
-
-      <ul>
-        <li><a href="api/eos.html#qha.eos.BirchMurnaghan3rd.pressure_at">(qha.eos.BirchMurnaghan3rd method)</a>
+      <li><a href="api/fitting.html#qha.fitting.polynomial_least_square_fitting">polynomial_least_square_fitting() (in module qha.fitting)</a>
 </li>
-        <li><a href="api/eos.html#qha.eos.EOS.pressure_at">(qha.eos.EOS method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.Murnaghan.pressure_at">(qha.eos.Murnaghan method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.PourierTarantola.pressure_at">(qha.eos.PourierTarantola method)</a>
-</li>
-        <li><a href="api/eos.html#qha.eos.Vinet.pressure_at">(qha.eos.Vinet method)</a>
-</li>
-      </ul></li>
-      <li><a href="api/thermodynamics.html#qha.thermodynamics.pressure_specific_heat_capacity">pressure_specific_heat_capacity() (in module qha.thermodynamics)</a>
-</li>
-      <li><a href="api/thermodynamics.html#qha.thermodynamics.pressure_tv">pressure_tv() (in module qha.thermodynamics)</a>
+      <li><a href="api/thermodynamics.html#qha.thermodynamics.pressure">pressure() (in module qha.thermodynamics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -440,9 +404,7 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#module-qha">qha (module)</a>, <a href="api/fitting.html#module-qha">[1]</a>, <a href="api/grid_interpolation.html#module-qha">[2]</a>, <a href="api/input_maker.html#module-qha">[3]</a>, <a href="api/multi_configurations.html#module-qha">[4]</a>, <a href="api/multi_configurations.html#module-qha">[5]</a>, <a href="api/read_input.html#module-qha">[6]</a>, <a href="api/settings.html#module-qha">[7]</a>, <a href="api/single_configuration.html#module-qha">[8]</a>, <a href="api/statmech.html#module-qha">[9]</a>, <a href="api/thermodynamics.html#module-qha">[10]</a>, <a href="api/tools.html#module-qha">[11]</a>, <a href="api/unit_conversion.html#module-qha">[12]</a>, <a href="api/v2p.html#module-qha">[13]</a>
-</li>
-      <li><a href="api/eos.html#module-qha.eos">qha.eos (module)</a>
+      <li><a href="api/fitting.html#module-qha">qha (module)</a>, <a href="api/grid_interpolation.html#module-qha">[1]</a>, <a href="api/input_maker.html#module-qha">[2]</a>, <a href="api/multi_configurations.html#module-qha">[3]</a>, <a href="api/multi_configurations.html#module-qha">[4]</a>, <a href="api/read_input.html#module-qha">[5]</a>, <a href="api/settings.html#module-qha">[6]</a>, <a href="api/single_configuration.html#module-qha">[7]</a>, <a href="api/statmech.html#module-qha">[8]</a>, <a href="api/thermodynamics.html#module-qha">[9]</a>, <a href="api/tools.html#module-qha">[10]</a>, <a href="api/unit_conversion.html#module-qha">[11]</a>, <a href="api/v2p.html#module-qha">[12]</a>
 </li>
       <li><a href="api/fitting.html#module-qha.fitting">qha.fitting (module)</a>
 </li>
@@ -456,10 +418,10 @@
 </li>
       <li><a href="api/multi_configurations.html#module-qha.multi_configurations.same_phonon_dos">qha.multi_configurations.same_phonon_dos (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/read_input.html#module-qha.readers">qha.readers (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/read_input.html#module-qha.readers.read_input">qha.readers.read_input (module)</a>
 </li>
       <li><a href="api/settings.html#module-qha.settings">qha.settings (module)</a>
@@ -482,6 +444,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.ratio">ratio (qha.grid_interpolation.VolumeExpander attribute)</a>
+</li>
       <li><a href="api/input_maker.html#qha.input_maker.FromQEOutput.read_file_list">read_file_list() (qha.input_maker.FromQEOutput method)</a>
 </li>
       <li><a href="api/input_maker.html#qha.input_maker.FromQEOutput.read_frequency_file">read_frequency_file() (qha.input_maker.FromQEOutput static method)</a>
@@ -494,11 +458,9 @@
 </li>
       <li><a href="api/input_maker.html#qha.input_maker.FromQEOutput.read_static">read_static() (qha.input_maker.FromQEOutput method)</a>
 </li>
-      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.refine_grid">refine_grid() (qha.grid_interpolation.RefineGrid method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.RefineGrid">RefineGrid (class in qha.grid_interpolation)</a>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.FinerGrid.refine_grid">refine_grid() (qha.grid_interpolation.FinerGrid method)</a>
 </li>
       <li><a href="api/unit_conversion.html#qha.unit_conversion.ry_b3_to_gpa">ry_b3_to_gpa() (in module qha.unit_conversion)</a>
 </li>
@@ -520,11 +482,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/settings.html#qha.settings.Settings">Settings (class in qha.settings)</a>
 </li>
+      <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.static_part">static_part (qha.multi_configurations.same_phonon_dos.FreeEnergy attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#qha.eos.EOS.solve_v_by_p">solve_v_by_p() (qha.eos.EOS method)</a>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.strains">strains (qha.grid_interpolation.VolumeExpander attribute)</a>
 </li>
-      <li><a href="api/multi_configurations.html#qha.multi_configurations.same_phonon_dos.FreeEnergy.static_part">static_part (qha.multi_configurations.same_phonon_dos.FreeEnergy attribute)</a>
+      <li><a href="api/statmech.html#qha.statmech.subsystem_partition_function">subsystem_partition_function() (in module qha.statmech)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -562,15 +526,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/v2p.html#qha.v2p.v2p">v2p() (in module qha.v2p)</a>
 </li>
-      <li><a href="api/eos.html#qha.eos.Vinet">Vinet (class in qha.eos)</a>
+      <li><a href="api/thermodynamics.html#qha.thermodynamics.volume">volume() (in module qha.thermodynamics)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/eos.html#qha.eos.vinet">vinet (in module qha.eos)</a>
+      <li><a href="api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander">VolumeExpander (class in qha.grid_interpolation)</a>
 </li>
-      <li><a href="api/thermodynamics.html#qha.thermodynamics.volume_specific_heat_capacity">volume_specific_heat_capacity() (in module qha.thermodynamics)</a>
-</li>
-      <li><a href="api/thermodynamics.html#qha.thermodynamics.volume_tp">volume_tp() (in module qha.thermodynamics)</a>
+      <li><a href="api/thermodynamics.html#qha.thermodynamics.volumetric_heat_capacity">volumetric_heat_capacity() (in module qha.thermodynamics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -597,7 +559,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

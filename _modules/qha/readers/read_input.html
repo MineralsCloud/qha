@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -127,12 +127,16 @@
 
 <div class="viewcode-block" id="read_input"><a class="viewcode-back" href="../../../api/read_input.html#qha.readers.read_input.read_input">[docs]</a><span class="k">def</span> <span class="nf">read_input</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Array3D</span><span class="p">,</span> <span class="n">Vector</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Can be a string directing to a file, or the file&#39;s content directly.</span>
+<span class="sd">    Read the standard &quot;input&quot; file for ``qha``.</span>
 
-<span class="sd">    :param inp: The filename or file&#39;s path.</span>
-<span class="sd">    :return: The input data. They are the number of formula unit in a cell,</span>
-<span class="sd">        number of volumes in *inp*, static energies of each volume, frequencies of each volume of each q-point and mode,</span>
-<span class="sd">        an array of weights of each q-point, respectively.</span>
+<span class="sd">    :param inp: The filename or its path.</span>
+<span class="sd">    :return: The input data. They are</span>
+
+<span class="sd">        - the number of formula unit in a unit cell,</span>
+<span class="sd">        - the number of volumes in *inp*,</span>
+<span class="sd">        - the static energies of each volume,</span>
+<span class="sd">        - a 3D array, i.e., the frequencies of each volume of each q-point of each mode, and</span>
+<span class="sd">        - a vector of weights of each q-point, respectively.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">text_stream</span> <span class="o">=</span> <span class="n">TextStream</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
     <span class="n">gen</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_stream</span><span class="o">.</span><span class="n">generator_telling_position</span><span class="p">()</span>
@@ -230,7 +234,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

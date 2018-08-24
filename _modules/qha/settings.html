@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -106,11 +106,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">.. module settings</span>
 <span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
-<span class="sd">   :synopsis: In this module, we give a simple computational settings ``DEFAULT_SETTING``, which will</span>
-<span class="sd">    be used by default in the following calculation, if the users do not specify settings themselves.</span>
+<span class="sd">   :synopsis: In this module, we give a simple computational &quot;settings&quot; ``DEFAULT_SETTINGS``, which will</span>
+<span class="sd">    be used by default in the following calculation, if the users do not specify &quot;settings&quot; themselves.</span>
 <span class="sd">    If they want, they can write some settings in a YAML file.</span>
-<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
 <span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">collections</span>
@@ -119,19 +119,20 @@
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="c1"># ===================== What can be exported? =====================</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEFAULT_SETTING&#39;</span><span class="p">,</span> <span class="s1">&#39;Settings&#39;</span><span class="p">,</span> <span class="s1">&#39;from_yaml&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEFAULT_SETTINGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Settings&#39;</span><span class="p">,</span> <span class="s1">&#39;from_yaml&#39;</span><span class="p">]</span>
 
-<span class="n">DEFAULT_SETTING</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">DEFAULT_SETTINGS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;energy_unit&#39;</span><span class="p">:</span> <span class="s1">&#39;ry&#39;</span><span class="p">,</span>
     <span class="s1">&#39;length_unit&#39;</span><span class="p">:</span> <span class="s1">&#39;angstrom&#39;</span><span class="p">,</span>
     <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.</span>
     <span class="s1">&#39;p_min_modifier&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;parallel&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;T_MIN&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s1">&#39;DT_SAMPLE&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
     <span class="s1">&#39;DELTA_P&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
     <span class="s1">&#39;DELTA_P_SAMPLE&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s1">&#39;static_only&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">&#39;same_phonon_dos&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;volume_ratio&#39;</span><span class="p">:</span> <span class="mf">1.45</span><span class="p">,</span>
     <span class="c1"># output setting</span>
     <span class="s1">&#39;output_directory&#39;</span><span class="p">:</span> <span class="s1">&#39;./results/&#39;</span><span class="p">,</span>
     <span class="s1">&#39;T4FV&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;300&#39;</span><span class="p">],</span>
@@ -142,35 +143,35 @@
 
 <div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../api/settings.html#qha.settings.Settings">[docs]</a><span class="k">class</span> <span class="nc">Settings</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">ChainMap</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Contains both user settings and default settings, where user settings will override default settings.</span>
+<span class="sd">    Contains both user &quot;settings&quot; and default &quot;settings&quot;, where user &quot;settings&quot; will override default &quot;settings&quot;.</span>
 
-<span class="sd">    The default settings are</span>
+<span class="sd">    The default &quot;settings&quot; are</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        DEFAULT_SETTING: Dict[str, Any] = {</span>
+<span class="sd">        DEFAULT_SETTINGS: = {</span>
 <span class="sd">            &#39;energy_unit&#39;: &#39;ry&#39;,</span>
 <span class="sd">            &#39;length_unit&#39;: &#39;angstrom&#39;,</span>
-<span class="sd">            &#39;order&#39;: 3,  # BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.</span>
+<span class="sd">            &#39;order&#39;: 3,</span>
 <span class="sd">            &#39;p_min_modifier&#39;: 1.0,</span>
 <span class="sd">            &#39;target&#39;: &#39;parallel&#39;,</span>
+<span class="sd">            &#39;T_MIN&#39;: 0,</span>
 <span class="sd">            &#39;DT_SAMPLE&#39;: 10,</span>
 <span class="sd">            &#39;DELTA_P&#39;: 0.1,</span>
 <span class="sd">            &#39;DELTA_P_SAMPLE&#39;: 1,</span>
 <span class="sd">            &#39;static_only&#39;: False,</span>
-<span class="sd">            &#39;same_phonon_dos&#39;: False,</span>
-<span class="sd">            # output setting</span>
+<span class="sd">            &#39;volume_ratio&#39;: 1.45,</span>
 <span class="sd">            &#39;output_directory&#39;: &#39;./results/&#39;,</span>
 <span class="sd">            &#39;T4FV&#39;: [&#39;0&#39;, &#39;300&#39;],</span>
 <span class="sd">            &#39;plot_results&#39;: False,</span>
 <span class="sd">            &#39;high_verbosity&#39;: False</span>
 <span class="sd">        }</span>
 
-<span class="sd">    :param user_settings: As its name, it can be a single dictionary, or a tuple of dictionaries.</span>
+<span class="sd">    :param user_settings: It can be a single dictionary or a tuple of dictionaries, with strings as their keys.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">user_settings</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">...</span><span class="p">]]):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">user_settings</span><span class="p">,</span> <span class="n">DEFAULT_SETTING</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">user_settings</span><span class="p">,</span> <span class="n">DEFAULT_SETTINGS</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Settings.to_yaml_file"><a class="viewcode-back" href="../../api/settings.html#qha.settings.Settings.to_yaml_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_yaml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">):</span>
@@ -181,7 +182,7 @@
 
 <div class="viewcode-block" id="from_yaml"><a class="viewcode-back" href="../../api/settings.html#qha.settings.from_yaml">[docs]</a><span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Settings</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function reads user settings from a YAML file, and generate a ``Settings`` class for later use.</span>
+<span class="sd">    This function reads user &quot;settings&quot; from a YAML file, and generate a ``Settings`` class for later use.</span>
 
 <span class="sd">    :param filename: The name of the YAML file.</span>
 <span class="sd">    :return: A ``Settings`` class.</span>
@@ -191,7 +192,7 @@
 
 
 <span class="k">global</span> <span class="n">energy_unit</span>
-<span class="n">energy_unit</span> <span class="o">=</span> <span class="n">DEFAULT_SETTING</span><span class="p">[</span><span class="s1">&#39;energy_unit&#39;</span><span class="p">]</span>
+<span class="n">energy_unit</span> <span class="o">=</span> <span class="n">DEFAULT_SETTINGS</span><span class="p">[</span><span class="s1">&#39;energy_unit&#39;</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -206,7 +207,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

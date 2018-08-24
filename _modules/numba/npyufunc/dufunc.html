@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -145,11 +145,9 @@
                 <span class="n">func_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cres</span><span class="o">.</span><span class="n">fndesc</span><span class="o">.</span><span class="n">llvm_func_name</span><span class="p">)</span>
             <span class="n">entry_point</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;alwaysinline&quot;</span><span class="p">)</span>
 
-            <span class="n">envptr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cres</span><span class="o">.</span><span class="n">environment</span><span class="o">.</span><span class="n">as_pointer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cres</span><span class="o">.</span><span class="n">target_context</span><span class="p">)</span>
-
             <span class="n">_</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">call_conv</span><span class="o">.</span><span class="n">call_function</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span> <span class="n">entry_point</span><span class="p">,</span> <span class="n">isig</span><span class="o">.</span><span class="n">return_type</span><span class="p">,</span> <span class="n">isig</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">cast_args</span><span class="p">,</span>
-                <span class="n">env</span><span class="o">=</span><span class="n">envptr</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">builder</span><span class="p">,</span> <span class="n">entry_point</span><span class="p">,</span> <span class="n">isig</span><span class="o">.</span><span class="n">return_type</span><span class="p">,</span> <span class="n">isig</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">cast_args</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">isig</span><span class="o">.</span><span class="n">return_type</span><span class="p">,</span> <span class="n">osig</span><span class="o">.</span><span class="n">return_type</span><span class="p">)</span>
 
     <span class="n">DUFuncKernel</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+=</span> <span class="n">_dufunc</span><span class="o">.</span><span class="n">ufunc</span><span class="o">.</span><span class="vm">__name__</span>
@@ -404,7 +402,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

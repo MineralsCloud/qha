@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -121,10 +121,10 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v2p&#39;</span><span class="p">]</span>
 
 
-<span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_lagrange4</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">y3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A fourth-order Lagrange polynomial function. Given 4 points for interpolation:</span>
+<span class="sd">    A third-order Lagrange polynomial function. Given 4 points for interpolation:</span>
 <span class="sd">    :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.</span>
 
 <span class="sd">    :param x: The x-coordinate of the point to be evaluated.</span>
@@ -146,10 +146,12 @@
 
 <div class="viewcode-block" id="v2p"><a class="viewcode-back" href="../../api/v2p.html#qha.v2p.v2p">[docs]</a><span class="k">def</span> <span class="nf">v2p</span><span class="p">(</span><span class="n">func_of_t_v</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">p_of_t_v</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">desired_pressures</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Obtain :math:`f(T, P)` given :math:`f(T, V)` and :math:`P(T, V)`. Do a fourth-order Lagrangian interpolation.</span>
+<span class="sd">    Obtain :math:`f(T, P)` given :math:`f(T, V)` and :math:`P(T, V)` by doing a fourth-order Lagrangian interpolation.</span>
 
-<span class="sd">    :param func_of_t_v: Any function :math:`f` on :math:`(T, V)` grid, it is of shape (# temperature, # volumes).</span>
-<span class="sd">    :param p_of_t_v: Pressures on :math:`(T, V)` grid.</span>
+<span class="sd">    :param func_of_t_v: Any function :math:`f` on :math:`(T, V)` grid, which has</span>
+<span class="sd">        shape: (number of temperature, number of volumes).</span>
+<span class="sd">    :param p_of_t_v: Pressures on :math:`(T, V)` grid, which has</span>
+<span class="sd">        shape: (number of temperature, number of volumes).</span>
 <span class="sd">    :param desired_pressures: A vector of pressures which user wants to apply.</span>
 <span class="sd">    :return: The interpolated function :math:`f` on :math:`(T, P)` grid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -185,7 +187,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>

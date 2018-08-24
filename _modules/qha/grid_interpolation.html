@@ -52,8 +52,8 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">1. API reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">2. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
 </ul>
 </ul>
@@ -104,9 +104,9 @@
   <h1>Source code for qha.grid_interpolation</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">.. module</span>
+<span class="sd">.. module grid_interpolation</span>
 <span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
-<span class="sd">   :synopsis: This module defines a class ``RefineGrid`` that will do Birch--Murnaghan EoS fitting on the input</span>
+<span class="sd">   :synopsis: This module defines a class ``FinerGrid`` that will do Birch--Murnaghan EoS fitting on the input</span>
 <span class="sd">    free energies and volumes, and evaluate the fitted function on a denser volume grid.</span>
 <span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
 <span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
@@ -115,86 +115,177 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">vectorize</span><span class="p">,</span> <span class="n">float64</span><span class="p">,</span> <span class="n">jit</span><span class="p">,</span> <span class="n">int64</span>
-<span class="kn">from</span> <span class="nn">numba.types</span> <span class="k">import</span> <span class="n">UniTuple</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">vectorize</span><span class="p">,</span> <span class="n">float64</span>
 
-<span class="kn">from</span> <span class="nn">qha.fitting</span> <span class="k">import</span> <span class="n">polynomial_least_square_fitting</span><span class="p">,</span> <span class="n">birch_murnaghan_finite_strain_fitting</span>
+<span class="kn">from</span> <span class="nn">qha.fitting</span> <span class="k">import</span> <span class="n">polynomial_least_square_fitting</span><span class="p">,</span> <span class="n">apply_finite_strain_fitting</span>
 <span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span>
 <span class="kn">from</span> <span class="nn">qha.unit_conversion</span> <span class="k">import</span> <span class="n">gpa_to_ry_b3</span>
 
 <span class="c1"># ===================== What can be exported? =====================</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;calc_eulerian_strain&#39;</span><span class="p">,</span> <span class="s1">&#39;from_eulerian_strain&#39;</span><span class="p">,</span> <span class="s1">&#39;interpolate_volumes&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;RefineGrid&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;calculate_eulerian_strain&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;from_eulerian_strain&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;VolumeExpander&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FinerGrid&#39;</span>
+<span class="p">]</span>
 
 
 <span class="nd">@vectorize</span><span class="p">([</span><span class="n">float64</span><span class="p">(</span><span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">)],</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">calc_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calculate_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">vs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate Eulerian strain (:math:`f`) of a given volume vector *v* regarding to a reference *v0*, where</span>
+<span class="sd">    Calculate the Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*,</span>
+<span class="sd">    where</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).</span>
+<span class="sd">       f = \\frac{ 1 }{ 2 } \\bigg( \\Big( \\frac{ V_0 }{ V }^{2/3} \\Big) -1 \\bigg).</span>
 
-<span class="sd">    :param v0: The volume set as reference for Eulerian strain calculation.</span>
-<span class="sd">    :param v: The volume to be calculated its strain W.R.T. *v0*.</span>
-<span class="sd">    :return: Calculated Eulerian strain.</span>
+<span class="sd">    :param v0: The volume set as the reference for the Eulerian strain calculation.</span>
+<span class="sd">    :param vs: A volume vector, each item of which will be calculated the Eulerian strain with respect to *v0*.</span>
+<span class="sd">    :return: A vector of the calculated Eulerian strain.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">v0</span> <span class="o">/</span> <span class="n">v</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">v0</span> <span class="o">/</span> <span class="n">vs</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
 
 <span class="nd">@vectorize</span><span class="p">([</span><span class="n">float64</span><span class="p">(</span><span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">)],</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">from_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">from_eulerian_strain</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate corresponding volume :math:`V` from given Eulerian strain (*f*) and reference volume *v0*. It is the</span>
-<span class="sd">    inverse of ``calc_eulerian_strain`` function, i.e.,</span>
+<span class="sd">    Calculate the corresponding volumes :math:`V`s from a vector of given Eulerian strains (*fs*)</span>
+<span class="sd">    and a reference volume *v0*. It is the inverse function of ``calculate_eulerian_strain``, i.e.,</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        V = V_0 (2 f + 1)^{-3/2}.</span>
+<span class="sd">       V = V_0 (2 f + 1)^{-3/2}.</span>
 
-<span class="sd">    :param v0: The volume set as reference for volume calculation.</span>
-<span class="sd">    :param f: Eulerian strain for :math:`V` W.R.T. :math:`V_0`.</span>
-<span class="sd">    :return: Calculated volume :math:`V`.</span>
+<span class="sd">    :param v0: The volume set as a reference for volume calculation, i.e., :math:`V_0` mentioned above.</span>
+<span class="sd">    :param fs: A vector of Eulerian strains with respect to :math:`V_0`.</span>
+<span class="sd">    :return: A vector of calculated volume :math:`V`s.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">v0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="interpolate_volumes"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.interpolate_volumes">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">UniTuple</span><span class="p">(</span><span class="n">float64</span><span class="p">[:],</span> <span class="mi">2</span><span class="p">)(</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">int64</span><span class="p">,</span> <span class="n">float64</span><span class="p">),</span> <span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">interpolate_volumes</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+<div class="viewcode-block" id="VolumeExpander"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander">[docs]</a><span class="k">class</span> <span class="nc">VolumeExpander</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Interpolate volumes on input, with *ratio* given.</span>
-<span class="sd">    For Eulerian strain, the larger the strain, the smaller the volume. So large volume corresponds to small strain.</span>
+<span class="sd">    Interpolate volumes on input volumes *in_volumes*, with *ratio* given.</span>
+<span class="sd">    For the Eulerian strain, the larger the strain, the smaller the volume.</span>
+<span class="sd">    So larger volume corresponds to smaller strain.</span>
 
-<span class="sd">    :param in_volumes: The input sparse 1D array of volumes.</span>
+<span class="sd">    Algorithm:</span>
+
+<span class="sd">    1. Find the maximum and minimum volumes of *in_volumes*.</span>
+<span class="sd">    2. Expand the lower and upper bounds of the volumes to :math:`V_\\text{lower}` and :math:`V_\\text{upper}` by :math:`V_\\text{lower} = \\frac{ V_\\text{min} }{ r }` and :math:`V_\\text{upper} = V_\\text{max} r`, where :math:`r` is the *ratio*, which is usually an empirical parameter.</span>
+<span class="sd">    3. The Eulerian strains of :math:`V_\\text{lower}` and :math:`V_\\text{upper}` with respect to :math:`V_\\text{max}` is calculated. Then a linear sequence between the lower and upper bounds of the strains is generated. It is the ``strains`` attribute.</span>
+<span class="sd">    4. The volumes corresponding to ``strains`` are generated by function ``from_eulerian_strain``.</span>
+
+<span class="sd">    **Note:** To use this class, the method ``interpolate_volumes`` must be called immediately after</span>
+<span class="sd">    instantiating it. Otherwise, the ``strains`` and ``out_volumes`` attributes are all ``None``, which is usually not</span>
+<span class="sd">    expected.</span>
+
+<span class="sd">    :param in_volumes: An input vector of volumes.</span>
 <span class="sd">    :param out_volumes_num: Number of output volumes. It should be larger than the number of input volumes.</span>
-<span class="sd">    :param ratio: The ratio of the largest volume used in fitting W.R.T. the largest input volumes.</span>
-<span class="sd">    :return: The interpolated strains in a finer grid, and corresponding volumes.</span>
+<span class="sd">    :param ratio: The ratio of the upper bounds of expanded volumes with respect to the largest input volume in</span>
+<span class="sd">        *in_volumes*. An empirical parameter, better lower than ``1.5``. Otherwise, the later</span>
+<span class="sd">        result may not be reliable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">v_min</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">)</span>
-    <span class="n">v_smallest</span><span class="p">,</span> <span class="n">v_largest</span> <span class="o">=</span> <span class="n">v_min</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">*</span> <span class="n">ratio</span>
-    <span class="c1"># The *v_max* is a reference value here. It equals to ``v_max / v_largest = v_smallest / v_min``.</span>
-    <span class="n">s_largest</span><span class="p">,</span> <span class="n">s_smallest</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_smallest</span><span class="p">),</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_largest</span><span class="p">)</span>
-    <span class="n">strains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s_smallest</span><span class="p">,</span> <span class="n">s_largest</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">strains</span><span class="p">,</span> <span class="n">from_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">strains</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_in_volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">in_volumes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_volumes_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strains</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">in_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: Input volume vector, read only.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_volumes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An empirical parameter, usually larger than ``1`` and lower than ``1.5``.</span>
+
+<span class="sd">        :return: A floating-point number described in the algorithm above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span>
+
+    <span class="nd">@ratio</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">out_volumes_num</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: The number of output volumes user wants, usually greater than the number of input volumes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes_num</span>
+
+    <span class="nd">@out_volumes_num</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">out_volumes_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The argument *out_volumes_num* must be an integer!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The argument *out_volumes_num* must be an integer larger than 0!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes_num</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">strains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vector</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An arithmetic sequence starting from the lower bound to the upper bound of the expanded strain,</span>
+<span class="sd">        the number of elements in it is specified by ``out_volumes_num`` attribute.</span>
+
+<span class="sd">        :return: A vector of strains if method ``interpolate_volumes`` is called, otherwise ``None``</span>
+<span class="sd">            is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strains</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">out_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vector</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The volumes interpolated by the algorithm described above.</span>
+
+<span class="sd">        :return: If method ``interpolate_volumes`` is called, a vector of output volumes is returned, otherwise ``None``</span>
+<span class="sd">            is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes</span>
+
+<div class="viewcode-block" id="VolumeExpander.interpolate_volumes"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.VolumeExpander.interpolate_volumes">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The algorithm is described above. This method should be called immediately after an instance of the</span>
+<span class="sd">        class is created, unless user is clear what is being done.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_min</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in_volumes</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in_volumes</span><span class="p">)</span>
+        <span class="c1"># r = v_upper / v_max = v_min / v_lower</span>
+        <span class="n">v_lower</span><span class="p">,</span> <span class="n">v_upper</span> <span class="o">=</span> <span class="n">v_min</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span><span class="p">,</span> <span class="n">v_max</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span>
+        <span class="c1"># The *v_max* is a reference value here.</span>
+        <span class="n">s_upper</span><span class="p">,</span> <span class="n">s_lower</span> <span class="o">=</span> <span class="n">calculate_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_lower</span><span class="p">),</span> <span class="n">calculate_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="n">v_upper</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s_lower</span><span class="p">,</span> <span class="n">s_upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out_volumes</span> <span class="o">=</span> <span class="n">from_eulerian_strain</span><span class="p">(</span><span class="n">v_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strains</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="RefineGrid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid">[docs]</a><span class="k">class</span> <span class="nc">RefineGrid</span><span class="p">:</span>
+<div class="viewcode-block" id="FinerGrid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.FinerGrid">[docs]</a><span class="k">class</span> <span class="nc">FinerGrid</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class that will do the Birch--Murnaghan finite-strain EoS fitting,</span>
-<span class="sd">    and evaluate the fitted function on a denser volume grid.</span>
+<span class="sd">    A class that will do the Birch--Murnaghan finite-strain equation of state fitting,</span>
+<span class="sd">    moreover, evaluate the free energies on the denser volume vector.</span>
 
 <span class="sd">    :param desired_p_min: The desired minimum pressure to calculate for further steps.</span>
-<span class="sd">    :param nv: The number of volumes on a denser grid.</span>
-<span class="sd">    :param order: The order of the Birch--Murnaghan finite-strain EoS fitting.</span>
+<span class="sd">    :param dense_volumes_amount: The number of volumes on a denser grid.</span>
+<span class="sd">    :param order: The order of the Birch--Murnaghan finite-strain equation of state fitting.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_p_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">nv</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_desire</span> <span class="o">=</span> <span class="n">desired_p_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="n">order</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_p_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dense_volumes_amount</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desired_p_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">desired_p_min</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dense_volumes_amount</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="RefineGrid.approach_to_best_ratio"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.approach_to_best_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">approach_to_best_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span>
+
+<div class="viewcode-block" id="FinerGrid.approach_to_best_ratio"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.FinerGrid.approach_to_best_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">approach_to_best_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trying to find the best volume grids based on an a very large volume grids.</span>
 
@@ -203,24 +294,26 @@
 <span class="sd">        :param initial_ratio: Initial ratio, a guess value, which can be set to a very large number.</span>
 <span class="sd">        :return: The suitable `ratio` for further calculation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">strains</span><span class="p">,</span> <span class="n">finer_volumes</span> <span class="o">=</span> <span class="n">interpolate_volumes</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">)</span>
-        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
+        <span class="n">vr</span> <span class="o">=</span> <span class="n">VolumeExpander</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">initial_ratio</span><span class="p">)</span>
+        <span class="n">vr</span><span class="o">.</span><span class="n">interpolate_volumes</span><span class="p">()</span>
+        <span class="n">strains</span><span class="p">,</span> <span class="n">finer_volumes</span> <span class="o">=</span> <span class="n">vr</span><span class="o">.</span><span class="n">strains</span><span class="p">,</span> <span class="n">vr</span><span class="o">.</span><span class="n">out_volumes</span>
+        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calculate_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">f_v_tmax</span> <span class="o">=</span> <span class="n">polynomial_least_square_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">,</span> <span class="n">strains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">)</span>
         <span class="n">p_v_tmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">f_v_tmax</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">finer_volumes</span><span class="p">)</span>
-        <span class="n">p_desire</span> <span class="o">=</span> <span class="n">gpa_to_ry_b3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_desire</span><span class="p">)</span>
+        <span class="n">p_desire</span> <span class="o">=</span> <span class="n">gpa_to_ry_b3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desired_p_min</span><span class="p">)</span>
         <span class="c1"># Find the index of the first pressure value that slightly smaller than p_desire.</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">p_v_tmax</span> <span class="o">&lt;</span> <span class="n">p_desire</span><span class="p">)</span>
         <span class="n">final_ratio</span> <span class="o">=</span> <span class="n">finer_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">volumes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">final_ratio</span></div>
 
-<div class="viewcode-block" id="RefineGrid.refine_grid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.RefineGrid.refine_grid">[docs]</a>    <span class="k">def</span> <span class="nf">refine_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
+<div class="viewcode-block" id="FinerGrid.refine_grid"><a class="viewcode-back" href="../../api/grid_interpolation.html#qha.grid_interpolation.FinerGrid.refine_grid">[docs]</a>    <span class="k">def</span> <span class="nf">refine_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volumes</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span>
                     <span class="n">ratio</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the appropriate volume grid for interpolation.</span>
 <span class="sd">        Avoid to use a too large volume grid to obtain data, which might lose accuracy.</span>
 
 <span class="sd">        :param free_energies: Calculated Helmholtz Free Energies for input volumes (sparse).</span>
-<span class="sd">        :param volumes: Volumes of these calculations were perform (sparse).</span>
+<span class="sd">        :param volumes: Volumes of these calculations were performed (sparse).</span>
 <span class="sd">        :param ratio: This ratio is used to get a larger volume grid</span>
 <span class="sd">        :return: volume, Helmholtz free energy at a denser vector, and the `ratio` used in this calculation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -229,14 +322,18 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">new_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">approach_to_best_ratio</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="mf">1.45</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">new_ratio</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="c1"># if the new_ratio is smaller than 1.0, which means the volumes calculated is large enough,</span>
+                <span class="c1"># If the ``new_ratio`` is smaller than 1.0, which means the volumes calculated is large enough,</span>
                 <span class="c1"># there is no need to expand the volumes.</span>
                 <span class="n">new_ratio</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calc_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
-        <span class="n">strains</span><span class="p">,</span> <span class="n">finer_volumes</span> <span class="o">=</span> <span class="n">interpolate_volumes</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">new_ratio</span><span class="p">)</span>
-        <span class="n">f_tv_bfm</span> <span class="o">=</span> <span class="n">birch_murnaghan_finite_strain_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">,</span> <span class="n">strains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">finer_volumes</span><span class="p">,</span> <span class="n">f_tv_bfm</span><span class="p">,</span> <span class="n">new_ratio</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ratio</span> <span class="o">=</span> <span class="n">new_ratio</span>
+
+        <span class="n">eulerian_strain</span> <span class="o">=</span> <span class="n">calculate_eulerian_strain</span><span class="p">(</span><span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">volumes</span><span class="p">)</span>
+        <span class="n">vr</span> <span class="o">=</span> <span class="n">VolumeExpander</span><span class="p">(</span><span class="n">in_volumes</span><span class="o">=</span><span class="n">volumes</span><span class="p">,</span> <span class="n">out_volumes_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dense_volumes_amount</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="n">new_ratio</span><span class="p">)</span>
+        <span class="n">vr</span><span class="o">.</span><span class="n">interpolate_volumes</span><span class="p">()</span>  <span class="c1"># As mentioned in ``VolumeExpander`` doc, call this method immediately.</span>
+        <span class="n">strains</span><span class="p">,</span> <span class="n">dense_volumes</span> <span class="o">=</span> <span class="n">vr</span><span class="o">.</span><span class="n">strains</span><span class="p">,</span> <span class="n">vr</span><span class="o">.</span><span class="n">out_volumes</span>
+        <span class="n">dense_free_energies</span> <span class="o">=</span> <span class="n">apply_finite_strain_fitting</span><span class="p">(</span><span class="n">eulerian_strain</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">,</span> <span class="n">strains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dense_volumes</span><span class="p">,</span> <span class="n">dense_free_energies</span><span class="p">,</span> <span class="n">new_ratio</span></div></div>
 </pre></div>
 
     </div>
@@ -251,7 +348,7 @@
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.<br/>
     </p>
   </div>
 </footer>
