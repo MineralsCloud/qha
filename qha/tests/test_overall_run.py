@@ -12,7 +12,7 @@ import pandas as pd
 class TestOverallRun(unittest.TestCase):
     def setUp(self):
         self.root_directory = pathlib.Path('../../examples')
-        self.command = 'qha-run'
+        self.command = 'qha run'
         self.fixed_directory = 'results.benchmark'
         self.new_results_directory = 'results.plot'
 
