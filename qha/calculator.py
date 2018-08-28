@@ -42,7 +42,7 @@ class Calculator:
                         'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                         'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                         'volume_ratio', 'order', 'p_min_modifier',
-                        'T4FV', 'output_directory', 'plot_results', 'high_verbosity', 'qha_output')
+                        'T4FV', 'output_directory', 'high_verbosity', 'qha_output')
 
         for key in allowed_keys:
             try:
@@ -222,7 +222,7 @@ class Calculator:
 
             save_to_output(d['qha_output'], textwrap.dedent("""\
                            !!!ATTENTION!!!
-                           
+
                            DESIRED PRESSURE is too high (NTV is too large)!
                            QHA results might not be right!
                            Please reduce the NTV accordingly, for example, try to set NTV < {:4d}.
