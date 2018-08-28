@@ -32,7 +32,6 @@ DEFAULT_SETTINGS: Dict[str, Any] = {
     # output setting
     'output_directory': './results/',
     'T4FV': ['0', '300'],
-    'plot_results': False,
     'high_verbosity': False
 }
 
@@ -59,7 +58,6 @@ class Settings(collections.ChainMap):
             'volume_ratio': 1.45,
             'output_directory': './results/',
             'T4FV': ['0', '300'],
-            'plot_results': False,
             'high_verbosity': False
         }
 
