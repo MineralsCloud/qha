@@ -60,7 +60,7 @@ setup(name='qha',
           'qha',
           'qha.multi_configurations',
           'qha.cli',
-          'qha.readers',
+          'qha.basic_io',
       ],
       entry_points={
           'console_scripts': [
