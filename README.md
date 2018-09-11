@@ -85,15 +85,13 @@ $ qha plot /path/to/settings.yaml
 
 ## Structure of the `qha` package
 
-The `qha` source code is consists of three major parts.
+The `qha` source code consists of three major parts.
 
 1. `./qha` directory contains all the source code.
+
 2. `./examples` directory contains two examples, `./examples/silicon` is the example for single-configuration calculation, `./examples/ice VII` is the example for multi-configuration calculation.
-3. `./docs` directory contains all the necessary file to build the documents in `*.html` format
 
 The brief of the organization of these directories follows as below:
-
-
 
 ### The main folder `./`
 
@@ -101,47 +99,45 @@ This main folder contains three folders, license file, readme file, and setup fi
 
 `LICENSE.txt`: The license file attached with the `qha` code;
 
-`README.md`: Readme file of the code;
+`README.md`: Readme file of the code, it would be better to view it in a [Markdown](https://en.wikipedia.org/wiki/Markdown) editor, e.g., [Typora](https://typora.io);
 
-`setup.py`: setup file needed for installation of the `qha` python package.
+`setup.py`: setup file needed for installation of the `qha` Python package.
 
+#### The `./qha/` folder
 
+`qha/__init__.py`: Tells Python interpreter that this is a Python package;
 
-#### The`./qha/` folder
+`qha/calculator.py`: Perform single-, multi-configuration calculations, one of the most crucial modules in this code;
 
-`qha/__init__.py` 
+`qha/fitting.py`: Perform the Birch—Murnaghan (BM) equation-of-state (EOS) fitting; 
 
-`qha/calculator.py`:  perform single-, multi-configuration calculations, one of the most crucial modules in this code;
+`qha/grid_interpolation.py`: Find the most suitable volume grid to perform the BM EOS fitting;
 
-`qha/fitting.py`: Perform the Birch—Murnaghan EOS fitting; 
+`qha/plotting.py`: A simple module to plot the calculated physical properties;
 
-`qha/grid_interpolation.py`: Find the most suitable volume grid to perform the BM EOS fitting
+`qha/settings.py`: Define some computational settings for the calculation;
 
-`qha/plotting.py`: Simple module to plot calculated physical properties;
+`qha/single_configuration.py`: Calculate the Helmholtz free energy for a single-configuration system;
 
-`qha/settings.py`: Some default settings for calculation control;
+`qha/statmech.py`: Define some useful statistical mechanics functions;
 
-`qha/single_configuration.py`: Calculate Helmholtz free energy for the single-configuration system;
+`qha/thermodynamics.py`: Derive the internal energy($U$), enthalpy($H$), and Gibbs free energy ($G$) from the calculated Helmholtz free energy ($F$) via basic thermodynamics relationship;
 
-`qha/statmech.py`: Calculate vibrational energy from calculated freqencies / vibrational density of state(VDOS);
+`qha/tools.py`: Define some miscellaneous functions used in the code, e.g., function used to perform Lagrange interpolation;
 
-`qha/thermodynamics.py`: Derive Internal energy(U), enthalpy(H), and Gibbs free energy(G) from calculated Helmholtz free energy via basic thermodynamics relationship;
+`qha/type_aliases.py`: Define some types for annotation in the code;
 
-`qha/tools.py`: miscellaneous functions used in the code, e.g., function used to perform Lagrange interpolation, or check whether an array is monotonic increasing, etc.
+`qha/unit_conversion.py`: A module to convert units used in the calculation;
 
-`qha/type_aliases.py`: Used in variable type check;
+`qha/v2p.py`: Contain the function `v2p` used to convert calculated properties on $(T, V)$ grid to $(T, P)$ grid;
 
-`qha/unit_conversion.py`: module used to convert unit used in the calculation;
-
-`qha/v2p.py`: The function used to convert calculated properties on (T, V) grid to (T, P) grid;
-
-`qha/input_maker.py`: Generate input file for `qha` from results obtained from *ab initio* calculation;
+`qha/input_maker.py`: Generate the input file for `qha` from results obtained from *ab initio* calculation;
 
 `qha/out.py`: Functions used to write calculated properties into files.
 
 ##### The `./qha/readers` folder
 
-`qha/readers/__init__.py` 
+`qha/readers/__init__.py`
 
 `qha/readers/read_input.py`: This module is used to read the input file.
 
@@ -151,7 +147,7 @@ This folder contains files used for the command-line interface.
 
 `qha/cli/__init__.py` 
 
-`qha/cli/converter.py` 
+`qha/cli/converter.py`
 
 `qha/cli/handler.py` 
 
@@ -167,9 +163,9 @@ This folder contains files to calculate Helmholtz free energy for the multi-conf
 
 `qha/multi_configurations/__init__.py` 
 
-`qha/multi_configurations/different_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for the multi-configuration system with different VDOS for each configuration;
+`qha/multi_configurations/different_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for the multi-configuration system with different phonon density of states (VDOS) for each configuration;
 
-`qha/multi_configurations/same_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy fro multi-configuration system with the same VDOS for all configurations. 
+`qha/multi_configurations/same_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for multi-configuration system with the same VDOS for all configurations. 
 
 ##### The `./qha/tests` folder
 
@@ -187,33 +183,27 @@ this folder contains unit test files
 
 `qha/tests/test_unit_conversion.py`
 
-
-
 #### The `./examples/` folder
 
-This folder contains two examples for demo purpose.
+This folder contains two examples for demonstration purpose.
 
 ##### The `./examples/silicon` folder
 
-This folder conations example to perform the single-configuration calculation; Also, an example to generate the input file for `qha` code is included, check `examples/silicon/make_inpu/README` for details;
+This folder conations an example to perform the single-configuration calculation. Also, an example to generate the input file for the `qha` code is included, check `examples/silicon/make_input/README` for details;
 
-`examples/silicon/input`: input file for `qha`;
+`examples/silicon/input`: The input file for `qha`;
 
-`examples/silicon/settings.yaml`: This file is the calculation control file.
+`examples/silicon/settings.yaml`: This file is the computational settings file.
 
 ##### The `./examples/ice VII` folder
 
-`examples/ice VII/input_01` : input_01 through input_52 are input files of 52 distinguish configurations;
+`examples/ice VII/input_01` : `input_01` through `input_52` are the input files of 52 distinguish configurations;
 `examples/ice VII/input_02`
 `examples/ice VII/input_03`
 `…`
 `examples/ice VII/input_52`
 
-`examples/ice VII/settings.yaml`: This file is the calculation control file, see the tutorial for more details. 
-
-#### The `./docs/` folder
-
-This folder contains necessary files to generate the tutorial in `HTML` format via `sphinx` package, please check our [tutorial website](https://mineralscloud.github.io/qha/tutorials/doc.html) for details.
+`examples/ice VII/settings.yaml`: This file is the computational settings file, see our online [tutorial](https://mineralscloud.github.io/qha/tutorials/index.html) for more details. 
 
 ## License
 
