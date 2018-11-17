@@ -6,6 +6,10 @@
 
 Please check our [documentation](https://mineralscloud.github.io/qha/) for details.
 
+## How to cite
+
+The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub). Its DOI is `10.1016/j.cpc.2018.11.003`.
+
 ## Quick start: installation
 
 ### Python environment
