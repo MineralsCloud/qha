@@ -23,5 +23,4 @@ thermodynamic_properties:
     - Btp
     - Bs
 energy_unit: ry
-plot_results: False
 output_directory: ./results/
