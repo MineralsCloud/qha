@@ -10,4 +10,4 @@ __copyright__ = 'Copyright (c) 2018, Renata group'
 __credits__ = {'Renata M. M. Wentzcovitch': 'rmw2150@columbia.edu'}
 __date__ = 'Feb 17, 2018'
 __maintainer__ = 'Tian Qin, Qi Zhang'
-__version__ = '1.0.13'
+__version__ = '1.0.14'
