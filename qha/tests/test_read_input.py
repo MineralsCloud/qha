@@ -6,7 +6,7 @@ import unittest
 
 import numpy as np
 
-from qha.readers.read_input import read_input
+from qha.basic_io.read_input import read_input
 
 
 class TestReadInput(unittest.TestCase):

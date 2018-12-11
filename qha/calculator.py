@@ -21,8 +21,8 @@ import qha.multi_configurations.different_phonon_dos as different_phonon_dos
 import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 import qha.tools
 from qha.grid_interpolation import FinerGrid
-from qha.out import save_to_output
-from qha.readers import read_input
+from qha.basic_io.out import save_to_output
+from qha.basic_io import read_input
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
 from qha.type_aliases import Vector

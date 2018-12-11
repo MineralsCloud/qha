@@ -7,7 +7,7 @@
 """
 
 from qha.cli.handler import QHACommandHandler
-from qha.input_maker import FromQEOutput
+from qha.basic_io.input_maker import FromQEOutput
 
 
 class QHAConverter(QHACommandHandler):
