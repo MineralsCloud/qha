@@ -40,7 +40,7 @@ class QHARunner(QHACommandHandler):
                     'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
                     'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                     'volume_ratio', 'order', 'p_min_modifier',
-                    'T4FV', 'output_directory', 'plot_results', 'high_verbosity'):
+                    'T4FV', 'output_directory', 'high_verbosity'):
             try:
                 user_settings.update({key: settings[key]})
             except KeyError:

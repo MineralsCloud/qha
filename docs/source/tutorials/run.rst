@@ -50,7 +50,6 @@ Here are the keys that can be recognized in ``settings.yaml``:
   See its `official documentation <http://numba.pydata.org/numba-doc/0.39.0/reference/jit-compilation.html#numba.vectorize>`_ for help.
 * ``results_folder``: The path to store all calculated values, the default value is ``./results``, which is a directory named `results` in
   the same folder as the ``input`` file.
-* ``plot_results``: Plot all thermodynamic properties in PDF format, the allowed values are ``True`` or ``False`` (default).
 * ``T4FV``: Temperature for :math:`F(T_i, V)` plotting. By default is ``['0', '300']``.
 * ``high_verbosity``: Two verbosity levels are implemented in the output file, ``True`` or ``False`` (default).
 
