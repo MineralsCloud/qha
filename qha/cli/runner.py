@@ -44,7 +44,7 @@ class QHARunner(QHACommandHandler):
             try:
                 user_settings.update({key: settings[key]})
             except KeyError:
-                raise KeyError("Key '{0}' is not set in your settings!")
+                continue
 
         if not os.path.exists(user_settings['output_directory']):
             os.makedirs(user_settings['output_directory'])
