@@ -28,7 +28,6 @@ DEFAULT_SETTINGS: Dict[str, Any] = {
     'DELTA_P': 0.1,
     'DELTA_P_SAMPLE': 1,
     'static_only': False,
-    'volume_ratio': 1.45,
     # output setting
     'output_directory': './results/',
     'T4FV': ['0', '300'],
@@ -55,7 +54,6 @@ class Settings(collections.ChainMap):
             'DELTA_P': 0.1,
             'DELTA_P_SAMPLE': 1,
             'static_only': False,
-            'volume_ratio': 1.45,
             'output_directory': './results/',
             'T4FV': ['0', '300'],
             'high_verbosity': False
