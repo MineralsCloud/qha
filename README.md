@@ -2,13 +2,17 @@
 
 [TOC]
 
-## What is it
+[![Stable docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://mineralscloud.github.io/qha/)
 
-Please check our [documentation](https://mineralscloud.github.io/qha/) for details.
+## Contributors
+
+This repository is now maintained by [Tian Qin](mailto:qinxx197@umn.edu) and [Qi Zhang](mailto:qz2280@columbia.edu). Thanks to the contribution from [Chenxing Luo](https://github.com/chazeon).
 
 ## How to cite
 
-The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub). Its DOI is `10.1016/j.cpc.2018.11.003`.
+The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub). 
+
+Please cite this article as: T. Qin, Q. Zhang, R.M. Wentzcovitch et al., qha: A Python package for quasiharmonic free energy calculation for multi-configuration systems, Computer Physics Communications (2018), https://doi.org/10.1016/j.cpc.2018.11.003.
 
 ## Quick start: installation
 
@@ -216,7 +220,3 @@ This folder conations an example to perform the single-configuration calculation
 ## Documentation
 
 The official documentation is hosted on our [GitHub page](https://mineralscloud.github.io/qha/).
-
-## Contributors
-
-This repository is now maintained by [Tian Qin](mailto:qinxx197@umn.edu) and [Qi Zhang](mailto:qz2280@columbia.edu). Thanks to the contribution from [Chenxing Luo](https://github.com/chazeon).
