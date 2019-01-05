@@ -168,13 +168,20 @@ class FromQEOutput:
 
         gen: Iterator[str] = text_stream.generator_starts_from(offset)
 
+        quotient = bands_amount // 6  # QE splits branches into 6 columns per line
+
         for line in gen:
             if not line.strip():
                 continue
 
             q_coordinates.append(line.split())
-            line = next(gen)  # Start a new line
-            frequencies.append(line.split())
+
+            x = np.array([])
+            for _ in range(quotient):
+                line = next(gen)  # Start a new line
+                x = np.hstack((x, line.split()))
+
+            frequencies.append(x)
 
         q_coordinates = np.array(q_coordinates, dtype=float)
         frequencies = np.array(frequencies, dtype=float)
@@ -186,8 +193,8 @@ class FromQEOutput:
 
         if frequencies.shape != (q_points_amount, bands_amount):
             raise RuntimeError(
-                "The frequencies array shape '{0}' is not the same as what specified in head line!".format(
-                    frequencies.shape))
+                "The frequencies array shape '{0}' is not the same as '{1}'!".format(
+                    frequencies.shape, (q_points_amount, bands_amount)))
 
         return q_coordinates, frequencies
 
@@ -208,7 +215,7 @@ class FromQEOutput:
             # differences even they are supposed to be the same, because of the digits QE gave.
             if not np.allclose(q_coordinates, self.q_coordinates):
                 warnings.warn("The q-points' coordinates are different from what specified in the q-point file!",
-                              stacklevel=2)
+                              stacklevel=1)
 
             frequencies_for_all_files.append(frequencies)
 
