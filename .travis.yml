@@ -5,6 +5,9 @@ os:
   - osx
 python:
   - "3.6"
+sudo: required
+before_install:
+  - sudo apt-get install libmpc-dev
 install:
   - pip install .
   - pip install -Iv sphinx==1.7.4
