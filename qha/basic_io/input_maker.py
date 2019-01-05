@@ -80,7 +80,8 @@ class FromQEOutput:
         energies = []
 
         with open(self._inp_static, 'r') as f:
-            print("Reading static data: emtpy lines or lines starting with '#' will be ignored!")
+            print(
+                "Reading static data: emtpy lines or lines starting with '#' will be ignored!")
 
             for line in f:
                 if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
@@ -108,9 +109,11 @@ class FromQEOutput:
         q_weights = []
 
         with open(self._inp_q_points, 'r') as f:
-            print("Reading q-points file: emtpy lines or lines starting with '#' will be ignored!")
+            print(
+                "Reading q-points file: emtpy lines or lines starting with '#' will be ignored!")
 
-            regex = re.compile(r"\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
+            regex = re.compile(
+                r"\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
 
             for line in f:
                 if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
@@ -123,7 +126,8 @@ class FromQEOutput:
                 else:
                     g = match.groups()
                     q_coordinates.append(g[0:3])
-                    q_weights.append(g[3])  # TODO: Check possible bug, what if the regex match fails
+                    # TODO: Check possible bug, what if the regex match fails
+                    q_weights.append(g[3])
 
         self.q_coordinates = np.array(q_coordinates,
                                       dtype=float)  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
@@ -163,7 +167,8 @@ class FromQEOutput:
                     raise RuntimeError(
                         "The head line '{0}' is not complete! Here 'nbnd' and 'nks' are not found!".format(line))
                 else:
-                    bands_amount, q_points_amount = strings_to_integers(match.groups())
+                    bands_amount, q_points_amount = strings_to_integers(
+                        match.groups())
                     break
 
         gen: Iterator[str] = text_stream.generator_starts_from(offset)
@@ -209,7 +214,8 @@ class FromQEOutput:
             self.read_q_points()  # Fill these 2 properties
 
         for i in range(len(self._frequency_files)):
-            q_coordinates, frequencies = self.read_frequency_file(self._frequency_files[i])
+            q_coordinates, frequencies = self.read_frequency_file(
+                self._frequency_files[i])
 
             # Here I use `allclose` rather than `array_equal` since they may have very little
             # differences even they are supposed to be the same, because of the digits QE gave.
@@ -219,7 +225,8 @@ class FromQEOutput:
 
             frequencies_for_all_files.append(frequencies)
 
-        self.frequencies = np.array(frequencies_for_all_files)  # Shape: (# volumes, # q-points, # bands on each point)
+        # Shape: (# volumes, # q-points, # bands on each point)
+        self.frequencies = np.array(frequencies_for_all_files)
 
     def write_to_file(self, outfile='input') -> None:
         """
@@ -229,13 +236,15 @@ class FromQEOutput:
         """
         path = pathlib.Path(outfile)
         if path.is_file():
-            print("Old '{0}' file found, I will backup it before continue.".format(outfile))
+            print(
+                "Old '{0}' file found, I will backup it before continue.".format(outfile))
             path.rename(outfile + '.backup')
 
         with open(outfile, 'w') as f:
             f.write("# {0}\n".format(self.comment))
             f.write('# The file contains frequencies and weights at the END!\n')
-            f.write('# Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n')
+            f.write(
+                '# Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n')
             # TODO: Possible bug introduced in formatting
             f.write("{0} {1} {2} {3}\n\n".format(len(self.volumes), len(self.q_weights),
                                                  self.frequencies.shape[-1], self.formula_unit_number))
@@ -245,11 +254,14 @@ class FromQEOutput:
                                                                           self.static_energies[i]))
 
                 for j in range(len(self.q_weights)):
-                    f.write("{0:12.8f} {1:12.8f} {2:12.8f}\n".format(*self.q_coordinates[j]))
+                    f.write("{0:12.8f} {1:12.8f} {2:12.8f}\n".format(
+                        *self.q_coordinates[j]))
 
                     for k in range(self.frequencies.shape[-1]):
-                        f.write("{0:20.10f}\n".format(self.frequencies[i, j, k]))
+                        f.write("{0:20.10f}\n".format(
+                            self.frequencies[i, j, k]))
 
             f.write('\nweight\n')
             for j in range(len(self.q_weights)):
-                f.write("{0:12.8f} {1:12.8f} {2:12.8f} {3:12.8f}\n".format(*self.q_coordinates[j], self.q_weights[j]))
+                f.write("{0:12.8f} {1:12.8f} {2:12.8f} {3:12.8f}\n".format(
+                    *self.q_coordinates[j], self.q_weights[j]))
