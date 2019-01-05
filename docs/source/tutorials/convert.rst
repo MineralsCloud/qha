@@ -24,6 +24,6 @@ Please check the ``/examples/silicon/make_input`` as an example.
 
 When all these files are obtained, put them in them same directory and run::
 
-   $ qha-convert filelist.yaml static q_points
+   $ qha convert filelist.yaml static q_points
 
 then a file named ``input`` will be generated in the same directory.
