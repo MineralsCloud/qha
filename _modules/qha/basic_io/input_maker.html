@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qha.basic_io.input_maker &#8212; qha 1.0.16 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.16</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">2. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for qha.basic_io.input_maker</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module make_input</span>
+<span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
+<span class="sd">   :synopsis: Use data files from Quantum ESPRESSO and other software to generate a standard input.</span>
+<span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">scientific_string</span> <span class="k">import</span> <span class="n">strings_to_integers</span>
+<span class="kn">from</span> <span class="nn">text_stream</span> <span class="k">import</span> <span class="n">TextStream</span>
+
+<span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span>
+
+<span class="c1"># ===================== What can be exported? =====================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FromQEOutput&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="FromQEOutput"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput">[docs]</a><span class="k">class</span> <span class="nc">FromQEOutput</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that can generate a standard &quot;input&quot; file for the ``qha run`` command if the original data is given by</span>
+<span class="sd">    Quantum ESPRESSO.</span>
+
+<span class="sd">    :param inp_file_list: A YAML file that contains three keys and values:</span>
+
+<span class="sd">        1. ``formula_unit_number``: The number of formula units in a unit cell.</span>
+<span class="sd">        2. ``comment``: Comment that could be added as the first line of the ``input``,</span>
+<span class="sd">           which usually specifies the system which user wants to calculate.</span>
+<span class="sd">        3. ``frequency_files``: A YAML list of strings specifying all the frequency files given by Quantum ESPRESSO</span>
+<span class="sd">           ``matdyn.x``.</span>
+
+<span class="sd">        To become more familiar with YAML syntax, which is used in the &quot;settings&quot; file, please refer to</span>
+<span class="sd">        `this documentation &lt;http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html&gt;`_.</span>
+<span class="sd">    :param inp_static: A pure text file specifying the energies and pressures of each volume from the</span>
+<span class="sd">        static calculation. The order of these volumes must be the same as the ``frequency_files`` listing order.</span>
+<span class="sd">    :param inp_q_points: A pure text file specifying the q-points&#39; coordinates and their corresponding weights in the</span>
+<span class="sd">        Brillouin zone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp_file_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp_static</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp_q_points</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inp_file_list</span> <span class="o">=</span> <span class="n">inp_file_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inp_static</span> <span class="o">=</span> <span class="n">inp_static</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inp_q_points</span> <span class="o">=</span> <span class="n">inp_q_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula_unit_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_energies</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="FromQEOutput.read_file_list"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.read_file_list">[docs]</a>    <span class="k">def</span> <span class="nf">read_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read all the files&#39; names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inp_file_list</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula_unit_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;formula_unit_number&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;frequency_files&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FromQEOutput.read_static"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.read_static">[docs]</a>    <span class="k">def</span> <span class="nf">read_static</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read static information, including pressures (which will not be used in calculation by now),</span>
+<span class="sd">        optimized volumes, and static energies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pressures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">volumes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inp_static</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Reading static data: emtpy lines or lines starting with &#39;#&#39; will be ignored!&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>  <span class="c1"># Ignore empty line or comment line</span>
+                    <span class="k">continue</span>
+
+                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;p\s*=\s*(-?\d*\.?\d*)\s*v\s*=\s*(-?\d*\.?\d*)\s*e\s*=\s*(-?\d*\.?\d*)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span>
+                                 <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                <span class="n">pressures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">volumes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pressures</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">volumes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FromQEOutput.read_q_points"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.read_q_points">[docs]</a>    <span class="k">def</span> <span class="nf">read_q_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read q-points&#39; coordinates and their weights in the Brillouin zone. The q-points&#39; coordinates are supposed to be</span>
+<span class="sd">        three-dimensional. No other information should be given. If user still wants to,</span>
+<span class="sd">        write lines that start with ``#``, and then they will be ignored when reading.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">q_weights</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inp_q_points</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Reading q-points file: emtpy lines or lines starting with &#39;#&#39; will be ignored!&quot;</span><span class="p">)</span>
+
+            <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>  <span class="c1"># Ignore empty line or comment line</span>
+                    <span class="k">continue</span>
+
+                <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Unknown line! Should be 3 coordinates and 1 weight, other lines should be commented with &#39;#&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">g</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                    <span class="n">q_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="c1"># TODO: Check possible bug, what if the regex match fails</span>
+                    <span class="n">q_weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_coordinates</span><span class="p">,</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># TODO: Possible bug, ``np.array([])`` is regarded as ``False``</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FromQEOutput.read_frequency_file"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.read_frequency_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read_frequency_file</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vector</span><span class="p">,</span> <span class="n">Matrix</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read Quantum ESPRESSO&#39;s output for phonon frequencies. This method is provided for reading only</span>
+<span class="sd">        one file.</span>
+
+<span class="sd">        :param inp: The name or path of the file.</span>
+<span class="sd">        :return: The q-space coordinates of each q-point in the file and corresponding frequencies for each</span>
+<span class="sd">            q-point on each band.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text_stream</span> <span class="o">=</span> <span class="n">TextStream</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+
+        <span class="n">gen</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_stream</span><span class="o">.</span><span class="n">generator_telling_position</span><span class="p">()</span>
+
+        <span class="n">q_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">frequencies</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;nbnd\s*=\s*(\d*),\s*nks=\s*(\d*)&quot;</span><span class="p">)</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Initialization</span>
+        <span class="n">bands_amount</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">q_points_amount</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">line</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="s1">&#39;nbnd&#39;</span> <span class="ow">or</span> <span class="s1">&#39;nks&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;The head line &#39;</span><span class="si">{0}</span><span class="s2">&#39; is not complete! Here &#39;nbnd&#39; and &#39;nks&#39; are not found!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bands_amount</span><span class="p">,</span> <span class="n">q_points_amount</span> <span class="o">=</span> <span class="n">strings_to_integers</span><span class="p">(</span>
+                        <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
+                    <span class="k">break</span>
+
+        <span class="n">gen</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_stream</span><span class="o">.</span><span class="n">generator_starts_from</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="n">quotient</span> <span class="o">=</span> <span class="n">bands_amount</span> <span class="o">//</span> <span class="mi">6</span>  <span class="c1"># QE splits branches into 6 columns per line</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">continue</span>
+
+            <span class="n">q_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">quotient</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>  <span class="c1"># Start a new line</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+
+            <span class="n">frequencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">q_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q_coordinates</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">q_coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">q_points_amount</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The number of q-points detected, </span><span class="si">{0}</span><span class="s2">, is not the same as what specified in head line!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">q_coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">frequencies</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">q_points_amount</span><span class="p">,</span> <span class="n">bands_amount</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The frequencies array shape &#39;</span><span class="si">{0}</span><span class="s2">&#39; is not the same as &#39;</span><span class="si">{1}</span><span class="s2">&#39;!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">frequencies</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="n">q_points_amount</span><span class="p">,</span> <span class="n">bands_amount</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">q_coordinates</span><span class="p">,</span> <span class="n">frequencies</span></div>
+
+<div class="viewcode-block" id="FromQEOutput.read_frequency_files"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.read_frequency_files">[docs]</a>    <span class="k">def</span> <span class="nf">read_frequency_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the phonon frequencies for all files (which are specified in the</span>
+<span class="sd">        ``frequency_files`` key of the settings file).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frequencies_for_all_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">)):</span>  <span class="c1"># If any of them is ``None``</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_q_points</span><span class="p">()</span>  <span class="c1"># Fill these 2 properties</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency_files</span><span class="p">)):</span>
+            <span class="n">q_coordinates</span><span class="p">,</span> <span class="n">frequencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_frequency_file</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_frequency_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="c1"># Here I use `allclose` rather than `array_equal` since they may have very little</span>
+            <span class="c1"># differences even they are supposed to be the same, because of the digits QE gave.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">q_coordinates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span><span class="p">):</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The q-points&#39; coordinates are different from what specified in the q-point file!&quot;</span><span class="p">,</span>
+                              <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">frequencies_for_all_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)</span>
+
+        <span class="c1"># Shape: (# volumes, # q-points, # bands on each point)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frequencies_for_all_files</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FromQEOutput.write_to_file"><a class="viewcode-back" href="../../../api/input_maker.html#qha.basic_io.input_maker.FromQEOutput.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;input&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write all data to a file *outfile*, which will be regarded as standard input file for ``qha``.</span>
+
+<span class="sd">        :param outfile: The path or name of the output file, by default is ``&#39;input&#39;`` (for further calculation).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Old &#39;</span><span class="si">{0}</span><span class="s2">&#39; file found, I will backup it before continue.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outfile</span><span class="p">))</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s1">&#39;.backup&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# The file contains frequencies and weights at the END!</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s1">&#39;# Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># TODO: Possible bug introduced in formatting</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">),</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula_unit_number</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">)):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;P=</span><span class="si">{0:20.10f}</span><span class="s2"> V=</span><span class="si">{1:20.10f}</span><span class="s2"> E=</span><span class="si">{2:20.10f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pressures</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">volumes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">static_energies</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">)):</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:12.8f}</span><span class="s2"> </span><span class="si">{1:12.8f}</span><span class="s2"> </span><span class="si">{2:12.8f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:20.10f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]))</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">weight</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">)):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:12.8f}</span><span class="s2"> </span><span class="si">{1:12.8f}</span><span class="s2"> </span><span class="si">{2:12.8f}</span><span class="s2"> </span><span class="si">{3:12.8f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_weights</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

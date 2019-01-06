@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>qha.thermodynamics &#8212; qha 1.0.16 documentation</title>
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.16</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">2. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for qha.thermodynamics</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module thermodynamics</span>
+<span class="sd">   :platform: Unix, Windows, Mac, Linux</span>
+<span class="sd">   :synopsis: Calculate the basic thermodynamic properties for a system: S, U, H, G, Cv on a (T,V) grid.</span>
+<span class="sd">.. moduleauthor:: Tian Qin &lt;qinxx197@umn.edu&gt;</span>
+<span class="sd">.. moduleauthor:: Qi Zhang &lt;qz2280@columbia.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">qha.type_aliases</span> <span class="k">import</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">Vector</span>
+<span class="kn">from</span> <span class="nn">qha.v2p</span> <span class="k">import</span> <span class="n">v2p</span>
+
+<span class="c1"># ===================== What can be exported? =====================</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;pressure&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;entropy&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thermodynamic_potentials&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thermal_expansion_coefficient&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gruneisen_parameter&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;isothermal_bulk_modulus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;adiabatic_bulk_modulus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bulk_modulus_derivative&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;isobaric_heat_capacity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;volumetric_heat_capacity&#39;</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">calculate_derivatives</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the derivative of :math:`f(x)`, i.e., :math:`\\frac{ df(x) }{ dx }`.</span>
+
+<span class="sd">    :param xs: A 1D vector, with length :math:`N_x`.</span>
+<span class="sd">    :param fs: A matrix, with shape :math:`(N_x, _)`.</span>
+<span class="sd">    :return: A matrix, with shape :math:`(N_x, _)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">xs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">fs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The argument *xs* should be a 1D array and *ys* should be a 2D array!&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">xs</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># df(x)/dx.</span>
+
+
+<div class="viewcode-block" id="pressure"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.pressure">[docs]</a><span class="k">def</span> <span class="nf">pressure</span><span class="p">(</span><span class="n">vs</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the pressure as a function of temperature and volume, i.e.,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       P = - \\bigg( \\frac{ \\partial F(T, V) }{ \\partial V } \\bigg)_T.</span>
+
+<span class="sd">    :param vs: A vector of volumes.</span>
+<span class="sd">    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.</span>
+<span class="sd">    :return: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T,V)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">free_energies</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="entropy"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.entropy">[docs]</a><span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the entropy as a function of temperature and volume, i.e.,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       S = - \\bigg( \\frac{ \\partial F(T, V) }{ \\partial T } \\bigg)_V.</span>
+
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.</span>
+<span class="sd">    :return: A matrix, the entropy as a function of temperature and volume, i.e., :math:`S(T,V)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">calculate_derivatives</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="thermodynamic_potentials"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.thermodynamic_potentials">[docs]</a><span class="k">def</span> <span class="nf">thermodynamic_potentials</span><span class="p">(</span><span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vs</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">ps</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the enthalpy :math:`H(T, V)`, the internal energy :math:`U(T, V)`,</span>
+<span class="sd">    and the Gibbs free energy :math:`G` on a :math:`(T, V)` grid from Helmholtz free energy :math:`F(T, V)` by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       U(T, V) &amp;= F(T, V) + T S(T, V), \\\\</span>
+<span class="sd">       H(T, V) &amp;= U(T, V) + P(T, V) V, \\\\</span>
+<span class="sd">       G(T, V) &amp;= F(T, V) + P(T, V) V.</span>
+
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :param vs: A vector of volumes.</span>
+<span class="sd">    :param free_energies: A matrix, the free energy as a function of temperature and volume, i.e., :math:`F(T, V)`.</span>
+<span class="sd">    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T, V)`.</span>
+<span class="sd">    :return: A dictionary that contains the enthalpy :math:`H(T, V)`, the internal energy :math:`U(T, V)`,</span>
+<span class="sd">        and the Gibbs free energy :math:`G` on a :math:`(T, V)` grid. They can be retrieved by ``&#39;U&#39;``, ``&#39;H&#39;``, or</span>
+<span class="sd">        ``&#39;G&#39;`` keys, respectively.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span><span class="p">:</span> <span class="n">Matrix</span> <span class="o">=</span> <span class="n">free_energies</span> <span class="o">+</span> <span class="n">ps</span> <span class="o">*</span> <span class="n">vs</span>  <span class="c1"># G(T,V) = F(T,V) + V * P(T,V)</span>
+
+    <span class="n">u</span><span class="p">:</span> <span class="n">Matrix</span> <span class="o">=</span> <span class="n">free_energies</span> <span class="o">+</span> <span class="n">entropy</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">free_energies</span><span class="p">)</span> <span class="o">*</span> <span class="n">temperature</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># U(T,V) = F(T,V) + T * S(T,V)</span>
+
+    <span class="n">h</span><span class="p">:</span> <span class="n">Matrix</span> <span class="o">=</span> <span class="n">u</span> <span class="o">+</span> <span class="n">ps</span> <span class="o">*</span> <span class="n">vs</span>  <span class="c1"># H(T,V) = U(T,V) + V * P(T,V)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;U&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="n">g</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="volume"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.volume">[docs]</a><span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="n">vs</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">desired_ps</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">ps</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the volumes as a function of temperature and pressure, i.e., on a :math:`(T, P)` grid.</span>
+
+<span class="sd">    :param vs: A vector of volumes.</span>
+<span class="sd">    :param desired_ps: A vector of desired pressures.</span>
+<span class="sd">    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T,V)`, in atomic unit.</span>
+<span class="sd">    :return: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nt</span><span class="p">,</span> <span class="n">ntv</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v2p</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">ps</span><span class="p">,</span> <span class="n">desired_ps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="thermal_expansion_coefficient"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.thermal_expansion_coefficient">[docs]</a><span class="k">def</span> <span class="nf">thermal_expansion_coefficient</span><span class="p">(</span><span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vs</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the thermal expansion coefficient by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \\alpha = \\frac{ 1 }{ V }  \\bigg( \\frac{ \\partial V }{ \\partial T } \\bigg)_P.</span>
+
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :param vs: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.</span>
+<span class="sd">    :return: A matrix, the thermal expansion coefficient as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\alpha(T, P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Division is done by element-wise.</span>
+    <span class="k">return</span> <span class="n">calculate_derivatives</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">vs</span><span class="p">)</span> <span class="o">/</span> <span class="n">vs</span></div>
+
+
+<div class="viewcode-block" id="gruneisen_parameter"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.gruneisen_parameter">[docs]</a><span class="k">def</span> <span class="nf">gruneisen_parameter</span><span class="p">(</span><span class="n">vs</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">bt</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">cv</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Grüneisen parameter by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       \\gamma = \\frac{ \\alpha B_T V }{ C_V }.</span>
+
+<span class="sd">    :param vs: A matrix, the volume as a function of temperature and pressure, i.e., :math:`V(T, P)`.</span>
+<span class="sd">    :param bt: A matrix, the isothermal bulk modulus as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`B_T(T, P)`.</span>
+<span class="sd">    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\alpha(T, P)`.</span>
+<span class="sd">    :param cv: A matrix, the volumetric heat capacity as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`C_V(T, P)`.</span>
+<span class="sd">    :return: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\gamma(T, P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">vs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">gamma</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">vs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">bt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">cv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="c1"># return vs * bt * alpha / cv</span>
+    <span class="k">return</span> <span class="n">gamma</span></div>
+
+
+<div class="viewcode-block" id="isothermal_bulk_modulus"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.isothermal_bulk_modulus">[docs]</a><span class="k">def</span> <span class="nf">isothermal_bulk_modulus</span><span class="p">(</span><span class="n">vs</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">ps</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the isothermal bulk modulus by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       B_T = - V \\bigg( \\frac{ \\partial P }{ \\partial V } \\bigg)_T.</span>
+
+<span class="sd">    :param vs: A vector of volumes.</span>
+<span class="sd">    :param ps: A matrix, the pressure as a function of temperature and volume, i.e., :math:`P(T, V)`.</span>
+<span class="sd">    :return: A matrix, the isothermal bulk modulus, as a function of temperature and volume, i.e., :math:`B_T(T, V)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span> <span class="o">*</span> <span class="n">vs</span></div>
+
+
+<div class="viewcode-block" id="adiabatic_bulk_modulus"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.adiabatic_bulk_modulus">[docs]</a><span class="k">def</span> <span class="nf">adiabatic_bulk_modulus</span><span class="p">(</span><span class="n">bt</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the adiabatic bulk modulus by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       B_S = B_T \\big( 1 + \\alpha \\gamma T \\big).</span>
+
+<span class="sd">    :param bt: A matrix, the isothermal bulk modulus, as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`B_T(T, P)`.</span>
+<span class="sd">    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\alpha(T, P)`.</span>
+<span class="sd">    :param gamma: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\gamma(T, P)`.</span>
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :return: A matrix, the adiabatic bulk modulus, as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`B_S(T,P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">bt</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="bulk_modulus_derivative"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.bulk_modulus_derivative">[docs]</a><span class="k">def</span> <span class="nf">bulk_modulus_derivative</span><span class="p">(</span><span class="n">ps</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">bt</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the first-order derivative of bulk modulus with respect to pressure by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       B_T&#39; = \\bigg( \\frac{ \\partial B_T }{ \\partial P } \\bigg).</span>
+
+<span class="sd">    :param ps: A vector of pressures.</span>
+<span class="sd">    :param bt: A matrix, the isothermal bulk modulus, as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`B_T(T, P)`.</span>
+<span class="sd">    :return: A matrix, the isothermal bulk modulus, as a function of temperature and pressure, i.e.,</span>
+<span class="sd">        :math:`B_T&#39;(T, P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">calculate_derivatives</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">bt</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="isobaric_heat_capacity"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.isobaric_heat_capacity">[docs]</a><span class="k">def</span> <span class="nf">isobaric_heat_capacity</span><span class="p">(</span><span class="n">cv</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the isobaric heat capacity by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       C_P = C_V \\big( 1 + \\alpha \\gamma T \\big).</span>
+
+<span class="sd">    :param cv: A matrix, the volumetric heat capacity, :math:`C_V(T, P)`.</span>
+<span class="sd">    :param alpha: A matrix, the thermal expansion coefficient as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\alpha(T, P)`.</span>
+<span class="sd">    :param gamma: A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`\\gamma(T, P)`.</span>
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :return: A matrix, the isobaric specific heat capacity as a function of temperature and pressure,</span>
+<span class="sd">        i.e., :math:`C_P(T,P)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cv</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="volumetric_heat_capacity"><a class="viewcode-back" href="../../api/thermodynamics.html#qha.thermodynamics.volumetric_heat_capacity">[docs]</a><span class="k">def</span> <span class="nf">volumetric_heat_capacity</span><span class="p">(</span><span class="n">temperature</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">internal_energies</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the volumetric heat capacity by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       C_V = \\bigg( \\frac{ \\partial U }{ \\partial T } \\bigg).</span>
+
+<span class="sd">    :param temperature: A vector of temperature.</span>
+<span class="sd">    :param internal_energies: A matrix, the internal energy as a function of temperature and volume,</span>
+<span class="sd">        i.e., :math:`U(T, V)`.</span>
+<span class="sd">    :return: A matrix, the volumetric heat capacity as a function of temperature and volume,</span>
+<span class="sd">        i.e., :math:`C_V(T, V)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">calculate_derivatives</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">internal_energies</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2.9. Thermodynamic properties &#8212; qha 1.0.16 documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.10. Some miscellaneous functions" href="tools.html" />
+    <link rel="prev" title="2.8. Convert \(f(T, V)\) to \(f(T,P)\)" href="v2p.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          qha</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.16</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">1. Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop/index.html">3. Development</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">2.9. Thermodynamic properties</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="v2p.html" title="Previous Chapter: 2.8. Convert \(f(T, V)\) to \(f(T,P)\)"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; 2.8. Convert ...</span>
+    </a>
+  </li>
+  <li>
+    <a href="tools.html" title="Next Chapter: 2.10. Some miscellaneous functions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">2.10. Some mi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/api/thermodynamics.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <div class="section" id="thermodynamic-properties">
+<h1>2.9. Thermodynamic properties<a class="headerlink" href="#thermodynamic-properties" title="Permalink to this headline">¶</a></h1>
+<p>This module is used for calculating various thermodynamic properties using Helmholtz free energy.</p>
+<span class="target" id="module-qha"></span><span class="target" id="module-qha.thermodynamics"></span><dl class="function">
+<dt id="qha.thermodynamics.pressure">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">pressure</code><span class="sig-paren">(</span><em>vs</em>, <em>free_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#pressure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.pressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the pressure as a function of temperature and volume, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[P = - \bigg( \frac{ \partial F(T, V) }{ \partial V } \bigg)_T.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of volumes.</li>
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the free energy as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(F(T, V)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the pressure as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(P(T,V)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.entropy">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">entropy</code><span class="sig-paren">(</span><em>temperature</em>, <em>free_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the entropy as a function of temperature and volume, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[S = - \bigg( \frac{ \partial F(T, V) }{ \partial T } \bigg)_V.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the free energy as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(F(T, V)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the entropy as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(S(T,V)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.thermodynamic_potentials">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">thermodynamic_potentials</code><span class="sig-paren">(</span><em>temperature</em>, <em>vs</em>, <em>free_energies</em>, <em>ps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#thermodynamic_potentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.thermodynamic_potentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the enthalpy <span class="math notranslate nohighlight">\(H(T, V)\)</span>, the internal energy <span class="math notranslate nohighlight">\(U(T, V)\)</span>,
+and the Gibbs free energy <span class="math notranslate nohighlight">\(G\)</span> on a <span class="math notranslate nohighlight">\((T, V)\)</span> grid from Helmholtz free energy <span class="math notranslate nohighlight">\(F(T, V)\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}U(T, V) &amp;= F(T, V) + T S(T, V), \\
+H(T, V) &amp;= U(T, V) + P(T, V) V, \\
+G(T, V) &amp;= F(T, V) + P(T, V) V.\end{split}\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of volumes.</li>
+<li><strong>free_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the free energy as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(F(T, V)\)</span>.</li>
+<li><strong>ps</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the pressure as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(P(T, V)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A dictionary that contains the enthalpy <span class="math notranslate nohighlight">\(H(T, V)\)</span>, the internal energy <span class="math notranslate nohighlight">\(U(T, V)\)</span>,
+and the Gibbs free energy <span class="math notranslate nohighlight">\(G\)</span> on a <span class="math notranslate nohighlight">\((T, V)\)</span> grid. They can be retrieved by <code class="docutils literal notranslate"><span class="pre">'U'</span></code>, <code class="docutils literal notranslate"><span class="pre">'H'</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">'G'</span></code> keys, respectively.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.volume">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">volume</code><span class="sig-paren">(</span><em>vs</em>, <em>desired_ps</em>, <em>ps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the volumes as a function of temperature and pressure, i.e., on a <span class="math notranslate nohighlight">\((T, P)\)</span> grid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of volumes.</li>
+<li><strong>desired_ps</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of desired pressures.</li>
+<li><strong>ps</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the pressure as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(P(T,V)\)</span>, in atomic unit.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the volume as a function of temperature and pressure, i.e., <span class="math notranslate nohighlight">\(V(T, P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.thermal_expansion_coefficient">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">thermal_expansion_coefficient</code><span class="sig-paren">(</span><em>temperature</em>, <em>vs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#thermal_expansion_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.thermal_expansion_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the thermal expansion coefficient by</p>
+<div class="math notranslate nohighlight">
+\[\alpha = \frac{ 1 }{ V }  \bigg( \frac{ \partial V }{ \partial T } \bigg)_P.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the volume as a function of temperature and pressure, i.e., <span class="math notranslate nohighlight">\(V(T, P)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\alpha(T, P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.gruneisen_parameter">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">gruneisen_parameter</code><span class="sig-paren">(</span><em>vs</em>, <em>bt</em>, <em>alpha</em>, <em>cv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#gruneisen_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.gruneisen_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Grüneisen parameter by</p>
+<div class="math notranslate nohighlight">
+\[\gamma = \frac{ \alpha B_T V }{ C_V }.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the volume as a function of temperature and pressure, i.e., <span class="math notranslate nohighlight">\(V(T, P)\)</span>.</li>
+<li><strong>bt</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the isothermal bulk modulus as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(B_T(T, P)\)</span>.</li>
+<li><strong>alpha</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\alpha(T, P)\)</span>.</li>
+<li><strong>cv</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the volumetric heat capacity as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(C_V(T, P)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\gamma(T, P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.isothermal_bulk_modulus">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">isothermal_bulk_modulus</code><span class="sig-paren">(</span><em>vs</em>, <em>ps</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#isothermal_bulk_modulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.isothermal_bulk_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the isothermal bulk modulus by</p>
+<div class="math notranslate nohighlight">
+\[B_T = - V \bigg( \frac{ \partial P }{ \partial V } \bigg)_T.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>vs</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of volumes.</li>
+<li><strong>ps</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the pressure as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(P(T, V)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the isothermal bulk modulus, as a function of temperature and volume, i.e., <span class="math notranslate nohighlight">\(B_T(T, V)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.adiabatic_bulk_modulus">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">adiabatic_bulk_modulus</code><span class="sig-paren">(</span><em>bt</em>, <em>alpha</em>, <em>gamma</em>, <em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#adiabatic_bulk_modulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.adiabatic_bulk_modulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the adiabatic bulk modulus by</p>
+<div class="math notranslate nohighlight">
+\[B_S = B_T \big( 1 + \alpha \gamma T \big).\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bt</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the isothermal bulk modulus, as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(B_T(T, P)\)</span>.</li>
+<li><strong>alpha</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\alpha(T, P)\)</span>.</li>
+<li><strong>gamma</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\gamma(T, P)\)</span>.</li>
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the adiabatic bulk modulus, as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(B_S(T,P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.bulk_modulus_derivative">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">bulk_modulus_derivative</code><span class="sig-paren">(</span><em>ps</em>, <em>bt</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#bulk_modulus_derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.bulk_modulus_derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the first-order derivative of bulk modulus with respect to pressure by</p>
+<div class="math notranslate nohighlight">
+\[B_T' = \bigg( \frac{ \partial B_T }{ \partial P } \bigg).\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ps</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of pressures.</li>
+<li><strong>bt</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the isothermal bulk modulus, as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(B_T(T, P)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the isothermal bulk modulus, as a function of temperature and pressure, i.e.,
+<span class="math notranslate nohighlight">\(B_T'(T, P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.isobaric_heat_capacity">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">isobaric_heat_capacity</code><span class="sig-paren">(</span><em>cv</em>, <em>alpha</em>, <em>gamma</em>, <em>temperature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#isobaric_heat_capacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.isobaric_heat_capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the isobaric heat capacity by</p>
+<div class="math notranslate nohighlight">
+\[C_P = C_V \big( 1 + \alpha \gamma T \big).\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cv</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the volumetric heat capacity, <span class="math notranslate nohighlight">\(C_V(T, P)\)</span>.</li>
+<li><strong>alpha</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the thermal expansion coefficient as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\alpha(T, P)\)</span>.</li>
+<li><strong>gamma</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the thermodynamic Grüneisen parameter as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(\gamma(T, P)\)</span>.</li>
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the isobaric specific heat capacity as a function of temperature and pressure,
+i.e., <span class="math notranslate nohighlight">\(C_P(T,P)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="qha.thermodynamics.volumetric_heat_capacity">
+<code class="descclassname">qha.thermodynamics.</code><code class="descname">volumetric_heat_capacity</code><span class="sig-paren">(</span><em>temperature</em>, <em>internal_energies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qha/thermodynamics.html#volumetric_heat_capacity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#qha.thermodynamics.volumetric_heat_capacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the volumetric heat capacity by</p>
+<div class="math notranslate nohighlight">
+\[C_V = \bigg( \frac{ \partial U }{ \partial T } \bigg).\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>temperature</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>1d</em><em>, </em><em>A</em><em>)</em>) – A vector of temperature.</li>
+<li><strong>internal_energies</strong> (<em>array</em><em>(</em><em>float64</em><em>, </em><em>2d</em><em>, </em><em>A</em><em>)</em>) – A matrix, the internal energy as a function of temperature and volume,
+i.e., <span class="math notranslate nohighlight">\(U(T, V)\)</span>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">array(float64, 2d, A)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix, the volumetric heat capacity as a function of temperature and volume,
+i.e., <span class="math notranslate nohighlight">\(C_V(T, V)\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
