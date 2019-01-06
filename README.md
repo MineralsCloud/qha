@@ -10,7 +10,7 @@ This repository is now maintained by [Tian Qin](mailto:qinxx197@umn.edu) and [Qi
 
 ## How to cite
 
-The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub). 
+The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub).
 
 Please cite this article as: T. Qin, Q. Zhang, R.M. Wentzcovitch et al., qha: A Python package for quasiharmonic free energy calculation for multi-configuration systems, Computer Physics Communications (2018), https://doi.org/10.1016/j.cpc.2018.11.003.
 
@@ -18,27 +18,22 @@ Please cite this article as: T. Qin, Q. Zhang, R.M. Wentzcovitch et al., qha: A 
 
 ### Python environment
 
-`qha` is written in Python, and can be installed from [Python package index (PyPI)](https://pypi.org/search/?q=qha) or local source files. 
+`qha` is written in Python, and can be installed from [Python package index (PyPI)](https://pypi.org/search/?q=qha) or local source files.
 
 Python 3 can be downloaded from its official [website](https://www.python.org/) for systems including Windows, macOS, and Linux,
 please check more details on [Python 3 documentation](https://docs.python.org/3/using/index.html).
 
 To install `qha`, currently, Python 3.6.x distributions are recommended.
 
-Please do not use Python 3.7.x at this moment, since it contains breaking changes and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future. 
+Please do not use Python 3.7.x at this moment, since it contains breaking changes and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future.
 
 ### Where to get it
 
-Binary installers for the latest released version are available at the PyPI and on conda.
+Binary installers for the latest released version are available at the PyPI.
 
 ```shell
 # use PyPI
 $ pip install qha
-```
-
-```shell
-# use conda
-$ conda install qha
 ```
 
 ### Dependencies
@@ -71,7 +66,7 @@ $ pip install -e .
 ### Trouble shooting of installation
 
 1. Error raised about `mpfr.h` file: To solve this error, `GMP` and `MPFR` libraries are required to use `bigfloat` package.
-   * On Linux, install `libmpfr-dev` , for example, on Ubuntu type `apt-get install libmpfr-dev`; 
+   * On Linux, install `libmpfr-dev` , for example, on Ubuntu type `apt-get install libmpfr-dev`;
    * On Windows, `bigfloat` can be installed from the binary file, please check [“Unofficial Windows Binaries for Python Extension Packages”](https://www.lfd.uci.edu/~gohlke/pythonlibs/), download the version suitable for the system, for example, for a 64-bit system, use pip to install it `pip(3) install /the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl`;
    * On macOS, install these libraries via `brew install mpfr`. Of course, you need the [Homebrew package manager](https://brew.sh) installed to run this command.
 
@@ -117,7 +112,7 @@ This main folder contains three folders, license file, readme file, and setup fi
 
 `qha/calculator.py`: Perform single-, multi-configuration calculations, one of the most crucial modules in this code;
 
-`qha/fitting.py`: Perform the Birch—Murnaghan (BM) equation-of-state (EOS) fitting; 
+`qha/fitting.py`: Perform the Birch—Murnaghan (BM) equation-of-state (EOS) fitting;
 
 `qha/grid_interpolation.py`: Find the most suitable volume grid to perform the BM EOS fitting;
 
@@ -153,41 +148,41 @@ This main folder contains three folders, license file, readme file, and setup fi
 
 This folder contains files used for the command-line interface.
 
-`qha/cli/__init__.py` 
+`qha/cli/__init__.py`
 
 `qha/cli/converter.py`
 
-`qha/cli/handler.py` 
+`qha/cli/handler.py`
 
-`qha/cli/parser.py`  
+`qha/cli/parser.py`
 
-`qha/cli/plotter.py`  
+`qha/cli/plotter.py`
 
-`qha/cli/runner.py`  
+`qha/cli/runner.py`
 
 ##### The `./qha/multi_configurations` folder
 
 This folder contains files to calculate Helmholtz free energy for the multi-configuration system.
 
-`qha/multi_configurations/__init__.py` 
+`qha/multi_configurations/__init__.py`
 
 `qha/multi_configurations/different_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for the multi-configuration system with different phonon density of states (VDOS) for each configuration;
 
-`qha/multi_configurations/same_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for multi-configuration system with the same VDOS for all configurations. 
+`qha/multi_configurations/same_phonon_dos.py`: Work with `qha/calculator.py` to calculate Helmholtz free energy for multi-configuration system with the same VDOS for all configurations.
 
 ##### The `./qha/tests` folder
 
 this folder contains unit test files
 
-`qha/tests/__init__.py` 
+`qha/tests/__init__.py`
 
-`qha/tests/test_overall_run.py` 
+`qha/tests/test_overall_run.py`
 
-`qha/tests/test_read_input.py` 
+`qha/tests/test_read_input.py`
 
-`qha/tests/test_samevdos_overall.py` 
+`qha/tests/test_samevdos_overall.py`
 
-`qha/tests/test_single_configuration.py` 
+`qha/tests/test_single_configuration.py`
 
 `qha/tests/test_unit_conversion.py`
 
@@ -211,7 +206,7 @@ This folder conations an example to perform the single-configuration calculation
 `…`
 `examples/ice VII/input_52`
 
-`examples/ice VII/settings.yaml`: This file is the computational settings file, see our online [tutorial](https://mineralscloud.github.io/qha/tutorials/index.html) for more details. 
+`examples/ice VII/settings.yaml`: This file is the computational settings file, see our online [tutorial](https://mineralscloud.github.io/qha/tutorials/index.html) for more details.
 
 ## License
 
