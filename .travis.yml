@@ -1,0 +1,27 @@
+dist: xenial
+language: python
+os:
+  - linux
+python:
+  - "3.6"
+sudo: required
+before_install:
+  - sudo apt-get install libmpc-dev
+install:
+  - pip install .
+  - pip install -Iv sphinx==1.7.4
+  - pip install sphinx-autodoc-typehints
+  - pip install sphinx_bootstrap_theme
+script:
+  - cd docs/
+  - make clean && make html
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master
+notifications:
+  email:
+    - singularitti@outlook.com
