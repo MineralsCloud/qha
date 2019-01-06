@@ -22,6 +22,7 @@ deploy:
   keep-history: true
   on:
     branch: master
+  local-dir: docs/build/html/
 notifications:
   email:
     - singularitti@outlook.com
