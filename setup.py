@@ -45,6 +45,7 @@ setup(name='qha',
       keywords='thermodynamic-properties quasi-harmonic-approximation scientific-computation',
       install_requires=[
           'lazy_property',
+          'mpmath',
           'numba',
           'numpy',
           'bigfloat',
