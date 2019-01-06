@@ -118,12 +118,12 @@ class PartitionFunction:
         :return: A matrix, the partition function of each configuration of each volume.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
-            return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
+        with mpmath.workdps(self.precision):
+            return np.array([mpmath.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
                              logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
                                        axis=1, b=self.degeneracies)])
 
@@ -138,10 +138,10 @@ class PartitionFunction:
         :return: The free energy on a temperature-volume grid.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)
+        with mpmath.workdps(self.precision):
+            log_z = np.array([mpmath.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)
         return -K * self.temperature * log_z
