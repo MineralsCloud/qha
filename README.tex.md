@@ -215,3 +215,4 @@ This folder conations an example to perform the single-configuration calculation
 ## Documentation
 
 The official documentation is hosted on our [GitHub page](https://mineralscloud.github.io/qha/).
+
