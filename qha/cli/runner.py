@@ -130,6 +130,9 @@ class QHARunner(QHACommandHandler):
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
         save_x_tv(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
 
+        file_stv_j = results_folder / 's_tv_j.txt'
+        save_x_tv(calc.s_tv_j, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_stv_j)
+
         for idx in calc.settings['thermodynamic_properties']:
             if idx in ['F', 'G', 'H', 'U']:
                 attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']

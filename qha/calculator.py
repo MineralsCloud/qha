@@ -26,7 +26,7 @@ from qha.basic_io import read_input
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
 from qha.type_aliases import Vector
-from qha.unit_conversion import gpa_to_ry_b3, ry_b3_to_gpa, b3_to_a3, ry_to_j_mol, ry_to_ev
+from qha.unit_conversion import gpa_to_ry_b3, ry_b3_to_gpa, b3_to_a3, ry_to_j_mol, ry_to_ev, ry_to_j
 from qha.v2p import v2p
 
 # ===================== What can be exported? =====================
@@ -233,6 +233,10 @@ class Calculator:
     @LazyProperty
     def p_tv_au(self):
         return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
+    
+    @LazyProperty
+    def s_tv_j(self):
+        return ry_to_j(entropy(self.temperature_array, self.f_tv_ry))
 
     @LazyProperty
     def f_tv_ev(self):
