@@ -49,7 +49,8 @@ class QHARunner(QHACommandHandler):
         if not os.path.exists(user_settings['output_directory']):
             os.makedirs(user_settings['output_directory'])
 
-        user_settings.update({'qha_output': os.path.join(user_settings['output_directory'], 'output.txt')})
+        user_settings.update({'qha_output': os.path.join(
+            user_settings['output_directory'], 'output.txt')})
 
         try:
             os.remove(user_settings['qha_output'])
@@ -64,10 +65,12 @@ class QHARunner(QHACommandHandler):
             print("You have single-configuration calculation assumed.")
         elif calculation_type == 'same phonon dos':
             calc = SamePhDOSCalculator(user_settings)
-            print("You have multi-configuration calculation with the same phonon DOS assumed.")
+            print(
+                "You have multi-configuration calculation with the same phonon DOS assumed.")
         elif calculation_type == 'different phonon dos':
             calc = DifferentPhDOSCalculator(user_settings)
-            print("You have multi-configuration calculation with different phonon DOS assumed.")
+            print(
+                "You have multi-configuration calculation with different phonon DOS assumed.")
         else:
             raise ValueError("The 'calculation' in your settings in not recognized! It must be one of:"
                              "'single', 'same phonon dos', 'different phonon dos'!")
@@ -81,7 +84,8 @@ class QHARunner(QHACommandHandler):
 
         print("Caution: If negative frequencies found, they are currently treated as 0!")
         tmp = calc.where_negative_frequencies
-        if tmp is not None and not (tmp.T[-1].max() <= 2):  # Don't delete this parenthesis!
+        # Don't delete this parenthesis!
+        if tmp is not None and not (tmp.T[-1].max() <= 2):
             if calc.frequencies.ndim == 4:  # Multiple configuration
                 for indices in tmp:
                     print(
@@ -122,20 +126,29 @@ class QHARunner(QHACommandHandler):
                               }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_tv(calc.f_tv_ev, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
+        save_x_tv(calc.f_tv_ev, temperature_array,
+                  calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3, temperature_sample, file_ftv_non_fitted)
+        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3,
+                  temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
-        save_x_tv(calc.p_tv_gpa, temperature_array, calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
+        save_x_tv(calc.p_tv_gpa, temperature_array,
+                  calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
+
+        file_stv_j = results_folder / 's_tv_j.txt'
+        save_x_tv(calc.s_tv_j, temperature_array,
+                  calc.finer_volumes_ang3, temperature_sample, file_stv_j)
 
         for idx in calc.settings['thermodynamic_properties']:
             if idx in ['F', 'G', 'H', 'U']:
-                attr_name = calculation_option[idx] + '_' + calc.settings['energy_unit']
+                attr_name = calculation_option[idx] + \
+                    '_' + calc.settings['energy_unit']
                 file_name = attr_name + '.txt'
                 file_dir = results_folder / file_name
-                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
+                save_x_tp(getattr(calc, attr_name), temperature_array,
+                          desired_pressures_gpa, p_sample_gpa, file_dir)
 
             if idx == 'V':
                 v_bohr3 = calculation_option[idx] + '_' + 'bohr3'
@@ -145,15 +158,19 @@ class QHARunner(QHACommandHandler):
                 file_name_ang3 = v_ang3 + '.txt'
                 file_dir_ang3 = results_folder / file_name_ang3
 
-                save_x_tp(getattr(calc, v_bohr3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_au)
-                save_x_tp(getattr(calc, v_ang3), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir_ang3)
+                save_x_tp(getattr(calc, v_bohr3), temperature_array,
+                          desired_pressures_gpa, p_sample_gpa, file_dir_au)
+                save_x_tp(getattr(calc, v_ang3), temperature_array,
+                          desired_pressures_gpa, p_sample_gpa, file_dir_ang3)
 
             if idx in ['Cv', 'Cp', 'Bt', 'Btp', 'Bs', 'alpha', 'gamma']:
                 attr_name = calculation_option[idx]
                 file_name = attr_name + '.txt'
                 file_dir = results_folder / file_name
-                save_x_tp(getattr(calc, attr_name), temperature_array, desired_pressures_gpa, p_sample_gpa, file_dir)
+                save_x_tp(getattr(calc, attr_name), temperature_array,
+                          desired_pressures_gpa, p_sample_gpa, file_dir)
 
         end_time_total = time.time()
         time_elapsed = end_time_total - start_time_total
-        save_to_output(user_settings['qha_output'], make_ending_string(time_elapsed))
+        save_to_output(user_settings['qha_output'],
+                       make_ending_string(time_elapsed))
