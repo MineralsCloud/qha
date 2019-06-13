@@ -21,7 +21,7 @@ __all__ = ['v2p']
 def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     """
     A third-order Lagrange polynomial function. Given 4 points for interpolation:
-    :math:`(x_0, y_0), \ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.
+    :math:`(x_0, y_0), \\ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`.
 
     :param x: The x-coordinate of the point to be evaluated.
     :param x0: The x-coordinate of the 1st point.
