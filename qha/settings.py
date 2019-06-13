@@ -80,7 +80,7 @@ def from_yaml(filename: str) -> Settings:
     :return: A ``Settings`` class.
     """
     with open(filename, 'r') as f:
-        return Settings(yaml.load(f))
+        return Settings(yaml.load(f, Loader=yaml.CLoader))
 
 
 global energy_unit
