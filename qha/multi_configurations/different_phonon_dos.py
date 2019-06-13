@@ -123,7 +123,28 @@ class PartitionFunction:
             raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
-            return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
+            # shape = (# of configurations, # of volumes for each configuration)
+            return np.array(
+                [bigfloat.exp(d) for d in -self.aligned_free_energies_for_each_configuration / (K * self.temperature)])
+
+    def partition_functions_for_all_configurations(self):
+        """
+        Sum the partition functions for all configurations.
+
+        .. math::
+
+           Z_{\\text{all configs}}(T, V) = \\sum_{j} Z_{j}(T, V).
+
+        :return: A vector, the partition function of each volume.
+        """
+        try:
+            import bigfloat
+        except ImportError:
+            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+
+        with bigfloat.precision(self.precision):
+            # shape = (# of volumes,)
+            return np.array([bigfloat.exp(d) for d in
                              logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
                                        axis=1, b=self.degeneracies)])
 
@@ -143,5 +164,5 @@ class PartitionFunction:
             raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_each_configuration], dtype=float)
+            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
         return -K * self.temperature * log_z
