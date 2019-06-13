@@ -124,8 +124,8 @@ class PartitionFunction:
 
         with bigfloat.precision(self.precision):
             # shape = (# of configurations, # of volumes for each configuration)
-            return np.array(
-                [bigfloat.exp(d) for d in -self.aligned_free_energies_for_each_configuration / (K * self.temperature)])
+            exp = np.vectorize(bigfloat.exp)
+            return exp(-self.aligned_free_energies_for_each_configuration / (K * self.temperature))
 
     def partition_functions_for_all_configurations(self):
         """
@@ -164,5 +164,5 @@ class PartitionFunction:
             raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
 
         with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
+            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_all_configurations()], dtype=float)
         return -K * self.temperature * log_z
