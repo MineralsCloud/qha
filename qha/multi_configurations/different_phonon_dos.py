@@ -34,7 +34,7 @@ class PartitionFunction:
 
     .. math::
 
-       Z_{\\text{all configs}}(T, V) = \sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
+       Z_{\\text{all configs}}(T, V) = \\sum_{j = 1}^{N_{c}} g_{j} Z_{j}(T, V),
 
     where :math:`N_{c}` stands for the number of configurations and :math:`g_{j}` stands for degeneracy for the
     :math:`j` th configuration.
@@ -113,7 +113,7 @@ class PartitionFunction:
 
         .. math::
 
-           Z_{j}(T, V) = \exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
+           Z_{j}(T, V) = \\exp \\bigg( -\\frac{ F_{j}(T, V) }{ k_B T } \\bigg).
 
         :return: A matrix, the partition function of each configuration of each volume.
         """
@@ -154,7 +154,7 @@ class PartitionFunction:
 
         .. math::
 
-           F_{\\text{all configs}}(T, V) = - k_B T \ln Z_{\\text{all configs}}(T, V).
+           F_{\\text{all configs}}(T, V) = - k_B T \\ln Z_{\\text{all configs}}(T, V).
 
         :return: The free energy on a temperature-volume grid.
         """
