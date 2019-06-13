@@ -3,7 +3,7 @@
 
 import unittest
 
-from qha.single_configuration import ho_free_energy
+from qha.statmech import ho_free_energy
 
 
 class TestSingleConfiguration(unittest.TestCase):
