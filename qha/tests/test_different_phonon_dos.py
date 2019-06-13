@@ -72,7 +72,7 @@ class TestPartitionFunction(unittest.TestCase):
                          (52, 6))  # (# of configurations, # of volumes)
         self.assertEqual(self.partition_function.partition_functions_for_each_configuration.shape,
                          (52, 6))  # (# of configurations, # of volumes)
-        self.assertEqual(self.partition_function.partition_functions_for_all_configurations().shape,
+        self.assertEqual(self.partition_function.partition_functions_for_all_configurations.shape,
                          (6,))  # (# of volumes,)
         np.testing.assert_array_almost_equal(self.partition_function.get_free_energies(),
                                              [-550.74580132, -550.70964062, -550.37436235, -549.87365787, -549.43586034,
