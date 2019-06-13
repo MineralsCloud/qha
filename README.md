@@ -38,7 +38,7 @@ $ pip install qha
 
 ### Dependencies
 
-- [bigfloat](https://pypi.python.org/pypi/bigfloat)
+- [mpmath](http://mpmath.org/)
 - [lazy-property](https://github.com/jackmaney/lazy-property)
 - [matplotlib](https://matplotlib.org)
 - [Numba](http://numba.pydata.org)
@@ -62,13 +62,6 @@ Notice that you have to use Python version 3.6.x to install. If you want to inst
 ```shell
 $ pip install -e .
 ```
-
-### Trouble shooting of installation
-
-1. Error raised about `mpfr.h` file: To solve this error, `GMP` and `MPFR` libraries are required to use `bigfloat` package.
-   * On Linux, install `libmpfr-dev` , for example, on Ubuntu type `apt-get install libmpfr-dev`;
-   * On Windows, `bigfloat` can be installed from the binary file, please check [“Unofficial Windows Binaries for Python Extension Packages”](https://www.lfd.uci.edu/~gohlke/pythonlibs/), download the version suitable for the system, for example, for a 64-bit system, use pip to install it `pip(3) install /the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl`;
-   * On macOS, install these libraries via `brew install mpfr`. Of course, you need the [Homebrew package manager](https://brew.sh) installed to run this command.
 
 ## Checking the examples
 

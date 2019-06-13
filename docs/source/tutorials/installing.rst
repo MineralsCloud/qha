@@ -22,7 +22,7 @@ Our supported platforms are:
 
 Dependencies
 ------------
-- `bigfloat <https://pypi.python.org/pypi/bigfloat>`_ [#b]_
+- `mpmath <http://mpmath.org/>`_
 - `lazy-property <https://github.com/jackmaney/lazy-property>`_
 - `matplotlib <https://matplotlib.org>`_ [#m]_
 - `Numba <http://numba.pydata.org>`_
@@ -34,14 +34,6 @@ Dependencies
 - `text-stream <https://github.com/singularitti/text-stream>`_
 
 Notes:
-
-.. [#b] ``GMP`` and ``MPFR`` libraries are required to use ``bigfloat`` package. On macOS,
-    install these libraries via ``brew install mpfr``; on Linux, install ``libmpfr-dev`` ,
-    for example, on Ubuntu use ``apt-get install libmpfr-dev``;
-    on Windows, ``bigfloat`` can be installed from the binary file, please check
-    `Unofficial Windows Binaries for Python Extension Packages <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`_,
-    download the version suitable for the system, for example,for a 64-bit system,
-    use pip to install it ``pip(3) install /the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl``;
 
 .. [#m] For some systems, ``python-tkinter`` package is needed by ``matplotlib``, otherwise the plot function will not work.
 
