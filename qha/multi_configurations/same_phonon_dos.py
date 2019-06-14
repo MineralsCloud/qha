@@ -57,14 +57,16 @@ class PartitionFunction:
                  frequencies: Array3D, precision: Optional[int] = 500):
 
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be integers greater equal than 0!')
+            raise ValueError(
+                'Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,
                                        0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
             raise ValueError('Weights should all be greater equal than 0!')
 
         self.frequencies = np.array(frequencies)
         if self.frequencies.ndim != 3:
-            raise ValueError("*frequencies* must be a three-dimensional array!")
+            raise ValueError(
+                "*frequencies* must be a three-dimensional array!")
 
         if temperature < 1e-6:
             self.temperature = 1e-6
@@ -102,7 +104,8 @@ class PartitionFunction:
         """
         log_product_modes: Matrix = np.sum(
             log_subsystem_partition_function(self.temperature, self.frequencies), axis=2, dtype=float)
-        return np.exp(np.dot(log_product_modes, self._scaled_q_weights))  # (vol, 1)
+        # (vol, 1)
+        return np.exp(np.dot(log_product_modes, self._scaled_q_weights))
 
     @LazyProperty
     def total(self) -> Vector:
@@ -126,7 +129,8 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(
+                self.__class__.__name__))
 
         with mpmath.workprec(self.precision):
             log_z = np.array([mpmath.log(d) for d in self.total], dtype=float)
@@ -165,14 +169,16 @@ class FreeEnergy:
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
                  volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be integers greater equal than 0!')
+            raise ValueError(
+                'Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,
                                        0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
             raise ValueError('Weights should all be greater equal than 0!')
 
         self.frequencies = np.array(frequencies)
         if self.frequencies.ndim != 3:
-            raise ValueError("*frequencies* must be a three-dimensional array!")
+            raise ValueError(
+                "*frequencies* must be a three-dimensional array!")
 
         if temperature < 1e-6:
             self.temperature = 1e-6
@@ -204,7 +210,8 @@ class FreeEnergy:
         :return: The static contribution on the temperature-volume grid.
         """
         kt: float = K * self.temperature  # k_B T
-        inside_exp: Matrix = -self.aligned_static_energies_for_each_configuration.T / kt  # exp( E_n(V) / k_B / T )
+        inside_exp: Matrix = -self.aligned_static_energies_for_each_configuration.T / \
+            kt  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 
     @LazyProperty
@@ -214,7 +221,8 @@ class FreeEnergy:
 
         :return: The harmonic contribution on the temperature-volume grid.
         """
-        sum_modes = np.sum(ho_free_energy(self.temperature, self.frequencies), axis=2)
+        sum_modes = np.sum(ho_free_energy(
+            self.temperature, self.frequencies), axis=2)
         return np.dot(sum_modes, self._scaled_q_weights)
 
     @LazyProperty

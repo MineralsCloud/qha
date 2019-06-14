@@ -11,7 +11,8 @@ import pandas as pd
 
 class TestSamePhononDOS(unittest.TestCase):
     def setUp(self):
-        self.root_directory = pathlib.Path(__file__).parent.parent.parent / 'examples'
+        self.root_directory = pathlib.Path(
+            __file__).parent.parent.parent / 'examples'
         self.command = 'qha run'
         self.fixed_directory = 'results.benchmark'
         self.new_results_directory = 'results.same_vdos_new01'
@@ -25,11 +26,13 @@ class TestSamePhononDOS(unittest.TestCase):
     def compare_results(self, path_results_benchmark, path_results_new):
         d = dict()
         for f in self.listdir_nohidden(path_results_benchmark):
-            d.update({f: pd.read_csv(str(path_results_benchmark) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+            d.update({f: pd.read_csv(str(path_results_benchmark) +
+                                     '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
         d0 = dict()
         for f in self.listdir_nohidden(path_results_new):
-            d0.update({f: pd.read_csv(str(path_results_new) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+            d0.update({f: pd.read_csv(str(path_results_new) +
+                                      '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
         for k, v in d.items():
             print(k + ':', np.max(np.abs(v.as_matrix() - d0[k].as_matrix())))
@@ -49,9 +52,12 @@ class TestSamePhononDOS(unittest.TestCase):
 
         path_run_command = self.root_directory / test_directory
         path_results = path_run_command / 'results'
-        self.compare_results(path_results_fixed, path_results / 'results.same_vdos_new01')
-        self.compare_results(path_results / 'results.same_vdos_new', path_results / 'results.same_vdos_new01')
-        self.compare_results(path_results / 'results.diff_vdos', path_results / 'results.diff_vdos_new')
+        self.compare_results(path_results_fixed,
+                             path_results / 'results.same_vdos_new01')
+        self.compare_results(path_results / 'results.same_vdos_new',
+                             path_results / 'results.same_vdos_new01')
+        self.compare_results(path_results / 'results.diff_vdos',
+                             path_results / 'results.diff_vdos_new')
 
 
 if __name__ == '__main__':

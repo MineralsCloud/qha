@@ -11,7 +11,8 @@ import pandas as pd
 
 class TestOverallRun(unittest.TestCase):
     def setUp(self):
-        self.root_directory = pathlib.Path(__file__).parent.parent.parent / 'examples'
+        self.root_directory = pathlib.Path(
+            __file__).parent.parent.parent / 'examples'
         self.command = 'qha run'
         self.fixed_directory = 'results.benchmark'
         self.new_results_directory = 'results.plot'
@@ -25,11 +26,13 @@ class TestOverallRun(unittest.TestCase):
     def compare_results(self, path_results_benchmark, path_results_new):
         d = dict()
         for f in self.listdir_nohidden(path_results_benchmark):
-            d.update({f: pd.read_csv(str(path_results_benchmark) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+            d.update({f: pd.read_csv(str(path_results_benchmark) +
+                                     '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
         d0 = dict()
         for f in self.listdir_nohidden(path_results_new):
-            d0.update({f: pd.read_csv(str(path_results_new) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
+            d0.update({f: pd.read_csv(str(path_results_new) +
+                                      '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
         for k, v in d.items():
             print(k + ':', np.max(np.abs(v.as_matrix() - d0[k].as_matrix())))

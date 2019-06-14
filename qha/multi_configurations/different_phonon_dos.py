@@ -59,7 +59,8 @@ class PartitionFunction:
                  volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
                  precision: Optional[int] = 500, order: Optional[int] = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be greater equal than 0!')
+            raise ValueError(
+                'Degeneracies should all be greater equal than 0!')
         if not np.all(np.greater_equal(
                 q_weights, 0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
             raise ValueError('Weights should all be greater equal than 0!')
@@ -70,7 +71,8 @@ class PartitionFunction:
 
         self.static_energies = np.array(static_energies)
         if self.static_energies.ndim != 2:
-            raise ValueError("*static_energies* must be a two-dimensional array!")
+            raise ValueError(
+                "*static_energies* must be a two-dimensional array!")
 
         if temperature < 1e-1:
             self.temperature = 1
@@ -120,7 +122,8 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(
+                self.__class__.__name__))
 
         with mpmath.workprec(self.precision):
             # shape = (# of configurations, # of volumes for each configuration)
@@ -141,7 +144,8 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(
+                self.__class__.__name__))
 
         with mpmath.workprec(self.precision):
             # shape = (# of volumes,)
@@ -162,8 +166,10 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(
+                self.__class__.__name__))
 
         with mpmath.workprec(self.precision):
-            log_z = np.array([mpmath.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
+            log_z = np.array([mpmath.log(
+                d) for d in self.partition_functions_for_all_configurations], dtype=float)
         return -K * self.temperature * log_z
