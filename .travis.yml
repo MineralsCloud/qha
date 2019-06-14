@@ -16,8 +16,6 @@ matrix:
       osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
       language: shell       # 'language: python' is an error on Travis CI macOS
 sudo: required
-before_install:
-  - sudo apt-get install libmpc-dev
 install:
   - pip install .
   - pip install -Iv sphinx==1.7.4
