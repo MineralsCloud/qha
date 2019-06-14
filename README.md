@@ -26,8 +26,6 @@ please check more details on [Python 3 documentation](https://docs.python.org/3/
 
 To install `qha`, currently, Python 3.6.x distributions are recommended.
 
-Please do not use Python 3.7.x at this moment, since it contains breaking changes and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future.
-
 ### Where to get it
 
 Binary installers for the latest released version are available at the PyPI.
@@ -58,7 +56,7 @@ The source code is currently hosted on [GitHub](https://github.com/MineralsCloud
 $ pip install .
 ```
 
-Notice that you have to use Python version 3.6.x to install. If you want to install `qha` in development mode, instead run
+Notice that you have to use Python version > 3.6.x to install. If you want to install `qha` in development mode, instead run
 
 ```shell
 $ pip install -e .

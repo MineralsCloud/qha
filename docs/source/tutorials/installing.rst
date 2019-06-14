@@ -10,8 +10,6 @@ Compatibility
 -------------
 
 ``qha`` is compatible with Python 3.6.x.
-Please do not use Python 3.7.x at this moment, since it contains breaking changes
-and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future.
 
 Our supported platforms are:
 
