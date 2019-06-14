@@ -3,6 +3,7 @@
 [TOC]
 
 [![Stable docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://mineralscloud.github.io/qha/)
+[![Build Status](https://travis-ci.com/MineralsCloud/qha.svg?branch=master)](https://travis-ci.com/MineralsCloud/qha)
 
 ## Contributors
 
