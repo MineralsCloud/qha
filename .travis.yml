@@ -17,10 +17,10 @@ matrix:
       language: shell       # 'language: python' is an error on Travis CI macOS
 sudo: required
 install:
-  - pip install .
-  - pip install -Iv sphinx==1.7.4
-  - pip install sphinx-autodoc-typehints
-  - pip install sphinx_bootstrap_theme
+  - pip3 install .
+  - pip3 install -Iv sphinx==1.7.4
+  - pip3 install sphinx-autodoc-typehints
+  - pip3 install sphinx_bootstrap_theme
 script:
   - pytest qha/tests/test_different_phonon_dos.py
   - pytest qha/tests/test_read_input.py
