@@ -18,6 +18,7 @@ matrix:
 sudo: required
 install:
   - pip3 install .
+  - pip3 install -U pytest
   - pip3 install -Iv sphinx==1.7.4
   - pip3 install sphinx-autodoc-typehints
   - pip3 install sphinx_bootstrap_theme
