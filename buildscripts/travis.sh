@@ -22,6 +22,5 @@ pytest qha/tests/test_input_maker.py
 pytest qha/tests/test_overall_run.py
 
 echo "Build docs"
-cd ..
 cd docs/
 make clean && make html
