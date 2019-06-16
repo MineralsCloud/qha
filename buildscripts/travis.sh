@@ -17,8 +17,9 @@ cd ..
 cd ice\ VII
 qha run ./settings.yaml
 cd ..
-pwd
+pwd  # I am at root/qha/examples
 
 echo "Build docs"
+cd ..
 cd docs/
 make clean && make html
