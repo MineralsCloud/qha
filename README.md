@@ -13,7 +13,7 @@ This repository is now maintained by [Tian Qin](mailto:qinxx197@umn.edu) and [Qi
 
 The associated paper is published on [Computer Physics Communications](https://www.sciencedirect.com/science/article/pii/S0010465518303953?via%3Dihub).
 
-Please cite this article as: T. Qin, Q. Zhang, R.M. Wentzcovitch et al., qha: A Python package for quasiharmonic free energy calculation for multi-configuration systems, Computer Physics Communications (2018), https://doi.org/10.1016/j.cpc.2018.11.003.
+Please cite this article as: Qin, T., Zhang, Q., Wentzcovitch, R. M., & Umemoto, K. (2019). qha: A Python package for quasiharmonic free energy calculation for multi-configuration systems. *Computer Physics Communications*, *237*, 199-207.
 
 ## Quick start: installation
 
