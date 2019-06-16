@@ -23,12 +23,7 @@ install:
   - pip3 install sphinx-autodoc-typehints
   - pip3 install sphinx_bootstrap_theme
 script:
-  - pytest qha/tests/test_different_phonon_dos.py
-  - pytest qha/tests/test_read_input.py
-  - pytest qha/tests/test_single_configuration.py
-  - pytest qha/tests/test_unit_conversion.py
-  - cd docs/
-  - make clean && make html
+  - ./buildscripts/travis.sh
 deploy:
   provider: pages
   skip-cleanup: true
