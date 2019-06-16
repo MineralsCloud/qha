@@ -8,6 +8,17 @@ pytest qha/tests/test_single_configuration.py
 pytest qha/tests/test_unit_conversion.py
 pytest qha/tests/test_input_maker.py
 
+qha -V
+
+cd examples/
+cd silicon
+qha run ./settings.yaml
+cd ..
+cd ice\ VII
+qha run ./settings.yaml
+cd ..
+pwd
+
 echo "Build docs"
 cd docs/
 make clean && make html

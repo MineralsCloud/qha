@@ -38,10 +38,11 @@ before_script:
   - qha run ./settings.yaml
   - cd ..
   - cd ice\ VII
-  - qha run ./settings.yaml
-  - cd ..
+  - qha run ./settings.yaml  # I am at root/qha/qha_old/ice\ VII/
+  - cd ..  # I am at root/qha/qha_old
   - deactivate
 script:
+  - cd ../  # I am at root/qha/
   - ./buildscripts/travis.sh
 deploy:
   provider: pages
