@@ -188,13 +188,13 @@
 <span class="sd">        :return: The static contribution on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">bigfloat</span>
+            <span class="kn">import</span> <span class="nn">mpmath</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;You need to install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+                <span class="s2">&quot;You need to install ``mpmath`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
-        <span class="k">with</span> <span class="n">bigfloat</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bigfloat</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span>  <span class="c1"># shape = (# of volumes for each configuration, 1)</span>
+        <span class="k">with</span> <span class="n">mpmath</span><span class="o">.</span><span class="n">workprec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mpmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span>  <span class="c1"># shape = (# of volumes for each configuration, 1)</span>
                              <span class="n">logsumexp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">static_energies</span> <span class="o">/</span> <span class="p">(</span><span class="n">K</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">degeneracies</span><span class="p">)])</span>
 
     <span class="nd">@property</span>
@@ -228,12 +228,12 @@
 <span class="sd">        :return: The free energy on the temperature-volume grid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">bigfloat</span>
+            <span class="kn">import</span> <span class="nn">mpmath</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install ``bigfloat`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Install ``mpmath`` package to use </span><span class="si">{0}</span><span class="s2"> object!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
-        <span class="k">with</span> <span class="n">bigfloat</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
-            <span class="n">log_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bigfloat</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">mpmath</span><span class="o">.</span><span class="n">workprec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
+            <span class="n">log_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mpmath</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">K</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">*</span> <span class="n">log_z</span></div></div>
 
 

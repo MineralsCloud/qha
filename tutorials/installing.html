@@ -133,21 +133,19 @@
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title first">Table of contents:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#compatibility" id="id3">Compatibility</a></li>
-<li><a class="reference internal" href="#dependencies" id="id4">Dependencies</a></li>
-<li><a class="reference internal" href="#installing-the-qha-package" id="id5">Installing the <code class="docutils literal notranslate"><span class="pre">qha</span></code> package</a><ul>
-<li><a class="reference internal" href="#installing-using-pypi" id="id6">Installing using PyPI</a></li>
-<li><a class="reference internal" href="#installing-from-source" id="id7">Installing from source</a></li>
+<li><a class="reference internal" href="#compatibility" id="id2">Compatibility</a></li>
+<li><a class="reference internal" href="#dependencies" id="id3">Dependencies</a></li>
+<li><a class="reference internal" href="#installing-the-qha-package" id="id4">Installing the <code class="docutils literal notranslate"><span class="pre">qha</span></code> package</a><ul>
+<li><a class="reference internal" href="#installing-using-pypi" id="id5">Installing using PyPI</a></li>
+<li><a class="reference internal" href="#installing-from-source" id="id6">Installing from source</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#checking-your-installation" id="id8">Checking your installation</a></li>
+<li><a class="reference internal" href="#checking-your-installation" id="id7">Checking your installation</a></li>
 </ul>
 </div>
 <div class="section" id="compatibility">
-<h2><a class="toc-backref" href="#id3">1.2.1. Compatibility</a><a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">qha</span></code> is compatible with Python 3.6.x.
-Please do not use Python 3.7.x at this moment, since it contains breaking changes
-and many Python packages don’t support Python 3.7.x yet. We may support Python 3.7.x in the future.</p>
+<h2><a class="toc-backref" href="#id2">1.2.1. Compatibility</a><a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">qha</span></code> is compatible with Python 3.6.x.</p>
 <p>Our supported platforms are:</p>
 <ul class="simple">
 <li>Linux x86 (32-bit and 64-bit)</li>
@@ -157,11 +155,11 @@ and many Python packages don’t support Python 3.7.x yet. We may support Python
 </ul>
 </div>
 <div class="section" id="dependencies">
-<h2><a class="toc-backref" href="#id4">1.2.2. Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">1.2.2. Dependencies</a><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://pypi.python.org/pypi/bigfloat">bigfloat</a> <a class="footnote-reference" href="#b" id="id1">[1]</a></li>
+<li><a class="reference external" href="http://mpmath.org/">mpmath</a></li>
 <li><a class="reference external" href="https://github.com/jackmaney/lazy-property">lazy-property</a></li>
-<li><a class="reference external" href="https://matplotlib.org">matplotlib</a> <a class="footnote-reference" href="#m" id="id2">[2]</a></li>
+<li><a class="reference external" href="https://matplotlib.org">matplotlib</a> <a class="footnote-reference" href="#m" id="id1">[1]</a></li>
 <li><a class="reference external" href="http://numba.pydata.org">Numba</a></li>
 <li><a class="reference external" href="http://www.numpy.org">NumPy</a></li>
 <li><a class="reference external" href="https://pandas.pydata.org">pandas</a></li>
@@ -171,29 +169,17 @@ and many Python packages don’t support Python 3.7.x yet. We may support Python
 <li><a class="reference external" href="https://github.com/singularitti/text-stream">text-stream</a></li>
 </ul>
 <p>Notes:</p>
-<table class="docutils footnote" frame="void" id="b" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><code class="docutils literal notranslate"><span class="pre">GMP</span></code> and <code class="docutils literal notranslate"><span class="pre">MPFR</span></code> libraries are required to use <code class="docutils literal notranslate"><span class="pre">bigfloat</span></code> package. On macOS,
-install these libraries via <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">mpfr</span></code>; on Linux, install <code class="docutils literal notranslate"><span class="pre">libmpfr-dev</span></code> ,
-for example, on Ubuntu use <code class="docutils literal notranslate"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">libmpfr-dev</span></code>;
-on Windows, <code class="docutils literal notranslate"><span class="pre">bigfloat</span></code> can be installed from the binary file, please check
-<a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/">Unofficial Windows Binaries for Python Extension Packages</a>,
-download the version suitable for the system, for example,for a 64-bit system,
-use pip to install it <code class="docutils literal notranslate"><span class="pre">pip(3)</span> <span class="pre">install</span> <span class="pre">/the/path/to/bigfloat‑0.3.0‑cp36‑cp36m‑win_amd64.whl</span></code>;</td></tr>
-</tbody>
-</table>
 <table class="docutils footnote" frame="void" id="m" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>For some systems, <code class="docutils literal notranslate"><span class="pre">python-tkinter</span></code> package is needed by <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, otherwise the plot function will not work.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>For some systems, <code class="docutils literal notranslate"><span class="pre">python-tkinter</span></code> package is needed by <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, otherwise the plot function will not work.</td></tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="installing-the-qha-package">
-<h2><a class="toc-backref" href="#id5">1.2.3. Installing the <code class="docutils literal notranslate"><span class="pre">qha</span></code> package</a><a class="headerlink" href="#installing-the-qha-package" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">1.2.3. Installing the <code class="docutils literal notranslate"><span class="pre">qha</span></code> package</a><a class="headerlink" href="#installing-the-qha-package" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="installing-using-pypi">
-<h3><a class="toc-backref" href="#id6">1.2.3.1. Installing using PyPI</a><a class="headerlink" href="#installing-using-pypi" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">1.2.3.1. Installing using PyPI</a><a class="headerlink" href="#installing-using-pypi" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">qha</span></code> can be installed via pip from
 <a class="reference external" href="http://pypi.python.org/pypi/qha">PyPI</a>.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install qha
@@ -204,7 +190,7 @@ including NumPy, will require a compiler to compile required bits of code,
 and can take a few minutes to complete.</p>
 </div>
 <div class="section" id="installing-from-source">
-<h3><a class="toc-backref" href="#id7">1.2.3.2. Installing from source</a><a class="headerlink" href="#installing-from-source" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">1.2.3.2. Installing from source</a><a class="headerlink" href="#installing-from-source" title="Permalink to this headline">¶</a></h3>
 <p>Download the <a class="reference external" href="https://github.com/MineralsCloud/qha/releases">latest release</a> , and go to the top-level directory, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -e .
 </pre></div>
@@ -212,7 +198,7 @@ and can take a few minutes to complete.</p>
 </div>
 </div>
 <div class="section" id="checking-your-installation">
-<h2><a class="toc-backref" href="#id8">1.2.4. Checking your installation</a><a class="headerlink" href="#checking-your-installation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">1.2.4. Checking your installation</a><a class="headerlink" href="#checking-your-installation" title="Permalink to this headline">¶</a></h2>
 <p>You should be able to import Numba from the Python prompt:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python
 Python 3.6.5 (default, Jun 18 2018, 22:40:57)
