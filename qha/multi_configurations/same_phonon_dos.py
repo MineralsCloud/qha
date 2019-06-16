@@ -84,13 +84,13 @@ class PartitionFunction:
         :return: The static contribution on the temperature-volume grid.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
             raise ImportError(
-                "You need to install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+                "You need to install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
-            return np.array([bigfloat.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
+        with mpmath.workprec(self.precision):
+            return np.array([mpmath.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
                              logsumexp(-self.static_energies / (K * self.temperature), axis=1, b=self.degeneracies)])
 
     @property
@@ -124,12 +124,12 @@ class PartitionFunction:
         :return: The free energy on the temperature-volume grid.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.total], dtype=float)
+        with mpmath.workprec(self.precision):
+            log_z = np.array([mpmath.log(d) for d in self.total], dtype=float)
         return -K * self.temperature * log_z
 
 

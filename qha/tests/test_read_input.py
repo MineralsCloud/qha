@@ -11,7 +11,7 @@ from qha.basic_io.read_input import read_input
 
 class TestReadInput(unittest.TestCase):
     def setUp(self):
-        self.dir = pathlib.Path('../../examples')
+        self.dir = pathlib.Path(__file__).parent.parent.parent / 'examples'
 
     def test_read_si_input(self):
         file_path = self.dir / 'silicon/input'
