@@ -134,7 +134,7 @@ class QHARunner(QHACommandHandler):
                   temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
-        save_x_tv(calc.p_tv_gpa, temperature_array,
+        save_x_tv(calc.p_tv(unit='gpa'), temperature_array,
                   calc.finer_volumes_ang3, temperature_sample, file_ptv_gpa)
 
         file_stv_j = results_folder / 's_tv_j.txt'
