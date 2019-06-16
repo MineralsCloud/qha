@@ -224,7 +224,7 @@ class Calculator:
 
         if d['high_verbosity']:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
-                self.p_tv(unit='gpa')[:, 0].max(), self.p_tv[:, -1].min()))
+                self.p_tv(unit='gpa')[:, 0].max(), self.p_tv(unit='gpa')[:, -1].min()))
 
         if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures_gpa.max():
             ntv_max = int(
