@@ -28,13 +28,12 @@ install:
   - pip3 install sphinx_bootstrap_theme
   - pip3 install virtualenv
 before_script:
-  - mkdir qha_old
-  - cd qha_old
   - virtualenv qha_old
   - cd qha_old/bin/
   - source activate
+  - cd ../  # I am at root/qha/qha_old
   - pip3 install qha==1.0.17
-  - cp examples/* ./
+  - cp ../examples/* ./  # cp root/qha/examples to root/qha/qha_old/examples
   - cd silicon
   - qha run ./settings.yaml
   - cd ..
