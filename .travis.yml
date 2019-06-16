@@ -22,6 +22,8 @@ install:
   - pip3 install -Iv sphinx==1.7.4
   - pip3 install sphinx-autodoc-typehints
   - pip3 install sphinx_bootstrap_theme
+before_script:
+  - pip3 install qha==1.0.17
 script:
   - ./buildscripts/travis.sh
 deploy:
