@@ -187,7 +187,8 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au)
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry,
+                                        self.p_tv(unit='atomic'))
 
     @LazyProperty
     def temperature_sample_array(self):
@@ -198,9 +199,9 @@ class Calculator:
         d = self.settings
         return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
 
-    @LazyProperty
-    def desired_pressures(self):
-        return gpa_to_ry_b3(self.desired_pressures_gpa)
+    def desired_pressures(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return gpa_to_ry_b3(self.desired_pressures_gpa)
 
     @LazyProperty
     def pressure_sample_array(self):
@@ -223,11 +224,11 @@ class Calculator:
 
         if d['high_verbosity']:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
-                self.p_tv_gpa[:, 0].max(), self.p_tv_gpa[:, -1].min()))
+                self.p_tv(unit='gpa')[:, 0].max(), self.p_tv[:, -1].min()))
 
-        if self.p_tv_gpa[:, -1].min() < self.desired_pressures_gpa.max():
+        if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures_gpa.max():
             ntv_max = int(
-                (self.p_tv_gpa[:, -1].min() - self.desired_pressures_gpa.min()) / d['DELTA_P'])
+                (self.p_tv(unit='gpa')[:, -1].min() - self.desired_pressures_gpa.min()) / d['DELTA_P'])
 
             save_to_output(d['qha_output'], textwrap.dedent("""\
                            !!!ATTENTION!!!
@@ -240,9 +241,12 @@ class Calculator:
             raise ValueError(
                 "DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!")
 
-    @LazyProperty
-    def p_tv_au(self):
-        return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
+    def p_tv(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
+        if unit.lower() == 'gpa':
+            return ry_b3_to_gpa(self.p_tv(unit='atomic'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def s_tv_j(self):
@@ -252,113 +256,105 @@ class Calculator:
     def f_tv_ev(self):
         return ry_to_ev(self.f_tv_ry)
 
-    @LazyProperty
-    def p_tv_gpa(self):
-        return ry_b3_to_gpa(self.p_tv_au)
-
-    @LazyProperty
-    def f_tp_ry(self):
-        return v2p(self.f_tv_ry, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def f_tp_ev(self):
-        return ry_to_ev(self.f_tp_ry)
+    def f_tp(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return v2p(self.f_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'ev':
+            ry_to_ev(self.f_tp(unit='ry'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def u_tv_ry(self):
         return self.thermodynamic_potentials['U']
 
-    @LazyProperty
-    def u_tp_ry(self):
-        return v2p(self.u_tv_ry, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def u_tp_ev(self):
-        return ry_to_ev(self.u_tp_ry)
+    def u_tp(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return v2p(self.u_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.u_tp(unit='ev'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def h_tv_ry(self):
         return self.thermodynamic_potentials['H']
 
-    @LazyProperty
-    def h_tp_ry(self):
-        return v2p(self.h_tv_ry, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def h_tp_ev(self):
-        return ry_to_ev(self.h_tp_ry)
+    def h_tp(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return v2p(self.h_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.h_tp(unit='ry'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def g_tv_ry(self):
         return self.thermodynamic_potentials['G']
 
-    @LazyProperty
-    def g_tp_ry(self):
-        return v2p(self.g_tv_ry, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def g_tp_ev(self):
-        return ry_to_ev(self.g_tp_ry)
+    def g_tp(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return v2p(self.g_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.g_tp(unit='ry'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def bt_tv_au(self):
-        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv_au)
+        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv(unit='atomic'))
 
-    @LazyProperty
-    def bt_tp_au(self):
-        return v2p(self.bt_tv_au, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def bt_tp_gpa(self):
-        return ry_b3_to_gpa(self.bt_tp_au)
+    def bt_tp(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return v2p(self.bt_tv_au, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'gpa':
+            return ry_b3_to_gpa(self.bt_tp(unit='atomic'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def btp_tp(self):
-        return bulk_modulus_derivative(self.desired_pressures, self.bt_tp_au)
+        return bulk_modulus_derivative(self.desired_pressures(unit='atomic'), self.bt_tp(unit='atomic'))
 
-    @LazyProperty
-    def v_tp_bohr3(self):
-        return volume(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
-
-    @LazyProperty
-    def v_tp_ang3(self):
-        return b3_to_a3(self.v_tp_bohr3)
+    def v_tp(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return volume(self.finer_volumes_bohr3, self.desired_pressures(unit='atomic'), self.p_tv(unit='atomic'))
+        if unit.lower() == 'ang3':
+            return b3_to_a3(self.v_tp(unit='atomic'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def alpha_tp(self):
-        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_bohr3)
+        return thermal_expansion_coefficient(self.temperature_array, self.v_tp(unit='atomic'))
 
     @LazyProperty
     def cv_tv_au(self):
         return volumetric_heat_capacity(self.temperature_array, self.u_tv_ry)
 
-    @LazyProperty
-    def cv_tp_au(self):
-        return v2p(self.cv_tv_au, self.p_tv_au, self.desired_pressures)
-
-    @LazyProperty
-    def cv_tp_jmolk(self):
-        return ry_to_j_mol(self.cv_tp_au) / self.formula_unit_number
+    def cv_tp(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return v2p(self.cv_tv_au, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+        if unit.lower() == 'jmolk':
+            return ry_to_j_mol(self.cv_tp(unit='atomic')) / self.formula_unit_number
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def gamma_tp(self):
-        return gruneisen_parameter(self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
+        return gruneisen_parameter(self.v_tp(unit='atomic'), self.bt_tp(unit='atomic'), self.alpha_tp,
+                                   self.cv_tp(unit='atomic'))
+
+    def bs_tp(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return adiabatic_bulk_modulus(self.bt_tp(unit='atomic'), self.alpha_tp, self.gamma_tp,
+                                          self.temperature_array)
+        if unit.lower() == 'gpa':
+            return ry_b3_to_gpa(self.bs_tp(unit='atomic'))
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
-    def bs_tp_au(self):
-        return adiabatic_bulk_modulus(self.bt_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
-
-    @LazyProperty
-    def bs_tp_gpa(self):
-        return ry_b3_to_gpa(self.bs_tp_au)
-
-    @LazyProperty
-    def cp_tp_au(self):
-        return isobaric_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
-
-    @LazyProperty
-    def cp_tp_jmolk(self):
-        return isobaric_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
+    def cp_tp(self, unit: str = 'atomic'):
+        if unit.lower() == 'atomic':
+            return isobaric_heat_capacity(self.cv_tp(unit='atomic'), self.alpha_tp, self.gamma_tp,
+                                          self.temperature_array)
+        if unit.lower() == 'jmolk':
+            return isobaric_heat_capacity(self.cv_tp(unit='jmolk'), self.alpha_tp, self.gamma_tp,
+                                          self.temperature_array)
+        raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
 
 class DifferentPhDOSCalculator(Calculator):
@@ -428,7 +424,7 @@ class DifferentPhDOSCalculator(Calculator):
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
-            self.settings['static_only']
+               self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
@@ -445,7 +441,7 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
     @LazyProperty
     def vib_ry(self):
         args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
-            self.settings['static_only'], self.settings['order']
+               self.settings['static_only'], self.settings['order']
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):
