@@ -64,7 +64,7 @@ class FromQEOutput:
         Read all the files' names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.
         """
         with open(self._inp_file_list, 'r') as f:
-            d = yaml.load(f)
+            d = yaml.load(f, Loader=yaml.CLoader)
 
         self.formula_unit_number = int(d['formula_unit_number'])
         self.comment: str = d['comment']
