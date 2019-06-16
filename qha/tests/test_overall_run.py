@@ -29,9 +29,9 @@ class TestOverallRun(unittest.TestCase):
             d0.update({f: pd.read_csv(str(path_results_new) + '/' + f, sep='\s+', index_col='T(K)\P(GPa)')})
 
         for k, v in d.items():
-            # print(k + ':', np.max(np.abs(v.values() - d0[k].values())))
+            # print(k + ':', np.max(np.abs(v.values - d0[k].values)))
             print(k + ':')
-            np.testing.assert_array_almost_equal(v.values(), d0[k].values(), decimal=3)
+            np.testing.assert_array_almost_equal(v.values, d0[k].values, decimal=3)
 
     def test_silicon(self, test_directory='silicon'):
         print("testing the examples/silicon")
