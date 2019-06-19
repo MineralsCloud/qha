@@ -10,7 +10,7 @@ cd ..
 cd ice\ VII
 qha run ./settings.yaml
 cd ..
-pwd  # I am at root/qha/examples
+pwd # I am at root/qha/examples
 cd ..
 
 echo "Do Python tests"
