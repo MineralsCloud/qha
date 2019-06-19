@@ -424,7 +424,7 @@ class DifferentPhDOSCalculator(Calculator):
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
-               self.settings['static_only']
+            self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
@@ -441,7 +441,7 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
     @LazyProperty
     def vib_ry(self):
         args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
-               self.settings['static_only'], self.settings['order']
+            self.settings['static_only'], self.settings['order']
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):

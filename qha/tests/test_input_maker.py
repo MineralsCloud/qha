@@ -12,11 +12,13 @@ from qha.basic_io.input_maker import FromQEOutput
 
 class TestMakeInput(unittest.TestCase):
     def setUp(self) -> None:
-        self.dir = pathlib.Path(__file__).parent.parent.parent / 'examples/silicon/make_input/'
+        self.dir = pathlib.Path(
+            __file__).parent.parent.parent / 'examples/silicon/make_input/'
         os.chdir(self.dir)
 
     def test_make_input(self):
-        converter = FromQEOutput(self.dir / 'filelist.yaml', self.dir / 'static', self.dir / 'q_points')
+        converter = FromQEOutput(
+            self.dir / 'filelist.yaml', self.dir / 'static', self.dir / 'q_points')
         converter.read_file_list()
         converter.read_static()
         converter.read_q_points()
