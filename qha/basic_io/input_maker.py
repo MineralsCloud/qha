@@ -10,14 +10,19 @@
 import pathlib
 import re
 import warnings
-from typing import Iterator, List, Tuple, Optional
+from typing import Iterator, List, Optional, Tuple
 
 import numpy as np
-import yaml
 from scientific_string import strings_to_integers
 from text_stream import TextStream
+from yaml import load
 
-from qha.type_aliases import Vector, Matrix
+from qha.type_aliases import Matrix, Vector
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 
 # ===================== What can be exported? =====================
 __all__ = ['FromQEOutput']
@@ -64,7 +69,7 @@ class FromQEOutput:
         Read all the files' names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.
         """
         with open(self._inp_file_list, 'r') as f:
-            d = yaml.load(f)
+            d = load(f, Loader=Loader)
 
         self.formula_unit_number = int(d['formula_unit_number'])
         self.comment: str = d['comment']
