@@ -114,9 +114,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">yaml</span> <span class="k">import</span> <span class="n">load</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">yaml</span> <span class="k">import</span> <span class="n">CLoader</span> <span class="k">as</span> <span class="n">Loader</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">yaml</span> <span class="k">import</span> <span class="n">Loader</span>
+
 
 <span class="c1"># ===================== What can be exported? =====================</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEFAULT_SETTINGS&#39;</span><span class="p">,</span> <span class="s1">&#39;Settings&#39;</span><span class="p">,</span> <span class="s1">&#39;from_yaml&#39;</span><span class="p">]</span>
@@ -184,7 +190,7 @@
 <span class="sd">    :return: A ``Settings`` class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Settings</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">CLoader</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">Settings</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">Loader</span><span class="p">))</span></div>
 
 
 <span class="k">global</span> <span class="n">energy_unit</span>
