@@ -10,9 +10,15 @@
 """
 
 import collections
-from typing import Union, Tuple, Dict, Any
+from typing import Any, Dict, Tuple, Union
 
-import yaml
+from yaml import load
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
+
 
 # ===================== What can be exported? =====================
 __all__ = ['DEFAULT_SETTINGS', 'Settings', 'from_yaml']
@@ -80,7 +86,7 @@ def from_yaml(filename: str) -> Settings:
     :return: A ``Settings`` class.
     """
     with open(filename, 'r') as f:
-        return Settings(yaml.load(f, Loader=yaml.CLoader))
+        return Settings(load(f, Loader=Loader))
 
 
 global energy_unit
