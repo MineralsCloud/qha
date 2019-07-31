@@ -2,9 +2,9 @@
 
 import os
 import unittest
+from pathlib import Path
 
 import numpy as np
-
 from qha.calculator import DifferentPhDOSCalculator
 from qha.multi_configurations.different_phonon_dos import PartitionFunction
 from qha.settings import from_yaml
@@ -12,7 +12,7 @@ from qha.settings import from_yaml
 
 class TestPartitionFunction(unittest.TestCase):
     def setUp(self) -> None:
-        os.chdir('../../examples/ice VII/')
+        os.chdir(Path(__file__).parent.parent.parent / 'examples/ice VII/')
         self.user_settings = {}
         settings = from_yaml("settings.yaml")
 

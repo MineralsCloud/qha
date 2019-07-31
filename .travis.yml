@@ -1,18 +1,32 @@
-dist: xenial
 language: python
-os:
-  - linux
-python:
-  - "3.6"
+matrix:
+  include:
+    - name: "Python 3.6 on Xenial Linux"
+      python: 3.6
+      dist: xenial
+    - name: "Python 3.7.1 on Xenial Linux"
+      python: 3.7
+      dist: xenial
+    - name: "Python 3.6 on macOS"
+      os: osx
+      osx_image: xcode10.1
+      language: shell
+    - name: "Python 3.7.2 on macOS"
+      os: osx
+      osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+      language: shell       # 'language: python' is an error on Travis CI macOS
 sudo: required
-before_install:
-  - sudo apt-get install libmpc-dev
 install:
-  - pip install .
-  - pip install -Iv sphinx==1.7.4
-  - pip install sphinx-autodoc-typehints
-  - pip install sphinx_bootstrap_theme
+  - pip3 install .
+  - pip3 install -U pytest
+  - pip3 install -Iv sphinx==1.7.4
+  - pip3 install sphinx-autodoc-typehints
+  - pip3 install sphinx_bootstrap_theme
 script:
+  - pytest qha/tests/test_different_phonon_dos.py
+  - pytest qha/tests/test_read_input.py
+  - pytest qha/tests/test_single_configuration.py
+  - pytest qha/tests/test_unit_conversion.py
   - cd docs/
   - make clean && make html
 deploy:
