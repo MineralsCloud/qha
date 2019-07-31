@@ -37,7 +37,8 @@ def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
            (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
            (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
-           (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
+           (x - x0) * (x - x1) * (x - x2) / \
+        (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
 
 
 def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Matrix:
@@ -56,8 +57,10 @@ def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Mat
 
     result = np.empty((t_amount, desired_pressures_amount))
 
-    extended_f = np.hstack((func_of_t_v[:, 3].reshape(-1, 1), func_of_t_v, func_of_t_v[:, -4].reshape(-1, 1)))
-    extended_p = np.hstack((p_of_t_v[:, 3].reshape(-1, 1), p_of_t_v, p_of_t_v[:, -4].reshape(-1, 1)))
+    extended_f = np.hstack(
+        (func_of_t_v[:, 3].reshape(-1, 1), func_of_t_v, func_of_t_v[:, -4].reshape(-1, 1)))
+    extended_p = np.hstack(
+        (p_of_t_v[:, 3].reshape(-1, 1), p_of_t_v, p_of_t_v[:, -4].reshape(-1, 1)))
 
     for i in range(t_amount):
         rs = np.zeros(desired_pressures_amount)
@@ -68,5 +71,6 @@ def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Mat
             x1, x2, x3, x4 = extended_p[i, k - 1:k + 3]
             f1, f2, f3, f4 = extended_f[i, k - 1:k + 3]
 
-            result[i, j] = _lagrange4(desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4)
+            result[i, j] = _lagrange4(
+                desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4)
     return result
