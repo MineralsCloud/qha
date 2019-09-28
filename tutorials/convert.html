@@ -2,16 +2,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>1.5. Prepare the input: qha convert &#8212; qha 1.0.17 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="2. API reference" href="../api/index.html" />
@@ -124,23 +124,21 @@
 he/she might have the phonon frequency file(s) from the program <code class="docutils literal notranslate"><span class="pre">matdyn.x</span></code>.
 To generate a valid input data file for <code class="docutils literal notranslate"><span class="pre">qha</span></code>, three  files are needed:</p>
 <ol class="arabic simple">
-<li><code class="docutils literal notranslate"><span class="pre">filelist.yaml</span></code> file:</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filelist.yaml</span></code> file:</p></li>
 </ol>
 <ul>
-<li><p class="first">the description of the system in <code class="docutils literal notranslate"><span class="pre">comment</span></code> key: a string,</p>
-</li>
-<li><p class="first">the number of formula unit in <code class="docutils literal notranslate"><span class="pre">formula_unit_number</span></code> key: an integer,</p>
-</li>
-<li><p class="first">A YAML list of files containing frequencies <code class="docutils literal notranslate"><span class="pre">*.freq</span></code> in <code class="docutils literal notranslate"><span class="pre">frequency_files</span></code> key: a YAML list of strings.</p>
+<li><p>the description of the system in <code class="docutils literal notranslate"><span class="pre">comment</span></code> key: a string,</p></li>
+<li><p>the number of formula unit in <code class="docutils literal notranslate"><span class="pre">formula_unit_number</span></code> key: an integer,</p></li>
+<li><p>A YAML list of files containing frequencies <code class="docutils literal notranslate"><span class="pre">*.freq</span></code> in <code class="docutils literal notranslate"><span class="pre">frequency_files</span></code> key: a YAML list of strings.</p>
 <p>If you have trouble writing YAML, please refer to its syntax <a class="reference external" href="http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html">here</a>.</p>
 </li>
 </ul>
 <ol class="arabic simple" start="2">
-<li>An <code class="docutils literal notranslate"><span class="pre">static</span></code> file that contains the static energies and volumes for
-each configuration.</li>
-<li>An <code class="docutils literal notranslate"><span class="pre">q_points</span></code> file that specifies all the q-points to sample
+<li><p>An <code class="docutils literal notranslate"><span class="pre">static</span></code> file that contains the static energies and volumes for
+each configuration.</p></li>
+<li><p>An <code class="docutils literal notranslate"><span class="pre">q_points</span></code> file that specifies all the q-points to sample
 the Brillouin zone. The first three columns are the q-points’ coordinates in 3D space, and
-the last column is their weights.</li>
+the last column is their weights.</p></li>
 </ol>
 <p>Please check the <code class="docutils literal notranslate"><span class="pre">/examples/silicon/make_input</span></code> as an example.</p>
 <p>When all these files are obtained, put them in them same directory and run:</p>
@@ -163,7 +161,7 @@ the last column is their weights.</li>
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.<br/>
     </p>
   </div>
 </footer>

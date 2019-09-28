@@ -2,16 +2,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>1.3. Run calculation command: qha run &#8212; qha 1.0.17 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="1.4. Plot results command: qha plot" href="plot.html" />
@@ -128,9 +128,9 @@
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title first">Table of contents:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#how-to-write-computational-settings-file" id="id1">How to write computational settings file</a></li>
-<li><a class="reference internal" href="#how-to-make-input-data" id="id2">How to make input data</a></li>
-<li><a class="reference internal" href="#output" id="id3">Output</a></li>
+<li><p><a class="reference internal" href="#how-to-write-computational-settings-file" id="id1">How to write computational settings file</a></p></li>
+<li><p><a class="reference internal" href="#how-to-make-input-data" id="id2">How to make input data</a></p></li>
+<li><p><a class="reference internal" href="#output" id="id3">Output</a></p></li>
 </ul>
 </div>
 <div class="section" id="how-to-write-computational-settings-file">
@@ -141,44 +141,46 @@ Please refer to <a class="reference external" href="https://docs.ansible.com/ans
 if not familiar with YAML syntax.</p>
 <p>Here are the keys that can be recognized in <code class="docutils literal notranslate"><span class="pre">settings.yaml</span></code>:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">calculation</span></code>: The calculation type user wants to perform. Allowed values are <code class="docutils literal notranslate"><span class="pre">single</span></code>, <code class="docutils literal notranslate"><span class="pre">same</span> <span class="pre">phonon</span> <span class="pre">dos</span></code> and <code class="docutils literal notranslate"><span class="pre">different</span> <span class="pre">phonon</span> <span class="pre">dos</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">NT</span></code>: Number of temperatures on the grid</li>
-<li><code class="docutils literal notranslate"><span class="pre">T_MIN</span></code>: Desired minimum temperature to calculate, in Kelvin, default value is 0 K.</li>
-<li><code class="docutils literal notranslate"><span class="pre">DT</span></code>: The interval between two nearest temperatures on the grid</li>
-<li><code class="docutils literal notranslate"><span class="pre">NTV</span></code>: Number of volumes (or equivalently, pressure) on the gird</li>
-<li><code class="docutils literal notranslate"><span class="pre">DELTA_P</span></code>: The interval between two pressures on the grid, the default value is <span class="math notranslate nohighlight">\(0.1\)</span> GPa</li>
-<li><code class="docutils literal notranslate"><span class="pre">DELTA_P_SAMPLE</span></code>: Pressure-sampling interval, used for output, the default value is <span class="math notranslate nohighlight">\(1\)</span> GPa</li>
-<li><code class="docutils literal notranslate"><span class="pre">P_MIN</span></code>: Desired minimum pressure to calculate, in GPa</li>
-<li><code class="docutils literal notranslate"><span class="pre">input</span></code>: Name(s) of the input file(s).<ul>
-<li>In the single-configuration calculation, only the path of the file is needed,</li>
-<li>In the multi-configuration calculation, the names of the inputs files and the corresponding configuration degeneracy are given in a <a class="reference external" href="https://docs.ansible.com/ansible/latest/plugins/lookup/dict.html">YAML dictionary syntax</a>.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculation</span></code>: The calculation type user wants to perform. Allowed values are <code class="docutils literal notranslate"><span class="pre">single</span></code>, <code class="docutils literal notranslate"><span class="pre">same</span> <span class="pre">phonon</span> <span class="pre">dos</span></code> and <code class="docutils literal notranslate"><span class="pre">different</span> <span class="pre">phonon</span> <span class="pre">dos</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NT</span></code>: Number of temperatures on the grid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T_MIN</span></code>: Desired minimum temperature to calculate, in Kelvin, default value is 0 K.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DT</span></code>: The interval between two nearest temperatures on the grid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NTV</span></code>: Number of volumes (or equivalently, pressure) on the gird</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DELTA_P</span></code>: The interval between two pressures on the grid, the default value is <span class="math notranslate nohighlight">\(0.1\)</span> GPa</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DELTA_P_SAMPLE</span></code>: Pressure-sampling interval, used for output, the default value is <span class="math notranslate nohighlight">\(1\)</span> GPa</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">P_MIN</span></code>: Desired minimum pressure to calculate, in GPa</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input</span></code>: Name(s) of the input file(s).</p>
+<ul>
+<li><p>In the single-configuration calculation, only the path of the file is needed,</p></li>
+<li><p>In the multi-configuration calculation, the names of the inputs files and the corresponding configuration degeneracy are given in a <a class="reference external" href="https://docs.ansible.com/ansible/latest/plugins/lookup/dict.html">YAML dictionary syntax</a>.</p></li>
 </ul>
 </li>
-<li><code class="docutils literal notranslate"><span class="pre">static_only</span></code>: Whether to include the vibrational contribution in the calculation. Allowed values are <code class="docutils literal notranslate"><span class="pre">True</span></code> (not include) or <code class="docutils literal notranslate"><span class="pre">False</span></code> (include, default).</li>
-<li><code class="docutils literal notranslate"><span class="pre">order</span></code>: Order of Birch–Murnaghan equation of state fitting, can be <code class="docutils literal notranslate"><span class="pre">3</span></code> (default), <code class="docutils literal notranslate"><span class="pre">4</span></code> or <code class="docutils literal notranslate"><span class="pre">5</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">energy_unit</span></code>: Energy unit in the output file can be <code class="docutils literal notranslate"><span class="pre">ry</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">ev</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">thermodynamic_properties</span></code>: Which thermodynamic properties will be calculated by <code class="docutils literal notranslate"><span class="pre">qha</span></code>. Allowed values are<ul>
-<li><code class="docutils literal notranslate"><span class="pre">F</span></code>: the Helmholtz free energy</li>
-<li><code class="docutils literal notranslate"><span class="pre">G</span></code>: the Gibbs free energy</li>
-<li><code class="docutils literal notranslate"><span class="pre">U</span></code>: the internal energy</li>
-<li><code class="docutils literal notranslate"><span class="pre">H</span></code>: the enthalpy</li>
-<li><code class="docutils literal notranslate"><span class="pre">V</span></code>: the volume</li>
-<li><code class="docutils literal notranslate"><span class="pre">Cp</span></code>: the isobaric heat capacity</li>
-<li><code class="docutils literal notranslate"><span class="pre">Cv</span></code>: the volumetric heat capacity</li>
-<li><code class="docutils literal notranslate"><span class="pre">Bt</span></code>: the isothermal bulk modulus</li>
-<li><code class="docutils literal notranslate"><span class="pre">Btp</span></code>: the derivative of the isothermal bulk modulus with respect to pressure</li>
-<li><code class="docutils literal notranslate"><span class="pre">Bs</span></code>: the adiabatic bulk modulus</li>
-<li><code class="docutils literal notranslate"><span class="pre">alpha</span></code>: the thermal expansion coefficient</li>
-<li><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: the Grüneisen parameter</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">static_only</span></code>: Whether to include the vibrational contribution in the calculation. Allowed values are <code class="docutils literal notranslate"><span class="pre">True</span></code> (not include) or <code class="docutils literal notranslate"><span class="pre">False</span></code> (include, default).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>: Order of Birch–Murnaghan equation of state fitting, can be <code class="docutils literal notranslate"><span class="pre">3</span></code> (default), <code class="docutils literal notranslate"><span class="pre">4</span></code> or <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">energy_unit</span></code>: Energy unit in the output file can be <code class="docutils literal notranslate"><span class="pre">ry</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">ev</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermodynamic_properties</span></code>: Which thermodynamic properties will be calculated by <code class="docutils literal notranslate"><span class="pre">qha</span></code>. Allowed values are</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">F</span></code>: the Helmholtz free energy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">G</span></code>: the Gibbs free energy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">U</span></code>: the internal energy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">H</span></code>: the enthalpy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">V</span></code>: the volume</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cp</span></code>: the isobaric heat capacity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Cv</span></code>: the volumetric heat capacity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Bt</span></code>: the isothermal bulk modulus</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Btp</span></code>: the derivative of the isothermal bulk modulus with respect to pressure</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Bs</span></code>: the adiabatic bulk modulus</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>: the thermal expansion coefficient</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: the Grüneisen parameter</p></li>
 </ul>
 </li>
-<li><code class="docutils literal notranslate"><span class="pre">target</span></code>: The default value is <code class="docutils literal notranslate"><span class="pre">parallel</span></code>.
+<li><p><code class="docutils literal notranslate"><span class="pre">target</span></code>: The default value is <code class="docutils literal notranslate"><span class="pre">parallel</span></code>.
 This is a Numba package option. Allowed options are <code class="docutils literal notranslate"><span class="pre">cpu</span></code> (used on single-threaded CPU), <code class="docutils literal notranslate"><span class="pre">parallel</span></code> (used on multi-core CPU), and <code class="docutils literal notranslate"><span class="pre">cuda</span></code> (used on CUDA GPU).
-See its <a class="reference external" href="http://numba.pydata.org/numba-doc/0.39.0/reference/jit-compilation.html#numba.vectorize">official documentation</a> for help.</li>
-<li><code class="docutils literal notranslate"><span class="pre">results_folder</span></code>: The path to store all calculated values, the default value is <code class="docutils literal notranslate"><span class="pre">./results</span></code>, which is a directory named <cite>results</cite> in
-the same folder as the <code class="docutils literal notranslate"><span class="pre">input</span></code> file.</li>
-<li><code class="docutils literal notranslate"><span class="pre">T4FV</span></code>: Temperature for <span class="math notranslate nohighlight">\(F(T_i, V)\)</span> plotting. By default is <code class="docutils literal notranslate"><span class="pre">['0',</span> <span class="pre">'300']</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">high_verbosity</span></code>: Two verbosity levels are implemented in the output file, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default).</li>
+See its <a class="reference external" href="http://numba.pydata.org/numba-doc/0.39.0/reference/jit-compilation.html#numba.vectorize">official documentation</a> for help.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">results_folder</span></code>: The path to store all calculated values, the default value is <code class="docutils literal notranslate"><span class="pre">./results</span></code>, which is a directory named <cite>results</cite> in
+the same folder as the <code class="docutils literal notranslate"><span class="pre">input</span></code> file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T4FV</span></code>: Temperature for <span class="math notranslate nohighlight">\(F(T_i, V)\)</span> plotting. By default is <code class="docutils literal notranslate"><span class="pre">['0',</span> <span class="pre">'300']</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">high_verbosity</span></code>: Two verbosity levels are implemented in the output file, <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> (default).</p></li>
 </ul>
 </div>
 <div class="section" id="how-to-make-input-data">
@@ -199,18 +201,18 @@ path of it on his/her computer.</p>
 <h2><a class="toc-backref" href="#id3">1.3.3. Output</a><a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
 <p>The output files’ names and their meanings are as below:</p>
 <ul class="simple">
-<li>Helmholtz free energy: <code class="docutils literal notranslate"><span class="pre">f_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">f_tp_ev.txt</span></code></li>
-<li>Gibbs free energy: <code class="docutils literal notranslate"><span class="pre">g_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">g_tp_ev.txt</span></code></li>
-<li>Enthalpy: <code class="docutils literal notranslate"><span class="pre">h_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">h_tp_ev.txt</span></code></li>
-<li>Volume: <code class="docutils literal notranslate"><span class="pre">v_tp_bohr3.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">v_tp_ang3.txt</span></code></li>
-<li>Pressure-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cp_tp_jmolk.txt</span></code></li>
-<li>Volume-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cv_tp_jmolk.txt</span></code></li>
-<li>Isothermal bulk modulus: <code class="docutils literal notranslate"><span class="pre">bt_tp_gpa.txt</span></code></li>
-<li>Derivative of the isothermal bulk modulus with
-respect to pressure: <code class="docutils literal notranslate"><span class="pre">btp_tp.txt</span></code></li>
-<li>Adiabatic bulk modulus: <code class="docutils literal notranslate"><span class="pre">bs_tp_gpa.txt</span></code></li>
-<li>Thermal expansion: <code class="docutils literal notranslate"><span class="pre">alpha_tp.txt</span></code></li>
-<li>Thermal Grüneisen parameters: <code class="docutils literal notranslate"><span class="pre">gamma_tp.txt</span></code></li>
+<li><p>Helmholtz free energy: <code class="docutils literal notranslate"><span class="pre">f_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">f_tp_ev.txt</span></code></p></li>
+<li><p>Gibbs free energy: <code class="docutils literal notranslate"><span class="pre">g_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">g_tp_ev.txt</span></code></p></li>
+<li><p>Enthalpy: <code class="docutils literal notranslate"><span class="pre">h_tp_ry.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">h_tp_ev.txt</span></code></p></li>
+<li><p>Volume: <code class="docutils literal notranslate"><span class="pre">v_tp_bohr3.txt</span></code> or <code class="docutils literal notranslate"><span class="pre">v_tp_ang3.txt</span></code></p></li>
+<li><p>Pressure-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cp_tp_jmolk.txt</span></code></p></li>
+<li><p>Volume-specific heat capacity: <code class="docutils literal notranslate"><span class="pre">cv_tp_jmolk.txt</span></code></p></li>
+<li><p>Isothermal bulk modulus: <code class="docutils literal notranslate"><span class="pre">bt_tp_gpa.txt</span></code></p></li>
+<li><p>Derivative of the isothermal bulk modulus with
+respect to pressure: <code class="docutils literal notranslate"><span class="pre">btp_tp.txt</span></code></p></li>
+<li><p>Adiabatic bulk modulus: <code class="docutils literal notranslate"><span class="pre">bs_tp_gpa.txt</span></code></p></li>
+<li><p>Thermal expansion: <code class="docutils literal notranslate"><span class="pre">alpha_tp.txt</span></code></p></li>
+<li><p>Thermal Grüneisen parameters: <code class="docutils literal notranslate"><span class="pre">gamma_tp.txt</span></code></p></li>
 </ul>
 </div>
 </div>
@@ -228,7 +230,7 @@ respect to pressure: <code class="docutils literal notranslate"><span class="pre
     </p>
     <p>
         &copy; Copyright 2018, Tian Qin, Qi Zhang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.<br/>
     </p>
   </div>
 </footer>
