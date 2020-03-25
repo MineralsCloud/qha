@@ -260,7 +260,7 @@ class Calculator:
         if unit.lower() == 'ry':
             return v2p(self.f_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
         if unit.lower() == 'ev':
-            ry_to_ev(self.f_tp(unit='ry'))
+            return ry_to_ev(self.f_tp(unit='ry'))
         raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
