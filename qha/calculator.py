@@ -97,9 +97,11 @@ class Calculator:
     def finer_volumes_bohr3(self):
         return self._finer_volumes_bohr3
 
-    @property
-    def f_tv_ry(self):
-        return self._f_tv_ry
+    def f_tv(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return self._f_tv_ry
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.f_tv('ry'))
 
     @property
     def v_ratio(self) -> Optional[float]:
@@ -167,53 +169,51 @@ class Calculator:
         r = FinerGrid(p_min - p_min_modifier, ntv, order=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes,
+                                                                                    self.vibrational_energy('ry'),
                                                                                     ratio=d['volume_ratio'])
         else:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
-                self.volumes, self.vib_ry)
+                self.volumes, self.vibrational_energy('ry'))
 
     @LazyProperty
-    def vib_ry(self):
-        # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.q_weights, self.static_energies, self.frequencies, self.settings[
-            'static_only']
+    def vibrational_energy(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
+            args = self.q_weights, self.static_energies, self.frequencies, self.settings[
+                'static_only']
 
-        mat = np.empty((self.temperature_array.size, self.volumes.size))
-        for i, t in enumerate(self.temperature_array):
-            mat[i] = free_energy(t, *(arg for arg in args))
+            mat = np.empty((self.temperature_array.size, self.volumes.size))
+            for i, t in enumerate(self.temperature_array):
+                mat[i] = free_energy(t, *(arg for arg in args))
 
-        return mat
+            return mat
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.vibrational_energy('ry'))
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry,
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv('ry'),
                                         self.p_tv(unit='atomic'))
 
     @LazyProperty
     def temperature_sample_array(self):
         return self.temperature_array[0::int(self.settings['DT_SAMPLE'] / self.settings['DT'])]
 
-    @LazyProperty
-    def desired_pressures_gpa(self):
-        d = self.settings
-        return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
-
-    def desired_pressures(self, unit: str = 'atomic'):
+    def desired_pressures(self, unit: str = 'gpa'):
+        if unit.lower() == 'gpa':
+            d = self.settings
+            return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
         if unit.lower() == 'atomic':
-            return gpa_to_ry_b3(self.desired_pressures_gpa)
+            return gpa_to_ry_b3(self.desired_pressures('gpa'))
 
     @LazyProperty
     def pressure_sample_array(self):
-        return self.desired_pressures_gpa[0::int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])]
+        return self.desired_pressures('gpa')[0::int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])]
 
     @LazyProperty
     def finer_volumes_ang3(self):
         return b3_to_a3(self.finer_volumes_bohr3)
-
-    @LazyProperty
-    def vib_ev(self):
-        return ry_to_ev(self.vib_ry)
 
     @LazyProperty
     def volumes_ang3(self):
@@ -226,9 +226,9 @@ class Calculator:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
                 self.p_tv(unit='gpa')[:, 0].max(), self.p_tv(unit='gpa')[:, -1].min()))
 
-        if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures_gpa.max():
+        if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures(unit='gpa').max():
             ntv_max = int(
-                (self.p_tv(unit='gpa')[:, -1].min() - self.desired_pressures_gpa.min()) / d['DELTA_P'])
+                (self.p_tv(unit='gpa')[:, -1].min() - self.desired_pressures(unit='gpa').min()) / d['DELTA_P'])
 
             save_to_output(d['qha_output'], textwrap.dedent("""\
                            !!!ATTENTION!!!
@@ -243,24 +243,20 @@ class Calculator:
 
     def p_tv(self, unit: str = 'atomic'):
         if unit.lower() == 'atomic':
-            return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
+            return pressure(self.finer_volumes_bohr3, self.f_tv('ry'))
         if unit.lower() == 'gpa':
             return ry_b3_to_gpa(self.p_tv(unit='atomic'))
         raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def s_tv_j(self):
-        return ry_to_j(entropy(self.temperature_array, self.f_tv_ry))
-
-    @LazyProperty
-    def f_tv_ev(self):
-        return ry_to_ev(self.f_tv_ry)
+        return ry_to_j(entropy(self.temperature_array, self.f_tv('ry')))
 
     def f_tp(self, unit: str = 'ry'):
         if unit.lower() == 'ry':
-            return v2p(self.f_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+            return v2p(self.f_tv('ry'), self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
         if unit.lower() == 'ev':
-            ry_to_ev(self.f_tp(unit='ry'))
+            return ry_to_ev(self.f_tp(unit='ry'))
         raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
@@ -420,11 +416,10 @@ class DifferentPhDOSCalculator(Calculator):
         self._frequencies = frequencies
         self._q_weights = q_weights
 
-    @LazyProperty
-    def vib_ry(self):
+    def vibrational_energy(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
-            self.settings['static_only']
+               self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
@@ -438,10 +433,9 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
     def __init__(self, user_settings):
         super().__init__(user_settings)
 
-    @LazyProperty
-    def vib_ry(self):
+    def vibrational_energy(self):
         args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
-            self.settings['static_only'], self.settings['order']
+               self.settings['static_only'], self.settings['order']
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):

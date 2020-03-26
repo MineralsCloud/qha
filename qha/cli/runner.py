@@ -77,8 +77,8 @@ class QHARunner(QHACommandHandler):
 
         save_to_output(user_settings['qha_output'],
                        make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
-                                    calc.desired_pressures_gpa[0],
-                                    calc.desired_pressures_gpa[-1]))
+                                    calc.desired_pressures('gpa')[0],
+                                    calc.desired_pressures('gpa')[-1]))
 
         calc.read_input()
 
@@ -105,7 +105,7 @@ class QHARunner(QHACommandHandler):
         calc.desired_pressure_status()
 
         temperature_array = calc.temperature_array
-        desired_pressures_gpa = calc.desired_pressures_gpa
+        desired_pressures_gpa = calc.desired_pressures('gpa')
         temperature_sample = calc.temperature_sample_array
         p_sample_gpa = calc.pressure_sample_array
 
@@ -126,11 +126,11 @@ class QHARunner(QHACommandHandler):
                               }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_tv(calc.f_tv_ev, temperature_array,
+        save_x_tv(calc.f_tv('ev'), temperature_array,
                   calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3,
+        save_x_tv(calc.vibrational_energy('ev'), temperature_array, calc.volumes_ang3,
                   temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'
