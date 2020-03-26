@@ -130,7 +130,7 @@ class QHARunner(QHACommandHandler):
                   calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
-        save_x_tv(calc.vib_ev, temperature_array, calc.volumes_ang3,
+        save_x_tv(calc.vibrational_energy('ev'), temperature_array, calc.volumes_ang3,
                   temperature_sample, file_ftv_non_fitted)
 
         file_ptv_gpa = results_folder / 'p_tv_gpa.txt'

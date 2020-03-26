@@ -167,23 +167,27 @@ class Calculator:
         r = FinerGrid(p_min - p_min_modifier, ntv, order=order)
 
         if 'volume_ratio' in d:
-            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes,
+                                                                                    self.vibrational_energy('ry'),
                                                                                     ratio=d['volume_ratio'])
         else:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
-                self.volumes, self.vib_ry)
+                self.volumes, self.vibrational_energy('ry'))
 
     @LazyProperty
-    def vib_ry(self):
-        # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.q_weights, self.static_energies, self.frequencies, self.settings[
-            'static_only']
+    def vibrational_energy(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
+            args = self.q_weights, self.static_energies, self.frequencies, self.settings[
+                'static_only']
 
-        mat = np.empty((self.temperature_array.size, self.volumes.size))
-        for i, t in enumerate(self.temperature_array):
-            mat[i] = free_energy(t, *(arg for arg in args))
+            mat = np.empty((self.temperature_array.size, self.volumes.size))
+            for i, t in enumerate(self.temperature_array):
+                mat[i] = free_energy(t, *(arg for arg in args))
 
-        return mat
+            return mat
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.vibrational_energy('ry'))
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
@@ -208,10 +212,6 @@ class Calculator:
     @LazyProperty
     def finer_volumes_ang3(self):
         return b3_to_a3(self.finer_volumes_bohr3)
-
-    @LazyProperty
-    def vib_ev(self):
-        return ry_to_ev(self.vib_ry)
 
     @LazyProperty
     def volumes_ang3(self):
@@ -418,11 +418,10 @@ class DifferentPhDOSCalculator(Calculator):
         self._frequencies = frequencies
         self._q_weights = q_weights
 
-    @LazyProperty
-    def vib_ry(self):
+    def vibrational_energy(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
-            self.settings['static_only']
+               self.settings['static_only']
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
@@ -436,10 +435,9 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
     def __init__(self, user_settings):
         super().__init__(user_settings)
 
-    @LazyProperty
-    def vib_ry(self):
+    def vibrational_energy(self):
         args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
-            self.settings['static_only'], self.settings['order']
+               self.settings['static_only'], self.settings['order']
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):
