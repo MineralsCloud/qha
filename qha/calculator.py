@@ -97,9 +97,11 @@ class Calculator:
     def finer_volumes_bohr3(self):
         return self._finer_volumes_bohr3
 
-    @property
-    def f_tv_ry(self):
-        return self._f_tv_ry
+    def f_tv(self, unit: str = 'ry'):
+        if unit.lower() == 'ry':
+            return self._f_tv_ry
+        if unit.lower() == 'ev':
+            return ry_to_ev(self.f_tv('ry'))
 
     @property
     def v_ratio(self) -> Optional[float]:
@@ -191,7 +193,7 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry,
+        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv('ry'),
                                         self.p_tv(unit='atomic'))
 
     @LazyProperty
@@ -241,22 +243,18 @@ class Calculator:
 
     def p_tv(self, unit: str = 'atomic'):
         if unit.lower() == 'atomic':
-            return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
+            return pressure(self.finer_volumes_bohr3, self.f_tv('ry'))
         if unit.lower() == 'gpa':
             return ry_b3_to_gpa(self.p_tv(unit='atomic'))
         raise ValueError("Unknown `unit = {}` specified!".format(unit))
 
     @LazyProperty
     def s_tv_j(self):
-        return ry_to_j(entropy(self.temperature_array, self.f_tv_ry))
-
-    @LazyProperty
-    def f_tv_ev(self):
-        return ry_to_ev(self.f_tv_ry)
+        return ry_to_j(entropy(self.temperature_array, self.f_tv('ry')))
 
     def f_tp(self, unit: str = 'ry'):
         if unit.lower() == 'ry':
-            return v2p(self.f_tv_ry, self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
+            return v2p(self.f_tv('ry'), self.p_tv(unit='atomic'), self.desired_pressures(unit='atomic'))
         if unit.lower() == 'ev':
             return ry_to_ev(self.f_tp(unit='ry'))
         raise ValueError("Unknown `unit = {}` specified!".format(unit))

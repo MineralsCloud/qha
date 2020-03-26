@@ -126,7 +126,7 @@ class QHARunner(QHACommandHandler):
                               }
 
         file_ftv_fitted = results_folder / 'f_tv_fitted_ev_ang3.txt'
-        save_x_tv(calc.f_tv_ev, temperature_array,
+        save_x_tv(calc.f_tv('ev'), temperature_array,
                   calc.finer_volumes_ang3, temperature_sample, file_ftv_fitted)
 
         file_ftv_non_fitted = results_folder / 'f_tv_nonfitted_ev_ang3.txt'
