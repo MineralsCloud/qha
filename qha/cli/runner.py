@@ -77,8 +77,8 @@ class QHARunner(QHACommandHandler):
 
         save_to_output(user_settings['qha_output'],
                        make_tp_info(calc.temperature_array[0], calc.temperature_array[-1 - 4],
-                                    calc.desired_pressures_gpa[0],
-                                    calc.desired_pressures_gpa[-1]))
+                                    calc.desired_pressures('gpa')[0],
+                                    calc.desired_pressures('gpa')[-1]))
 
         calc.read_input()
 
@@ -105,7 +105,7 @@ class QHARunner(QHACommandHandler):
         calc.desired_pressure_status()
 
         temperature_array = calc.temperature_array
-        desired_pressures_gpa = calc.desired_pressures_gpa
+        desired_pressures_gpa = calc.desired_pressures('gpa')
         temperature_sample = calc.temperature_sample_array
         p_sample_gpa = calc.pressure_sample_array
 

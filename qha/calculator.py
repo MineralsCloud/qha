@@ -194,18 +194,16 @@ class Calculator:
     def temperature_sample_array(self):
         return self.temperature_array[0::int(self.settings['DT_SAMPLE'] / self.settings['DT'])]
 
-    @LazyProperty
-    def desired_pressures_gpa(self):
-        d = self.settings
-        return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
-
-    def desired_pressures(self, unit: str = 'atomic'):
+    def desired_pressures(self, unit: str = 'gpa'):
+        if unit.lower() == 'gpa':
+            d = self.settings
+            return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
         if unit.lower() == 'atomic':
-            return gpa_to_ry_b3(self.desired_pressures_gpa)
+            return gpa_to_ry_b3(self.desired_pressures('gpa'))
 
     @LazyProperty
     def pressure_sample_array(self):
-        return self.desired_pressures_gpa[0::int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])]
+        return self.desired_pressures('gpa')[0::int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])]
 
     @LazyProperty
     def finer_volumes_ang3(self):
@@ -226,9 +224,9 @@ class Calculator:
             save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
                 self.p_tv(unit='gpa')[:, 0].max(), self.p_tv(unit='gpa')[:, -1].min()))
 
-        if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures_gpa.max():
+        if self.p_tv(unit='gpa')[:, -1].min() < self.desired_pressures(unit='gpa').max():
             ntv_max = int(
-                (self.p_tv(unit='gpa')[:, -1].min() - self.desired_pressures_gpa.min()) / d['DELTA_P'])
+                (self.p_tv(unit='gpa')[:, -1].min() - self.desired_pressures(unit='gpa').min()) / d['DELTA_P'])
 
             save_to_output(d['qha_output'], textwrap.dedent("""\
                            !!!ATTENTION!!!
