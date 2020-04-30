@@ -12,7 +12,7 @@
 import collections
 from typing import Any, Dict, Tuple, Union
 
-from yaml import load
+from yaml import load, dump
 
 try:
     from yaml import CLoader as Loader
@@ -75,7 +75,7 @@ class Settings(collections.ChainMap):
         if not filename.endswith('.yaml'):
             filename += '.yaml'
         with open(filename, 'w') as f:
-            yaml.dump(self.maps, f)
+            dump(self.maps, f)
 
 
 def from_yaml(filename: str) -> Settings:
