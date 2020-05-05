@@ -14,19 +14,27 @@
 import textwrap
 from typing import Any, Dict, Optional
 
-import numpy as np
-import qha.multi_configurations.different_phonon_dos as different_phonon_dos
-import qha.multi_configurations.same_phonon_dos as same_phonon_dos
-import qha.tools
 from lazy_property import LazyProperty
+import numpy as np
+import pandas as pd
+
 from qha.basic_io import read_input
 from qha.basic_io.out import save_to_output
 from qha.grid_interpolation import FinerGrid
+import qha.multi_configurations.different_phonon_dos as different_phonon_dos
+import qha.multi_configurations.same_phonon_dos as same_phonon_dos
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
+import qha.tools
 from qha.type_aliases import Vector
-from qha.unit_conversion import (b3_to_a3, gpa_to_ry_b3, ry_b3_to_gpa,
-                                 ry_to_ev, ry_to_j, ry_to_j_mol)
+from qha.unit_conversion import (
+    b3_to_a3,
+    gpa_to_ry_b3,
+    ry_b3_to_gpa,
+    ry_to_ev,
+    ry_to_j,
+    ry_to_j_mol,
+)
 from qha.v2p import v2p
 
 # ===================== What can be exported? =====================
@@ -115,7 +123,7 @@ class Calculator:
             raise KeyError(
                 "The 'input' option must be given in your settings!")
 
-        if not qha.tools.is_monotonic_decreasing(volumes):
+        if not pd.Series(volumes).is_monotonic_decreasing:
             raise RuntimeError(
                 "Check the input file to make sure the volume decreases!")
 
@@ -382,7 +390,7 @@ class DifferentPhDOSCalculator(Calculator):
             nm_tmp, volumes_tmp, static_energies_tmp, freq_tmp, weights_tmp = read_input(
                 inp)
 
-            if not qha.tools.is_monotonic_decreasing(volumes_tmp):
+            if not pd.Series(volumes_tmp).is_monotonic_decreasing:
                 # TODO: Clean this sentence
                 save_to_output(
                     self.settings['qha_output'], "Check the input file to make sure the volume decreases")

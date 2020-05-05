@@ -14,8 +14,7 @@ from qha.grid_interpolation import calculate_eulerian_strain
 from qha.type_aliases import Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
-__all__ = ['find_nearest', 'vectorized_find_nearest', 'is_monotonic_decreasing',
-           'is_monotonic_increasing', 'arange', 'calibrate_energy_on_reference']
+__all__ = ['find_nearest', 'vectorized_find_nearest', 'arange', 'calibrate_energy_on_reference']
 
 
 @jit(nopython=True, nogil=True, cache=True)
@@ -107,48 +106,6 @@ def arange(start: Scalar, num: int, step: Scalar) -> Vector:
     :return: An arithmetic progression.
     """
     return np.array([start + step * n for n in range(int(num))])
-
-
-def is_monotonic_decreasing(array: Vector) -> bool:
-    """
-    Check whether the *array* is monotonic decreasing or not.
-    For example, in QHA calculation, the volumes should be listed as a decreasing array,
-    while the pressures should be monotonic increasing.
-    This function can be used to check whether the volumes are in the right order.
-
-    .. doctest::
-
-        >>> is_monotonic_decreasing([1, 2, 4, 5, 9])
-        False
-        >>> is_monotonic_decreasing([2, -5, -10, -20])
-        True
-
-    :param array: The array to be evaluated.
-    :return: ``True`` if the argument *array* is monotonic decreasing, otherwise ``False``.
-    """
-    dx = np.diff(array)
-    return np.all(dx <= 0)
-
-
-def is_monotonic_increasing(array: Vector) -> bool:
-    """
-    Check whether the *array* is monotonic increasing or not.
-    For example, in QHA calculation, the volumes should be listed as decreasing array,
-    and the pressures should be monotonic increasing.
-    This function can be used to check whether the pressures are in the right order.
-
-    .. doctest::
-
-        >>> is_monotonic_increasing([1, 2, 4, 5, 9])
-        True
-        >>> is_monotonic_increasing([2, -5, -10, -20])
-        False
-
-    :param array: The array to be evaluated.
-    :return: ``True`` if the argument *array* is monotonic increasing, otherwise ``False``.
-    """
-    dx = np.diff(array)
-    return np.all(dx >= 0)
 
 
 def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_before_calibration: Matrix,
