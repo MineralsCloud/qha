@@ -7,8 +7,8 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-import textwrap
 from datetime import datetime
+import textwrap
 
 import pandas as pd
 

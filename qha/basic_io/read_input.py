@@ -9,13 +9,13 @@
 
 import pathlib
 import re
-from typing import Iterator, Union, Tuple
+from typing import Iterator, Tuple, Union
 
 import numpy as np
 from scientific_string import strings_to_integers
 from text_stream import TextStream
 
-from qha.type_aliases import Vector, Array3D
+from qha.type_aliases import Array3D, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['read_input']

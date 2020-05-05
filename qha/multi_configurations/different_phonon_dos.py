@@ -5,15 +5,15 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-import numpy as np
 from lazy_property import LazyProperty
+import numpy as np
 from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
 from qha.single_configuration import free_energy
 from qha.tools import calibrate_energy_on_reference
-from qha.type_aliases import Array4D, Scalar, Vector, Matrix
+from qha.type_aliases import Array4D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction']

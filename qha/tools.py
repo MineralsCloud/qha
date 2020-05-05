@@ -8,8 +8,8 @@
 """
 from typing import Callable
 
-import numpy as np
 from numba import float64, guvectorize, int64, jit, vectorize
+import numpy as np
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calculate_eulerian_strain

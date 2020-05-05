@@ -10,10 +10,10 @@
 import os
 import pathlib
 
-import qha.tools
 from qha.cli.handler import QHACommandHandler
 from qha.plotting import Plotter
 from qha.settings import from_yaml
+import qha.tools
 
 
 class QHAPlotter(QHACommandHandler):

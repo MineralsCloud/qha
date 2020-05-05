@@ -4,15 +4,15 @@
    :platform: Unix, Windows, Mac, Linux
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
-import numpy as np
 from lazy_property import LazyProperty
+import numpy as np
 from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
 from qha.tools import calibrate_energy_on_reference
-from qha.type_aliases import Array3D, Scalar, Vector, Matrix
+from qha.type_aliases import Array3D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction', 'FreeEnergy']

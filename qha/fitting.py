@@ -8,6 +8,7 @@
 """
 import numpy as np
 from numpy.linalg import inv
+
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================

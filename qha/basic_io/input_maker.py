@@ -9,8 +9,8 @@
 
 import pathlib
 import re
-import warnings
 from typing import Iterator, List, Optional, Tuple
+import warnings
 
 import numpy as np
 from scientific_string import strings_to_integers
