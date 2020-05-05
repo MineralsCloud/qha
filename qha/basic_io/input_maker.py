@@ -58,10 +58,10 @@ class FromQEOutput:
         self.formula_unit_number: Optional[int] = None
         self.comment: str = ''
         self.pressures = None
-        self.volumes = None
+        self.volumes = np.array([], dtype=float)
         self.static_energies = None
         self.q_coordinates = None
-        self.q_weights = None
+        self.q_weights = np.array([], dtype=float)
         self.frequencies = None
 
     def read_file_list(self) -> None:
