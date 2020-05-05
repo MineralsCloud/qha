@@ -13,7 +13,7 @@ from typing import Optional, Tuple
 from numba import float64, vectorize
 import numpy as np
 
-from qha.fitting import apply_finite_strain_fitting, polynomial_least_square_fitting
+from qha.fitting import apply_finite_strain_fitting
 from qha.type_aliases import Matrix, Vector
 from qha.unit_conversion import gpa_to_ry_b3
 
@@ -194,7 +194,7 @@ class FinerGrid:
         vr.interpolate_volumes()
         strains, finer_volumes = vr.strains, vr.out_volumes
         eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
-        _, f_v_tmax = polynomial_least_square_fitting(eulerian_strain, free_energies, strains, self.option)
+        f_v_tmax = np.poly1d(np.polyfit(eulerian_strain, free_energies, self.option))(strains)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.desired_p_min)
         # Find the index of the first pressure value that slightly smaller than p_desire.
