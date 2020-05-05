@@ -6,8 +6,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-
-from typing import Callable, Optional
+from typing import Callable
 
 import numpy as np
 from numba import float64, guvectorize, int64, jit, vectorize
@@ -231,7 +230,7 @@ def is_monotonic_increasing(array: Vector) -> bool:
 
 
 def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_before_calibration: Matrix,
-                                  order: Optional[int] = 3):
+                                  order: int = 3):
     """
     In multi-configuration system calculation, the volume set of each calculation may vary a little,
     This function would make the volume set of the first configuration (normally, the most populated configuration)
