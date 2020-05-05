@@ -6,9 +6,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-from typing import Callable
-
-from numba import float64, guvectorize, int64, jit, vectorize
+from numba import float64, guvectorize, int64, jit
 import numpy as np
 
 from qha.fitting import polynomial_least_square_fitting
@@ -16,84 +14,8 @@ from qha.grid_interpolation import calculate_eulerian_strain
 from qha.type_aliases import Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
-__all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 'is_monotonic_decreasing',
+__all__ = ['find_nearest', 'vectorized_find_nearest', 'is_monotonic_decreasing',
            'is_monotonic_increasing', 'arange', 'calibrate_energy_on_reference']
-
-
-def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
-    """
-    A third-order Lagrange polynomial function. Given 4 points for interpolation:
-    :math:`(x_0, y_0), \\ldots, (x_3, y_3)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
-    `Wolfram MathWorld <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
-
-    :param xs: A vector of the x-coordinates' of the 4 points.
-    :param ys: A vector of the y-coordinates' of the 4 points.
-    :return: A function that can evaluate the value of an x-coordinate within the range of
-        :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
-    """
-    if not len(xs) == len(ys) == 4:
-        raise ValueError('The *xs* and *ys* must both have length 4!')
-
-    x0, x1, x2, x3 = xs
-    y0, y1, y2, y3 = ys
-
-    @vectorize(["float64(float64)"], target='parallel')
-    def f(x: float) -> float:
-        """
-        A helper function that only does the evaluation.
-
-        :param x: The variable on which the Lagrange polynomial is going to be applied.
-        :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
-        """
-        return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
-               (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
-               (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
-               (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
-
-    return f
-
-
-def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
-    """
-    A second-order Lagrange polynomial function. Given 3 points for interpolation:
-    :math:`(x_0, y_0), \\ldots, (x_2, y_2)`, evaluate the Lagrange polynomial on :math:`x`, referenced from
-    `Wolfram MathWorld also <http://mathworld.wolfram.com/LagrangeInterpolatingPolynomial.html>`_.
-
-    .. doctest::
-
-        >>> xs = [0, 1, 3]
-        >>> ys = [2, 4, 5]
-        >>> f = lagrange3(xs, ys)
-        >>> f(2.5)
-        5.125
-
-    :param xs: A vector of the x-coordinates' of the 3 points.
-    :param ys: A vector of the y-coordinates' of the 3 points.
-    :return: A function that can evaluate the value of an x-coordinate within the range of
-        :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
-    """
-    if not len(xs) == len(ys) == 3:
-        raise ValueError('The *xs* and *ys* must both have length 3!')
-
-    if len(set(xs)) < 3:  # The ``set`` will remove duplicated items.
-        raise ValueError('Some elements of *xs* are duplicated!')
-
-    x0, x1, x2 = xs
-    y0, y1, y2 = ys
-
-    @vectorize(["float64(float64)"], target='parallel')
-    def f(x: float) -> float:
-        """
-        A helper function that only does the evaluation.
-
-        :param x: The variable on which the Lagrange polynomial is going to be applied.
-        :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
-        """
-        return (x - x1) * (x - x2) / (x0 - x1) / (x0 - x2) * y0 + \
-               (x - x0) * (x - x2) / (x1 - x0) / (x1 - x2) * y1 + \
-               (x - x0) * (x - x1) / (x2 - x0) / (x2 - x1) * y2
-
-    return f
 
 
 @jit(nopython=True, nogil=True, cache=True)
