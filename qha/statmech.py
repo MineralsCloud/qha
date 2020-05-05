@@ -6,8 +6,8 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-import numpy as np
 from numba import float64, vectorize
+import numpy as np
 from scipy.constants import physical_constants as pc
 
 import qha.settings

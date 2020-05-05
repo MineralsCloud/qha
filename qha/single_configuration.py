@@ -6,12 +6,12 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-import numpy as np
 from lazy_property import LazyProperty
-from numba import jit, float64, boolean
+from numba import boolean, float64, jit
+import numpy as np
 
 from qha.statmech import ho_free_energy
-from qha.type_aliases import Scalar, Vector, Matrix, Array3D
+from qha.type_aliases import Array3D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['free_energy', 'HOFreeEnergySampler']

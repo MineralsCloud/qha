@@ -6,14 +6,16 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
-import matplotlib
+import pathlib
 
-matplotlib.use('Agg')
+import matplotlib
 import matplotlib.pylab as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import pathlib
-import numpy as np
+
+matplotlib.use('Agg')
+
 
 # ===================== What can be exported? =====================
 __all__ = ['Plotter']
@@ -82,7 +84,7 @@ class Plotter:
 
     def plot_thermal_expansion(self):
         f_alpha = self.user_settings['alpha']
-        alpha = pd.read_csv(f_alpha, sep='\s+', index_col='T(K)\P(GPa)')
+        alpha = pd.read_csv(f_alpha, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = alpha.plot(figsize=(6, 5), color=sns.color_palette("Reds", len(alpha.columns)))
         ax.set_xlabel('Temperature (K)')
@@ -95,7 +97,7 @@ class Plotter:
 
     def plot_isothermal_bulk_modulus(self):
         f_isothermal_bulk_modulus = self.user_settings['Bt']
-        btp = pd.read_csv(f_isothermal_bulk_modulus, sep='\s+', index_col='T(K)\P(GPa)')
+        btp = pd.read_csv(f_isothermal_bulk_modulus, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = btp.plot(y=btp.columns[0], use_index=True, figsize=(6, 5), color='k')
         ax.set_xlabel('Temperature (K)')
@@ -107,7 +109,7 @@ class Plotter:
 
     def plot_pressure_specific_heat_capacity(self):
         f_cp = self.user_settings['Cp']
-        cp = pd.read_csv(f_cp, sep='\s+', index_col='T(K)\P(GPa)')
+        cp = pd.read_csv(f_cp, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = cp.plot(figsize=(6, 5), color=sns.color_palette("Blues", len(cp.columns)))
         ax.set_xlabel('Temperature (K)')
@@ -120,7 +122,7 @@ class Plotter:
 
     def plot_gruneisen_parameter(self):
         f_gamma = self.user_settings['gamma']
-        gamma = pd.read_csv(f_gamma, sep='\s+', index_col='T(K)\P(GPa)')
+        gamma = pd.read_csv(f_gamma, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = gamma.plot(figsize=(6, 5), color=sns.color_palette("Greens", len(gamma.columns)))
         ax.set_xlabel('Temperature (K)')
@@ -133,7 +135,7 @@ class Plotter:
 
     def plot_gibbs_free_energy(self):
         f_gibbs = self.user_settings['G']
-        gibbs = pd.read_csv(f_gibbs, sep='\s+', index_col='T(K)\P(GPa)')
+        gibbs = pd.read_csv(f_gibbs, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = gibbs.plot(figsize=(6, 5), color=sns.color_palette("binary", len(gibbs.columns)))
         ax.set_xlabel('Temperature (K)')
@@ -145,7 +147,7 @@ class Plotter:
 
     def plot_volume(self):
         f_volume = self.user_settings['V']
-        volume = pd.read_csv(f_volume, sep='\s+', index_col='T(K)\P(GPa)')
+        volume = pd.read_csv(f_volume, sep=r'\s+', index_col=r'T(K)\P(GPa)')
         self.plot_to_file()
         ax = volume.plot(figsize=(6, 5), color=sns.color_palette("Oranges", len(volume.columns)))
         ax.set_xlabel('Temperature (K)')
@@ -161,7 +163,7 @@ class Plotter:
         v_f_min = []
 
         f_fitted_volume = self.user_settings['f_tv_fitted']
-        volume_tv = pd.read_csv(f_fitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        volume_tv = pd.read_csv(f_fitted_volume, sep=r'\s+', index_col=r'T(K)\V(A^3)')
         volume_tv.index = volume_tv.index.map(str)
         volume_vt = volume_tv.T
         volume_vt.index = volume_vt.index.map(float)
@@ -169,14 +171,14 @@ class Plotter:
         volume_v_grid = np.asarray(volume_vt.index, float)
 
         f_nonfitted_volume = self.user_settings['f_tv_non_fitted']
-        volume_nonfitted_tv = pd.read_csv(f_nonfitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        volume_nonfitted_tv = pd.read_csv(f_nonfitted_volume, sep=r'\s+', index_col=r'T(K)\V(A^3)')
         volume_nonfitted_tv.index = volume_nonfitted_tv.index.map(str)
         volume_nonfitted_vt = volume_nonfitted_tv.T
         volume_nonfitted_vt.index = volume_nonfitted_vt.index.map(float)
         volume_nonfitted_t = volume_nonfitted_vt[temperature_sample]
 
         f_p_volume = self.user_settings['p_tv_gpa']
-        p_volume_tv = pd.read_csv(f_p_volume, sep='\s+', index_col='T(K)\V(A^3)')
+        p_volume_tv = pd.read_csv(f_p_volume, sep=r'\s+', index_col=r'T(K)\V(A^3)')
         p_volume_tv.index = p_volume_tv.index.map(str)
         p_volume_vt = p_volume_tv.T
         p_volume_vt.index = p_volume_vt.index.map(float)

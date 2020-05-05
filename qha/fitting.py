@@ -6,18 +6,16 @@
     finite strain EoS fitting for ``grid_interpolation`` module's use.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-
-from typing import Optional
-
 import numpy as np
 from numpy.linalg import inv
+
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['polynomial_least_square_fitting', 'apply_finite_strain_fitting']
 
 
-def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
+def polynomial_least_square_fitting(xs, ys, new_xs, order: int = 3):
     """
     The algorithm is referenced from the
     `Wolfram MathWorld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_.
@@ -38,7 +36,7 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
 
 
 def apply_finite_strain_fitting(strains_sparse: Vector, free_energies: Matrix, strains_dense: Vector,
-                                order: Optional[int] = 3):
+                                order: int = 3):
     """
     Calculate the free energies :math:`F(T, V)` for some strains (*strains_dense*), with the
     free energies (*free_energies*) on some other strains (*strains_sparse*) known already.

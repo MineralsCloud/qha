@@ -10,11 +10,11 @@
 
 from typing import Optional, Tuple
 
+from numba import float64, vectorize
 import numpy as np
-from numba import vectorize, float64
 
-from qha.fitting import polynomial_least_square_fitting, apply_finite_strain_fitting
-from qha.type_aliases import Vector, Matrix
+from qha.fitting import apply_finite_strain_fitting, polynomial_least_square_fitting
+from qha.type_aliases import Matrix, Vector
 from qha.unit_conversion import gpa_to_ry_b3
 
 # ===================== What can be exported? =====================
@@ -171,14 +171,14 @@ class FinerGrid:
     :param order: The order of the Birch--Murnaghan finite-strain equation of state fitting.
     """
 
-    def __init__(self, desired_p_min: float, dense_volumes_amount: int, order: Optional[int] = 3):
+    def __init__(self, desired_p_min: float, dense_volumes_amount: int, order: int = 3):
         self.desired_p_min = float(desired_p_min)
         self.dense_volumes_amount = int(dense_volumes_amount)
         self.option = int(order)
         self._ratio = None
 
     @property
-    def ratio(self) -> float:
+    def ratio(self) -> Optional[float]:
         return self._ratio
 
     def approach_to_best_ratio(self, volumes: Vector, free_energies: Vector, initial_ratio: float) -> float:

@@ -9,13 +9,13 @@
 
 import pathlib
 import re
-from typing import Iterator, Union, Tuple
+from typing import Iterator, Tuple, Union
 
 import numpy as np
 from scientific_string import strings_to_integers
 from text_stream import TextStream
 
-from qha.type_aliases import Vector, Array3D
+from qha.type_aliases import Array3D, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['read_input']
@@ -44,7 +44,7 @@ def read_input(inp: Union[str, pathlib.PurePath]) -> Tuple[int, Vector, Vector, 
     offset = 0
 
     # Now we start reading some metadata.
-    regex0 = re.compile("\s*(\d+)[\s,]*(\d+)[\s,]*(\d+)[\s,]*(\d+)")
+    regex0 = re.compile(r"\s*(\d+)[\s,]*(\d+)[\s,]*(\d+)[\s,]*(\d+)")
 
     for line, offset in gen:
         if not line.strip() or line.startswith('#'):
@@ -74,7 +74,7 @@ def read_input(inp: Union[str, pathlib.PurePath]) -> Tuple[int, Vector, Vector, 
     j = 0  # q-point index, note it is not count like `i`!
 
     # Now we start reading the energies, volumes, and frequencies.
-    regex1 = re.compile("P\s*=\s*-?\d*\.?\d*\s*V\s*=(\s*\d*\.?\d*)\s*E\s*=\s*(-?\d*\.?\d*)", re.IGNORECASE)
+    regex1 = re.compile(r"P\s*=\s*-?\d*\.?\d*\s*V\s*=(\s*\d*\.?\d*)\s*E\s*=\s*(-?\d*\.?\d*)", re.IGNORECASE)
 
     for line in gen:
         if not line.strip():

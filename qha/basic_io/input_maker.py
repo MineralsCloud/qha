@@ -9,8 +9,8 @@
 
 import pathlib
 import re
-import warnings
 from typing import Iterator, List, Optional, Tuple
+import warnings
 
 import numpy as np
 from scientific_string import strings_to_integers
@@ -53,15 +53,15 @@ class FromQEOutput:
         self._inp_file_list = inp_file_list
         self._inp_static = inp_static
         self._inp_q_points = inp_q_points
-        self._frequency_files: Optional[List[str]] = None
+        self._frequency_files: List[str] = []
 
         self.formula_unit_number: Optional[int] = None
-        self.comment: Optional[str] = None
+        self.comment: str = ''
         self.pressures = None
-        self.volumes = None
+        self.volumes = np.array([], dtype=float)
         self.static_energies = None
         self.q_coordinates = None
-        self.q_weights = None
+        self.q_weights = np.array([], dtype=float)
         self.frequencies = None
 
     def read_file_list(self) -> None:

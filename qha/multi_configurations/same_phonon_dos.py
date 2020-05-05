@@ -4,18 +4,15 @@
    :platform: Unix, Windows, Mac, Linux
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
-
-from typing import Optional
-
-import numpy as np
 from lazy_property import LazyProperty
+import numpy as np
 from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
 from qha.statmech import ho_free_energy, log_subsystem_partition_function
 from qha.tools import calibrate_energy_on_reference
-from qha.type_aliases import Array3D, Scalar, Vector, Matrix
+from qha.type_aliases import Array3D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction', 'FreeEnergy']
@@ -54,7 +51,7 @@ class PartitionFunction:
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 frequencies: Array3D, precision: Optional[int] = 500):
+                 frequencies: Array3D, precision: int = 500):
 
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
@@ -163,7 +160,7 @@ class FreeEnergy:
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
+                 volumes: Matrix, frequencies: Array3D, static_only: bool = False, order: int = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be integers greater equal than 0!')
         if not np.all(np.greater_equal(q_weights,

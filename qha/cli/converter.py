@@ -6,8 +6,8 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-from qha.cli.handler import QHACommandHandler
 from qha.basic_io.input_maker import FromQEOutput
+from qha.cli.handler import QHACommandHandler
 
 
 class QHAConverter(QHACommandHandler):

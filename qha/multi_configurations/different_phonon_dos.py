@@ -5,18 +5,15 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-
-from typing import Optional
-
-import numpy as np
 from lazy_property import LazyProperty
+import numpy as np
 from scipy.constants import physical_constants as pc
 from scipy.special import logsumexp
 
 import qha.settings
 from qha.single_configuration import free_energy
 from qha.tools import calibrate_energy_on_reference
-from qha.type_aliases import Array4D, Scalar, Vector, Matrix
+from qha.type_aliases import Array4D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ['PartitionFunction']
@@ -56,8 +53,8 @@ class PartitionFunction:
     """
 
     def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
-                 volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
-                 precision: Optional[int] = 500, order: Optional[int] = 3):
+                 volumes: Matrix, frequencies: Array4D, static_only: bool = False,
+                 precision: int = 500, order: int = 3):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError('Degeneracies should all be greater equal than 0!')
         if not np.all(np.greater_equal(
