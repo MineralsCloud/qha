@@ -19,7 +19,7 @@ from qha.unit_conversion import gpa_to_ry_b3
 
 # ===================== What can be exported? =====================
 __all__ = [
-    'calculate_eulerian_strain',
+    'get_eulerian_strain',
     'from_eulerian_strain',
     'VolumeExpander',
     'FinerGrid'
@@ -27,7 +27,7 @@ __all__ = [
 
 
 @vectorize([float64(float64, float64)], nopython=True)
-def calculate_eulerian_strain(v0, vs):
+def get_eulerian_strain(v0, vs):
     """
     Calculate the Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*,
     where
@@ -47,7 +47,7 @@ def calculate_eulerian_strain(v0, vs):
 def from_eulerian_strain(v0, fs):
     """
     Calculate the corresponding volumes :math:`V`s from a vector of given Eulerian strains (*fs*)
-    and a reference volume *v0*. It is the inverse function of ``calculate_eulerian_strain``, i.e.,
+    and a reference volume *v0*. It is the inverse function of ``get_eulerian_strain``, i.e.,
 
     .. math::
 
@@ -156,7 +156,7 @@ class VolumeExpander:
         # r = v_upper / v_max = v_min / v_lower
         v_lower, v_upper = v_min / self._ratio, v_max * self._ratio
         # The *v_max* is a reference value here.
-        s_upper, s_lower = calculate_eulerian_strain(v_max, v_lower), calculate_eulerian_strain(v_max, v_upper)
+        s_upper, s_lower = get_eulerian_strain(v_max, v_lower), get_eulerian_strain(v_max, v_upper)
         self._strains = np.linspace(s_lower, s_upper, self._out_volumes_num)
         self._out_volumes = from_eulerian_strain(v_max, self._strains)
 
@@ -193,7 +193,7 @@ class FinerGrid:
         vr = VolumeExpander(volumes, self.dense_volumes_amount, initial_ratio)
         vr.interpolate_volumes()
         strains, finer_volumes = vr.strains, vr.out_volumes
-        eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
+        eulerian_strain = get_eulerian_strain(volumes[0], volumes)
         f_v_tmax = np.poly1d(np.polyfit(eulerian_strain, free_energies, self.option))(strains)
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
         p_desire = gpa_to_ry_b3(self.desired_p_min)
@@ -224,7 +224,7 @@ class FinerGrid:
 
         self._ratio = new_ratio
 
-        eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
+        eulerian_strain = get_eulerian_strain(volumes[0], volumes)
         vr = VolumeExpander(in_volumes=volumes, out_volumes_num=self.dense_volumes_amount, ratio=new_ratio)
         vr.interpolate_volumes()  # As mentioned in ``VolumeExpander`` doc, call this method immediately.
         strains, dense_volumes = vr.strains, vr.out_volumes

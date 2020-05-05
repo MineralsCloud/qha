@@ -9,7 +9,7 @@
 from numba import float64, guvectorize, int64, jit
 import numpy as np
 
-from qha.grid_interpolation import calculate_eulerian_strain
+from qha.grid_interpolation import get_eulerian_strain
 from qha.type_aliases import Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
@@ -125,9 +125,9 @@ def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_b
 
     energies_after_calibration = np.empty(volumes_before_calibration.shape)
     for i in range(configurations_amount):
-        strains_before_calibration = calculate_eulerian_strain(volumes_before_calibration[i, 0],
-                                                               volumes_before_calibration[i])
-        strains_after_calibration = calculate_eulerian_strain(volumes_before_calibration[i, 0], volumes_for_reference)
+        strains_before_calibration = get_eulerian_strain(volumes_before_calibration[i, 0],
+                                                         volumes_before_calibration[i])
+        strains_after_calibration = get_eulerian_strain(volumes_before_calibration[i, 0], volumes_for_reference)
         energies_after_calibration[i, :] = np.poly1d(
             np.polyfit(strains_before_calibration, energies_before_calibration[i], order))(
             strains_after_calibration)
