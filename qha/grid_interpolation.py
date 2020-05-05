@@ -181,7 +181,7 @@ class FinerGrid:
     def ratio(self) -> Optional[float]:
         return self._ratio
 
-    def approach_to_best_ratio(self, volumes: Vector, free_energies: Vector, initial_ratio: float) -> float:
+    def find_best_ratio(self, volumes: Vector, free_energies: Vector, initial_ratio: float) -> float:
         """
         Trying to find the best volume grids based on an a very large volume grids.
 
@@ -216,7 +216,7 @@ class FinerGrid:
         if ratio is not None:
             new_ratio: float = ratio
         else:
-            new_ratio = self.approach_to_best_ratio(volumes, free_energies[-1, :], 1.45)
+            new_ratio = self.find_best_ratio(volumes, free_energies[-1, :], 1.45)
             if new_ratio < 1.0:
                 # If the ``new_ratio`` is smaller than 1.0, which means the volumes calculated is large enough,
                 # there is no need to expand the volumes.
