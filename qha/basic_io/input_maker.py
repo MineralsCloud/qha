@@ -53,7 +53,7 @@ class FromQEOutput:
         self._inp_file_list = inp_file_list
         self._inp_static = inp_static
         self._inp_q_points = inp_q_points
-        self._frequency_files: Optional[List[str]] = None
+        self._frequency_files: List[str] = []
 
         self.formula_unit_number: Optional[int] = None
         self.comment: str = ''
