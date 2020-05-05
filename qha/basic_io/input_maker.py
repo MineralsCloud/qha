@@ -56,7 +56,7 @@ class FromQEOutput:
         self._frequency_files: Optional[List[str]] = None
 
         self.formula_unit_number: Optional[int] = None
-        self.comment: Optional[str] = None
+        self.comment: str = ''
         self.pressures = None
         self.volumes = None
         self.static_energies = None
