@@ -28,7 +28,7 @@ install:
   - pip3 install sphinx_bootstrap_theme
   - pip3 install virtualenv
 before_script:
-  - ./cripts/qha_old.sh
+  - ./scripts/qha_old.sh
 script:
   - ./scripts/travis.sh
 deploy:

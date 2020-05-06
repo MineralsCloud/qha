@@ -12,7 +12,7 @@ import pathlib
 
 from qha.cli.handler import QHACommandHandler
 from qha.plotting import Plotter
-from qha.settings import from_yaml
+from qha.settings import Settings
 import qha.tools
 
 
@@ -28,7 +28,7 @@ class QHAPlotter(QHACommandHandler):
     def run(self, namespace):
         user_settings = {}  # save necessary info for plotting later
         file_settings = namespace.settings
-        settings = from_yaml(file_settings)
+        settings = Settings.from_yaml(file_settings)
 
         for key in ('energy_unit', 'NT', 'DT', 'DT_SAMPLE', 'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
                     'thermodynamic_properties', 'T4FV', 'output_directory'):

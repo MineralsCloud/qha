@@ -19,9 +19,8 @@ try:
 except ImportError:
     from yaml import Loader
 
-
 # ===================== What can be exported? =====================
-__all__ = ['DEFAULT_SETTINGS', 'Settings', 'from_yaml']
+__all__ = ['DEFAULT_SETTINGS', 'Settings']
 
 DEFAULT_SETTINGS: Dict[str, Any] = {
     'energy_unit': 'ry',
@@ -71,22 +70,22 @@ class Settings(collections.ChainMap):
     def __init__(self, *user_settings: Union[Dict[str, Any], Tuple[Dict[str, Any], ...]]):
         super().__init__(*user_settings, DEFAULT_SETTINGS)
 
+    @classmethod
+    def from_yaml(cls, filename: str):
+        """
+        This function reads user "settings" from a YAML file, and generate a ``Settings`` class for later use.
+
+        :param filename: The name of the YAML file.
+        :return: A ``Settings`` class.
+        """
+        with open(filename, 'r') as f:
+            return Settings(load(f, Loader=Loader))
+
     def to_yaml_file(self, filename: str):
         if not filename.endswith('.yaml'):
             filename += '.yaml'
         with open(filename, 'w') as f:
             dump(self.maps, f)
-
-
-def from_yaml(filename: str) -> Settings:
-    """
-    This function reads user "settings" from a YAML file, and generate a ``Settings`` class for later use.
-
-    :param filename: The name of the YAML file.
-    :return: A ``Settings`` class.
-    """
-    with open(filename, 'r') as f:
-        return Settings(load(f, Loader=Loader))
 
 
 global energy_unit
