@@ -43,7 +43,7 @@ def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector,
         return static_energies
 
     scaled_q_weights: Vector = q_weights / np.sum(q_weights)
-    vibrational_energies: Vector = np.dot(ho_free_energy(temperature, frequencies).sum(axis=2), scaled_q_weights)
+    vibrational_energies: Vector = np.dot(np.sum(ho_free_energy(temperature, frequencies), axis=2), scaled_q_weights)
     return static_energies + vibrational_energies
 
 
