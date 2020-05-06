@@ -6,6 +6,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+import attr
 from lazy_property import LazyProperty
 from numba import boolean, float64, jit
 import numpy as np
@@ -46,6 +47,7 @@ def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector,
     return static_energies + vibrational_energies
 
 
+@attr.s
 class HOFreeEnergySampler:
     """
     A harmonic oscillator free energy sampler. The differences between ``free_energy`` and ``HOFreeEnergySampler`` are
@@ -63,15 +65,15 @@ class HOFreeEnergySampler:
     :param frequencies: An :math:`n \\times m \\times l` 3D array that represents the frequencies read from a file,
         usually in unit :math:`\\text{cm}^{-1}`.
     """
+    temperature = attr.ib(converter=float)
+    q_weights = attr.ib(converter=np.asfarray)
+    omegas = attr.ib(converter=np.asfarray)
+    _scaled_q_weights = attr.ib(default=q_weights / np.sum(q_weights))
 
-    def __init__(self, temperature: float, q_weights: Vector, frequencies: Array3D):
-        self.temperature = temperature  # Fix temperature and volume, just sample q-points and bands
-        self.q_weights = np.array(q_weights, dtype=float)
-        self.omegas = np.array(frequencies, dtype=float)
-        if not np.all(np.greater_equal(q_weights, 0)):
+    @q_weights.validator
+    def check(self, attribute, value):
+        if not np.all(np.greater_equal(value, 0)):
             raise ValueError('Weights should all be greater equal than 0!')
-        else:
-            self._scaled_q_weights = q_weights / np.sum(q_weights)
 
     def on_q_point(self, i: int) -> Matrix:  # E1(i,m)
         """
@@ -98,7 +100,7 @@ class HOFreeEnergySampler:
         :param i: An integer labeling :math:`i` th volume.
         :return: The accumulated free energy on the :math:`i` th volume.
         """
-        return np.vdot(ho_free_energy(self.temperature, self.omegas[i]).sum(axis=1), self._scaled_q_weights)
+        return np.vdot(np.sum(ho_free_energy(self.temperature, self.omegas[i]), axis=1), self._scaled_q_weights)
 
     @LazyProperty
     def on_all_volumes(self) -> Vector:
@@ -110,4 +112,4 @@ class HOFreeEnergySampler:
         """
         # First calculate free energies on a 3D array, then sum along the third axis (bands),
         # at last contract weights and free energies on all q-points.
-        return np.dot(ho_free_energy(self.temperature, self.omegas).sum(axis=2), self._scaled_q_weights)
+        return np.dot(np.sum(ho_free_energy(self.temperature, self.omegas), axis=2), self._scaled_q_weights)
