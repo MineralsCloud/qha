@@ -174,7 +174,7 @@ class Calculator:
             raise KeyError(
                 "All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!")
 
-        r = FinerGrid(p_min - p_min_modifier, ntv, order=order)
+        r = FinerGrid(p_min - p_min_modifier, ntv, order)
 
         if 'volume_ratio' in d:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes,
