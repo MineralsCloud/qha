@@ -68,12 +68,15 @@ class HOFreeEnergySampler:
     temperature = attr.ib(converter=float)
     q_weights = attr.ib(converter=np.asfarray)
     omegas = attr.ib(converter=np.asfarray)
-    _scaled_q_weights = attr.ib(default=q_weights / np.sum(q_weights))
 
     @q_weights.validator
     def check(self, attribute, value):
         if not np.all(np.greater_equal(value, 0)):
             raise ValueError('Weights should all be greater equal than 0!')
+
+    @property
+    def _scaled_q_weights(self):
+        return self.q_weights / np.sum(self.q_weights)
 
     def on_q_point(self, i: int) -> Matrix:  # E1(i,m)
         """

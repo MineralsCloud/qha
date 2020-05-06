@@ -6,7 +6,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-from qha.basic_io.input_maker import FromQEOutput
+from qha.basic_io.input_maker import InputMaker
 from qha.cli.handler import QHACommandHandler
 
 
@@ -25,9 +25,9 @@ class QHAConverter(QHACommandHandler):
         inp_static = namespace.inp_static
         inp_q_points = namespace.inp_q_points
 
-        converter = FromQEOutput(inp_file_list, inp_static, inp_q_points)
+        converter = InputMaker(inp_file_list, inp_static, inp_q_points)
         converter.read_file_list()
         converter.read_static()
-        converter.read_q_points()
-        converter.read_frequency_files()
-        converter.write_to_file()
+        converter.read_qpoints()
+        converter.read_frequencies()
+        converter.write()

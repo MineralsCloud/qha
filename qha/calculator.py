@@ -184,7 +184,6 @@ class Calculator:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
                 self.volumes, self.vibrational_energy('ry'))
 
-    @LazyProperty
     def vibrational_energy(self, unit: str = 'ry'):
         if unit.lower() == 'ry':
             # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.

@@ -7,7 +7,7 @@ import os
 import pathlib
 import unittest
 
-from qha.basic_io.input_maker import FromQEOutput
+from qha.basic_io.input_maker import InputMaker
 
 
 class TestMakeInput(unittest.TestCase):
@@ -17,13 +17,13 @@ class TestMakeInput(unittest.TestCase):
         os.chdir(self.dir)
 
     def test_make_input(self):
-        converter = FromQEOutput(
+        converter = InputMaker(
             self.dir / 'filelist.yaml', self.dir / 'static', self.dir / 'q_points')
         converter.read_file_list()
         converter.read_static()
-        converter.read_q_points()
-        converter.read_frequency_files()
-        converter.write_to_file(str(self.dir / 'input'))
+        converter.read_qpoints()
+        converter.read_frequencies()
+        converter.write(str(self.dir / 'input'))
         self.assertTrue(filecmp.cmp(self.dir / 'input', self.dir / '../input'))
 
 

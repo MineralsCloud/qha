@@ -25,10 +25,80 @@ except ImportError:
     from yaml import Loader
 
 # ===================== What can be exported? =====================
-__all__ = ['FromQEOutput']
+__all__ = ['InputMaker']
 
 
-class FromQEOutput:
+def read_frequency_file(inp: str) -> Tuple[Vector, Matrix]:
+    """
+    Read Quantum ESPRESSO's output for phonon frequencies. This method is provided for reading only
+    one file.
+
+    :param inp: The name or path of the file.
+    :return: The q-space coordinates of each q-point in the file and corresponding frequencies for each
+        q-point on each band.
+    """
+    text_stream = TextStream(pathlib.Path(inp))
+
+    gen: Iterator[str] = text_stream.generator_telling_position()
+
+    q_coordinates = []
+    frequencies = []
+
+    regex = re.compile(r"nbnd\s*=\s*(\d*),\s*nks=\s*(\d*)")
+
+    offset = None  # Initialization
+    bands_amount = None
+    q_points_amount = None
+
+    for line, offset in gen:
+        if not line.strip():
+            continue
+
+        if 'nbnd' or 'nks' in line:
+            match = regex.search(line)
+
+            if not match:
+                raise RuntimeError(
+                    "The head line '{0}' is not complete! Here 'nbnd' and 'nks' are not found!".format(line))
+            else:
+                bands_amount, q_points_amount = strings_to_integers(
+                    match.groups())
+                break
+
+    gen: Iterator[str] = text_stream.generator_starts_from(offset)
+
+    quotient = bands_amount // 6  # QE splits branches into 6 columns per line
+
+    for line in gen:
+        if not line.strip():
+            continue
+
+        q_coordinates.append(line.split())
+
+        x = np.array([])
+        for _ in range(quotient):
+            line = next(gen)  # Start a new line
+            x = np.hstack((x, line.split()))
+
+        frequencies.append(x)
+
+    q_coordinates = np.array(q_coordinates, dtype=float)
+    frequencies = np.array(frequencies, dtype=float)
+
+    if q_coordinates.shape[0] != q_points_amount:
+        raise RuntimeError(
+            "The number of q-points detected, {0}, is not the same as what specified in head line!".format(
+                q_coordinates.shape[0]))
+
+    if frequencies.shape != (q_points_amount, bands_amount):
+        raise RuntimeError(
+            "The frequencies array shape '{0}' is not the same as '{1}'!".format(
+                frequencies.shape, (q_points_amount, bands_amount)))
+
+    return q_coordinates, frequencies
+
+
+class InputMaker:
     """
     A class that can generate a standard "input" file for the ``qha run`` command if the original data is given by
     Quantum ESPRESSO.
@@ -104,7 +174,7 @@ class FromQEOutput:
         self.volumes = np.array(volumes, dtype=float)
         self.static_energies = np.array(energies, dtype=float)
 
-    def read_q_points(self) -> None:
+    def read_qpoints(self) -> None:
         """
         Read q-points' coordinates and their weights in the Brillouin zone. The q-points' coordinates are supposed to be
         three-dimensional. No other information should be given. If user still wants to,
@@ -138,77 +208,7 @@ class FromQEOutput:
                                       dtype=float)  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
         self.q_weights = np.array(q_weights, dtype=float)
 
-    @staticmethod
-    def read_frequency_file(inp: str) -> Tuple[Vector, Matrix]:
-        """
-        Read Quantum ESPRESSO's output for phonon frequencies. This method is provided for reading only
-        one file.
-
-        :param inp: The name or path of the file.
-        :return: The q-space coordinates of each q-point in the file and corresponding frequencies for each
-            q-point on each band.
-        """
-        text_stream = TextStream(pathlib.Path(inp))
-
-        gen: Iterator[str] = text_stream.generator_telling_position()
-
-        q_coordinates = []
-        frequencies = []
-
-        regex = re.compile(r"nbnd\s*=\s*(\d*),\s*nks=\s*(\d*)")
-
-        offset = None  # Initialization
-        bands_amount = None
-        q_points_amount = None
-
-        for line, offset in gen:
-            if not line.strip():
-                continue
-
-            if 'nbnd' or 'nks' in line:
-                match = regex.search(line)
-
-                if not match:
-                    raise RuntimeError(
-                        "The head line '{0}' is not complete! Here 'nbnd' and 'nks' are not found!".format(line))
-                else:
-                    bands_amount, q_points_amount = strings_to_integers(
-                        match.groups())
-                    break
-
-        gen: Iterator[str] = text_stream.generator_starts_from(offset)
-
-        quotient = bands_amount // 6  # QE splits branches into 6 columns per line
-
-        for line in gen:
-            if not line.strip():
-                continue
-
-            q_coordinates.append(line.split())
-
-            x = np.array([])
-            for _ in range(quotient):
-                line = next(gen)  # Start a new line
-                x = np.hstack((x, line.split()))
-
-            frequencies.append(x)
-
-        q_coordinates = np.array(q_coordinates, dtype=float)
-        frequencies = np.array(frequencies, dtype=float)
-
-        if q_coordinates.shape[0] != q_points_amount:
-            raise RuntimeError(
-                "The number of q-points detected, {0}, is not the same as what specified in head line!".format(
-                    q_coordinates.shape[0]))
-
-        if frequencies.shape != (q_points_amount, bands_amount):
-            raise RuntimeError(
-                "The frequencies array shape '{0}' is not the same as '{1}'!".format(
-                    frequencies.shape, (q_points_amount, bands_amount)))
-
-        return q_coordinates, frequencies
-
-    def read_frequency_files(self) -> None:
+    def read_frequencies(self) -> None:
         """
         Read the phonon frequencies for all files (which are specified in the
         ``frequency_files`` key of the settings file).
@@ -216,11 +216,10 @@ class FromQEOutput:
         frequencies_for_all_files = []
 
         if any(_ is None for _ in (self.q_coordinates, self.q_weights)):  # If any of them is ``None``
-            self.read_q_points()  # Fill these 2 properties
+            self.read_qpoints()  # Fill these 2 properties
 
         for i in range(len(self._frequency_files)):
-            q_coordinates, frequencies = self.read_frequency_file(
-                self._frequency_files[i])
+            q_coordinates, frequencies = read_frequency_file(self._frequency_files[i])
 
             # Here I use `allclose` rather than `array_equal` since they may have very little
             # differences even they are supposed to be the same, because of the digits QE gave.
@@ -233,7 +232,7 @@ class FromQEOutput:
         # Shape: (# volumes, # q-points, # bands on each point)
         self.frequencies = np.array(frequencies_for_all_files)
 
-    def write_to_file(self, outfile='input') -> None:
+    def write(self, outfile='input') -> None:
         """
         Write all data to a file *outfile*, which will be regarded as standard input file for ``qha``.
 
