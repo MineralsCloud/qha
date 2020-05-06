@@ -10,8 +10,9 @@
 
 from typing import Optional, Tuple
 
-from numba import float64, vectorize
+import attr
 import numpy as np
+from numba import float64, vectorize
 
 from qha.fitting import apply_finite_strain_fitting
 from qha.type_aliases import Matrix, Vector
@@ -60,6 +61,7 @@ def get_eulerian_volume(v0, fs):
     return v0 * (2 * fs + 1) ** (-3 / 2)
 
 
+@attr.s
 class VolumeExpander:
     """
     Interpolate volumes on input volumes *in_volumes*, with *ratio* given.
@@ -80,51 +82,18 @@ class VolumeExpander:
     :param in_volumes: An input vector of volumes.
     :param out_volumes_num: Number of output volumes. It should be larger than the number of input volumes.
     :param ratio: The ratio of the upper bounds of expanded volumes with respect to the largest input volume in
-        *in_volumes*. An empirical parameter, better lower than ``1.5``. Otherwise, the later
-        result may not be reliable.
+        *in_volumes*. An empirical parameter, usually between ``1`` and ``1.5``. Otherwise, the result may not be reliable.
     """
+    in_volumes = attr.ib(converter=np.asfarray)
+    out_volumes_num = attr.ib(converter=int)
+    ratio = attr.ib(converter=float)  # FIXME: now `ratio` is not changable?
 
-    def __init__(self, in_volumes: Vector, out_volumes_num: int, ratio: float):
-        self._in_volumes = np.array(in_volumes, dtype=float)
-        self._out_volumes_num = int(out_volumes_num)
-        self._ratio = float(ratio)
-        self._strains = None
-        self._out_volumes = None
-
-    @property
-    def in_volumes(self):
-        """
-        :return: Input volume vector, read only.
-        """
-        return self._in_volumes
-
-    @property
-    def ratio(self) -> float:
-        """
-        An empirical parameter, usually larger than ``1`` and lower than ``1.5``.
-
-        :return: A floating-point number described in the algorithm above.
-        """
-        return self._ratio
-
-    @ratio.setter
-    def ratio(self, value: float):
-        self._ratio = float(value)
-
-    @property
-    def out_volumes_num(self) -> int:
-        """
-        :return: The number of output volumes user wants, usually greater than the number of input volumes.
-        """
-        return self._out_volumes_num
-
-    @out_volumes_num.setter
-    def out_volumes_num(self, value: int):
+    @out_volumes_num.validator
+    def check(self, attribute, value: int):
         if not isinstance(value, int):
             raise TypeError("The argument *out_volumes_num* must be an integer!")
         if value <= 0:
-            raise ValueError("The argument *out_volumes_num* must be an integer larger than 0!")
-        self._out_volumes_num = value
+            raise ValueError("The argument *out_volumes_num* must be positive!")
 
     @property
     def strains(self) -> Optional[Vector]:
@@ -135,7 +104,8 @@ class VolumeExpander:
         :return: A vector of strains if method ``interpolate_volumes`` is called, otherwise ``None``
             is returned.
         """
-        return self._strains
+        s_upper, s_lower = self._upper_lower_bounds()
+        return np.linspace(s_lower, s_upper, self.out_volumes_num)
 
     @property
     def out_volumes(self) -> Optional[Vector]:
@@ -145,20 +115,20 @@ class VolumeExpander:
         :return: If method ``interpolate_volumes`` is called, a vector of output volumes is returned, otherwise ``None``
             is returned.
         """
-        return self._out_volumes
+        v_max = np.max(self.in_volumes)
+        return get_eulerian_volume(v_max, self.strains)
 
-    def interpolate_volumes(self) -> None:
+    def _upper_lower_bounds(self):
         """
         The algorithm is described above. This method should be called immediately after an instance of the
         class is created, unless user is clear what is being done.
         """
-        v_min, v_max = np.min(self._in_volumes), np.max(self._in_volumes)
+        v_min, v_max = np.min(self.in_volumes), np.max(self.in_volumes)
         # r = v_upper / v_max = v_min / v_lower
-        v_lower, v_upper = v_min / self._ratio, v_max * self._ratio
+        v_lower, v_upper = v_min / self.ratio, v_max * self.ratio
         # The *v_max* is a reference value here.
         s_upper, s_lower = get_eulerian_strain(v_max, v_lower), get_eulerian_strain(v_max, v_upper)
-        self._strains = np.linspace(s_lower, s_upper, self._out_volumes_num)
-        self._out_volumes = get_eulerian_volume(v_max, self._strains)
+        return s_upper, s_lower
 
 
 class FinerGrid:
@@ -191,7 +161,6 @@ class FinerGrid:
         :return: The suitable `ratio` for further calculation.
         """
         vr = VolumeExpander(volumes, self.dense_volumes_amount, initial_ratio)
-        vr.interpolate_volumes()
         strains, finer_volumes = vr.strains, vr.out_volumes
         eulerian_strain = get_eulerian_strain(volumes[0], volumes)
         f_v_tmax = np.poly1d(np.polyfit(eulerian_strain, free_energies, self.option))(strains)
@@ -225,8 +194,7 @@ class FinerGrid:
         self._ratio = new_ratio
 
         eulerian_strain = get_eulerian_strain(volumes[0], volumes)
-        vr = VolumeExpander(in_volumes=volumes, out_volumes_num=self.dense_volumes_amount, ratio=new_ratio)
-        vr.interpolate_volumes()  # As mentioned in ``VolumeExpander`` doc, call this method immediately.
+        vr = VolumeExpander(volumes, self.dense_volumes_amount, new_ratio)
         strains, dense_volumes = vr.strains, vr.out_volumes
         dense_free_energies = apply_finite_strain_fitting(eulerian_strain, free_energies, strains, self.option)
         return dense_volumes, dense_free_energies, new_ratio
