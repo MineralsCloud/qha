@@ -20,7 +20,7 @@ from qha.basic_io.out import (
     save_x_tv,
 )
 from qha.calculator import Calculator, DifferentPhDOSCalculator, SamePhDOSCalculator
-from qha.settings import from_yaml
+from qha.settings import Settings
 
 from .handler import QHACommandHandler
 
@@ -41,7 +41,7 @@ class QHARunner(QHACommandHandler):
 
         user_settings = {}
         file_settings = namespace.settings
-        settings = from_yaml(file_settings)
+        settings = Settings.from_yaml(file_settings)
 
         for key in ('input', 'calculation',
                     'thermodynamic_properties', 'static_only', 'energy_unit',
