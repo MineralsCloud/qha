@@ -6,13 +6,13 @@
     finite strain EoS fitting for ``grid_interpolation`` module's use.
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
-
 from typing import Optional
 
 import numpy as np
 from numpy.linalg import inv
 
-from qha.type_aliases import Matrix, Vector
+from qha.type_aliases import Matrix
+from qha.type_aliases import Vector
 
 # ===================== What can be exported? =====================
 __all__ = ["polynomial_least_square_fitting", "apply_finite_strain_fitting"]
