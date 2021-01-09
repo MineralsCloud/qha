@@ -39,10 +39,10 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
 
 
 def apply_finite_strain_fitting(
-    strains_sparse: Vector,
-    free_energies: Matrix,
-    strains_dense: Vector,
-    order: Optional[int] = 3,
+        strains_sparse: Vector,
+        free_energies: Matrix,
+        strains_dense: Vector,
+        order: Optional[int] = 3,
 ):
     """
     Calculate the free energies :math:`F(T, V)` for some strains (*strains_dense*), with the
@@ -59,13 +59,12 @@ def apply_finite_strain_fitting(
     """
     temperature_amount, _ = free_energies.shape
     dense_volume_amount = len(strains_dense)
-    f_v_t = np.empty(
-        (temperature_amount, dense_volume_amount)
-    )  # Initialize the F(T,V) array
+    f_v_t = np.empty((temperature_amount,
+                      dense_volume_amount))  # Initialize the F(T,V) array
 
     for i in range(temperature_amount):
-        _, f_i = polynomial_least_square_fitting(
-            strains_sparse, free_energies[i], strains_dense, order
-        )
+        _, f_i = polynomial_least_square_fitting(strains_sparse,
+                                                 free_energies[i],
+                                                 strains_dense, order)
         f_v_t[i] = f_i
     return f_v_t
