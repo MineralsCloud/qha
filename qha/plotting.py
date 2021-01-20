@@ -6,14 +6,15 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
-import matplotlib
+import pathlib
 
-matplotlib.use('Agg')
+import matplotlib
 import matplotlib.pylab as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import pathlib
-import numpy as np
+
+matplotlib.use('Agg')
 
 # ===================== What can be exported? =====================
 __all__ = ['Plotter']
