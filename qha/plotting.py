@@ -156,36 +156,38 @@ class Plotter:
         self.save_fig(ax, fig_name)
 
     def fv_pv(self):
-        temperature_sample: list = self.user_settings['T4FV']
+        temperature_sample: list = list(map(float, self.user_settings['T4FV']))
         f_min = []
         v_f_min = []
 
         f_fitted_volume = self.user_settings['f_tv_fitted']
         volume_tv = pd.read_csv(f_fitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
-        volume_tv.index = volume_tv.index.map(str)
+        volume_tv.index = volume_tv.index.map(float)
         volume_vt = volume_tv.T
         volume_vt.index = volume_vt.index.map(float)
-        volume_t = volume_vt[temperature_sample]
+        volume_t = volume_vt.loc[:, volume_vt.columns.isin(temperature_sample)]
         volume_v_grid = np.asarray(volume_vt.index, float)
 
         f_nonfitted_volume = self.user_settings['f_tv_non_fitted']
         volume_nonfitted_tv = pd.read_csv(f_nonfitted_volume, sep='\s+', index_col='T(K)\V(A^3)')
-        volume_nonfitted_tv.index = volume_nonfitted_tv.index.map(str)
+        volume_nonfitted_tv.index = volume_nonfitted_tv.index.map(float)
         volume_nonfitted_vt = volume_nonfitted_tv.T
         volume_nonfitted_vt.index = volume_nonfitted_vt.index.map(float)
-        volume_nonfitted_t = volume_nonfitted_vt[temperature_sample]
+        volume_nonfitted_t = volume_nonfitted_vt.loc[:, volume_nonfitted_vt.columns.isin(temperature_sample)]
 
         f_p_volume = self.user_settings['p_tv_gpa']
         p_volume_tv = pd.read_csv(f_p_volume, sep='\s+', index_col='T(K)\V(A^3)')
-        p_volume_tv.index = p_volume_tv.index.map(str)
+        p_volume_tv.index = p_volume_tv.index.map(float)
         p_volume_vt = p_volume_tv.T
         p_volume_vt.index = p_volume_vt.index.map(float)
-        p_volume_t = p_volume_vt[temperature_sample]
+        p_volume_t = p_volume_vt.loc[:, p_volume_vt.columns.isin(temperature_sample)]
 
         # Get the 'V0' and 'E0' for selected Temperatures
         for t in temperature_sample:
-            f_min.append(float(volume_vt[t].min()))
-            v_f_min.append(float(volume_vt[t].idxmin()))
+            f_min.append(volume_vt.loc[:, volume_vt.columns == t].min().values)
+            v_f_min.append(volume_vt.loc[:, volume_vt.columns == t].idxmin().values)
+
+        f_min, v_f_min = np.asfarray(f_min), np.asfarray(v_f_min)
 
         self.plot_to_file()
 
