@@ -21,9 +21,9 @@ def save_to_output(fn_output, text):
 def save_x_tp(df, t, desired_pressures_gpa, p_sample_gpa, outfile_name):
     # To fix the last 2 temperature points of Cp is not accurate, we added 4 temperature points,
     # Now to get rid of the added temperature points before saving calculated properties into files.
-    df = pd.DataFrame(df, index=t, columns=desired_pressures_gpa)[:-4]
+    df = pd.DataFrame(df, index=t, columns=desired_pressures_gpa).iloc[:-4, :]
     df.columns.name = 'T(K)\P(GPa)'
-    sample = df[p_sample_gpa]
+    sample = df.loc[:, df.columns.isin(p_sample_gpa)]
     with open(outfile_name, 'w') as f:
         f.write(sample.to_string())
 
@@ -33,7 +33,7 @@ def save_x_pt(df, t, desired_pressures_gpa, t_sample, outfile_name):
     # Now to get rid of the added temperature points before saving calculated properties into files.
     df = pd.DataFrame(df[:-4].T, index=desired_pressures_gpa, columns=t[:-4])
     df.columns.name = 'P(GPa)\T(K)'
-    sample = df[t_sample]
+    sample = df.loc[:, df.columns.isin(t_sample)]
     with open(outfile_name, 'w') as f:
         f.write(sample.to_string())
 
@@ -41,15 +41,15 @@ def save_x_pt(df, t, desired_pressures_gpa, t_sample, outfile_name):
 def save_x_vt(x, t, volume_grid, t_sample, outfile_name):
     df = pd.DataFrame(x.T, index=volume_grid, columns=t)
     df.columns.name = 'V(A^3)\T(K)'
-    sample = df[t_sample]
+    sample = df.loc[:, df.columns.isin(t_sample)]
     with open(outfile_name, 'w') as f:
         f.write(sample.to_string())
 
 
 def save_x_tv(x, t, volume_grid, t_sample, outfile_name):
-    df = pd.DataFrame(x, index=t, columns=volume_grid)[:-4]
+    df = pd.DataFrame(x, index=t, columns=volume_grid).iloc[:-4, :]
     df.columns.name = 'T(K)\V(A^3)'
-    sample = df.T[t_sample[:-4]].T
+    sample = df.loc[df.index.isin(t_sample[:-4]), :]
     with open(outfile_name, 'w') as f:
         f.write(sample.to_string())
 
