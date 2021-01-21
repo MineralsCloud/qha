@@ -118,11 +118,11 @@ class PartitionFunction:
         :return: A matrix, the partition function of each configuration of each volume.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
+        with mpmath.workprec(self.precision):
             # shape = (# of configurations, # of volumes for each configuration)
             exp = np.vectorize(bigfloat.exp)
             return exp(-self.aligned_free_energies_for_each_configuration / (K * self.temperature))
@@ -139,13 +139,13 @@ class PartitionFunction:
         :return: A vector, the partition function of each volume.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
+        with mpmath.workprec(self.precision):
             # shape = (# of volumes,)
-            return np.array([bigfloat.exp(d) for d in
+            return np.array([mpmath.exp(d) for d in
                              logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
                                        axis=1, b=self.degeneracies)])
 
@@ -160,10 +160,10 @@ class PartitionFunction:
         :return: The free energy on a temperature-volume grid.
         """
         try:
-            import bigfloat
+            import mpmath
         except ImportError:
-            raise ImportError("Install ``bigfloat`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
 
-        with bigfloat.precision(self.precision):
-            log_z = np.array([bigfloat.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
+        with mpmath.workprec(self.precision):
+            log_z = np.array([mpmath.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
         return -K * self.temperature * log_z
