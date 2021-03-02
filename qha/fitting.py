@@ -31,8 +31,7 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     """
     order += 1  # The definition of order in ``numpy.vander`` is different from the order in finite strain by one.
     xx = np.vander(xs, order, increasing=True)  # This will make a Vandermonde matrix that will be used in EoS fitting.
-    xx_t = xx.T  # Transpose the matrix.
-    a = inv(xx_t @ xx) @ xx_t @ ys  # a = (X^T . X)^{-1} . X^T . ys
+    a, _, _, _ = np.lstsq(xx, ys)
     new_y = np.vander(new_xs, order, increasing=True) @ a
     return a, new_y
 
