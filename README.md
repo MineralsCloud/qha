@@ -37,7 +37,7 @@ $ pip install qha
 
 ### Dependencies
 
-- [mpmath](http://mpmath.org/)
+- [mpmath](https://mpmath.org/)
 - [lazy-property](https://github.com/jackmaney/lazy-property)
 - [matplotlib](https://matplotlib.org)
 - [Numba](http://numba.pydata.org)

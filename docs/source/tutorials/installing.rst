@@ -20,7 +20,7 @@ Our supported platforms are:
 
 Dependencies
 ------------
-- `mpmath <http://mpmath.org/>`_
+- `mpmath <https://mpmath.org>`_
 - `lazy-property <https://github.com/jackmaney/lazy-property>`_
 - `matplotlib <https://matplotlib.org>`_ [#m]_
 - `Numba <http://numba.pydata.org>`_
