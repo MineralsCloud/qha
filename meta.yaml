@@ -1,0 +1,29 @@
+package:
+  name: qha
+  version: "1.0.20"
+
+source:
+  git_url: https://github.com/MineralsCloud/qha.git
+  git_rev: "1.0.20"
+
+build:
+  number: 3
+  entry_points:
+    - qha = qha.cli:main
+
+requirements:
+  run:
+    - python
+    - lazy_property
+    - numba
+    - mpmath
+    - numpy
+    - pandas
+    - scientific-string
+    - scipy
+    - text-stream
+    - pyyaml
+    - matplotlib
+    - seaborn
+about:
+  summary: A Python package for calculating thermodynamic properties under quasi-harmonic approximation, using data from ab-initio calculations
