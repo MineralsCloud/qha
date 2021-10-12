@@ -189,7 +189,11 @@ class FromQEOutput:
             x = np.array([])
             for _ in range(quotient):
                 line = next(gen)  # Start a new line
-                x = np.hstack((x, line.split()))
+                # Sometimes QE prints negative numbers that coalesce with the previous one,
+                # so we need to split not only spaces but also minus signs
+                # Regex from https://stackoverflow.com/a/30858977/3260253
+                freqs = list(filter(lambda s: s, re.split(r'\s+|(?<!\s)(?=-)', line)))
+                x = np.hstack((x, freqs))
 
             frequencies.append(x)
 
