@@ -1,10 +1,10 @@
 package:
   name: qha
-  version: "1.0.20"
+  version: "1.0.21"
 
 source:
   git_url: https://github.com/MineralsCloud/qha.git
-  git_rev: "1.0.20"
+  git_rev: "1.0.21"
 
 build:
   number: 3
