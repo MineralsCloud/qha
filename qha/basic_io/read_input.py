@@ -13,7 +13,7 @@ from typing import Iterator, Union, Tuple
 
 import numpy as np
 from scientific_string import strings_to_integers
-from text_stream import TextStream
+from qha.basic_io.text_stream import TextStream
 
 from qha.type_aliases import Vector, Array3D
 

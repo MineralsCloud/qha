@@ -14,7 +14,7 @@ from typing import Iterator, List, Optional, Tuple
 
 import numpy as np
 from scientific_string import strings_to_integers
-from text_stream import TextStream
+from qha.basic_io.text_stream import TextStream
 from yaml import load
 
 from qha.type_aliases import Matrix, Vector
