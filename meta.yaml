@@ -23,7 +23,7 @@ requirements:
     - pip
     - python >=3.6
   run:
-    - lazy_property
+    - lazy-property
     - matplotlib
     - mpmath
     - numba
@@ -31,10 +31,8 @@ requirements:
     - pandas
     - python
     - pyyaml
-    - scientific-string
     - scipy
     - seaborn
-    - text-stream
     - python >=3.6
 
 test:
