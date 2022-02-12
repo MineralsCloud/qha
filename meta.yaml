@@ -16,18 +16,21 @@ build:
   number: 3
   entry_points:
     - qha = qha.cli:main
-  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
+  build:
+    - {{ compiler('fortran') }}
+    - {{ compiler('c') }}
   host:
     - pip
     - python >=3.6
+    - numpy >=1.18,<1.22
   run:
     - lazy-property
     - matplotlib
     - mpmath
     - numba
-    - numpy
+    - numpy >=1.18,<1.22
     - pandas
     - python
     - pyyaml
