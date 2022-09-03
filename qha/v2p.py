@@ -68,9 +68,11 @@ def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Mat
 
         for j in range(desired_pressures_amount):
             k = int(rs[j])
+            # Interpolate pressures around desired pressure, x1-x4 in `_lagrange4`
             x1, x2, x3, x4 = extended_p[i, k - 1:k + 3]
+            # Interpolate func, f1-f4 in `_lagrange4`
             f1, f2, f3, f4 = extended_f[i, k - 1:k + 3]
-
+            # Evaluate func at desired pressure
             result[i, j] = _lagrange4(
                 desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4)
     return result
