@@ -13,28 +13,27 @@ source:
 
 build:
   noarch: python
-  number: 3
+  number: 0
   entry_points:
     - qha = qha.cli:main
-  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
   host:
     - pip
     - python >=3.6
+    - numpy >=1.18,<1.22
   run:
-    - lazy_property
+    - lazy-property
     - matplotlib
     - mpmath
     - numba
-    - numpy
+    - numpy >=1.18,<1.22
     - pandas
     - python
     - pyyaml
-    - scientific-string
+    # - scientific-string
     - scipy
-    - seaborn
-    - text-stream
+    # - text-stream
     - python >=3.6
 
 test:
@@ -48,7 +47,7 @@ test:
 
 about:
   home: https://github.com/MineralsCloud/qha
-  license: "GNU General Public v3 (GPLv3)"
+  license: GPL-2.0-or-later
   license_family: GPL3
   license_file: LICENSE.txt
   summary: A Python package for calculating thermodynamic properties under quasi-harmonic approximation, using data from ab-initio calculations
