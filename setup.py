@@ -56,7 +56,6 @@ setup(name='qha',
           'text-stream',
           'pyyaml',
           'matplotlib',
-          'seaborn',
       ],
       packages=[
           'qha',
