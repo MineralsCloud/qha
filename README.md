@@ -208,3 +208,6 @@ This folder conations an example to perform the single-configuration calculation
 
 The official documentation is hosted on our [GitHub page](https://mineralscloud.github.io/qha/).
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MineralsCloud/qha&type=Date)](https://star-history.com/#MineralsCloud/qha&Date)
