@@ -76,8 +76,6 @@ If you want to plot your results, in the same folder, run
 $ qha plot /path/to/settings.yaml
 ```
 
-
-
 ## Structure of the `qha` package
 
 The `qha` source code consists of three major parts.
@@ -126,7 +124,7 @@ This main folder contains three folders, license file, readme file, and setup fi
 
 `qha/v2p.py`: Contain the function `v2p` used to convert calculated properties on $(T, V)$ grid to $(T, P)$ grid;
 
-`qha/input_maker.py`: Generate the input file for `qha` from results obtained from *ab initio* calculation;
+`qha/input_maker.py`: Generate the input file for `qha` from results obtained from _ab initio_ calculation;
 
 `qha/out.py`: Functions used to write calculated properties into files.
 
