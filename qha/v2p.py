@@ -7,7 +7,6 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-import numba
 import numpy as np
 
 from qha.tools import vectorized_find_nearest
@@ -17,7 +16,6 @@ from qha.type_aliases import Matrix, Vector
 __all__ = ["v2p"]
 
 
-@numba.jit(nopython=True, parallel=True)
 def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     """
     A third-order Lagrange polynomial function. Given 4 points for interpolation:

@@ -10,7 +10,6 @@
 from typing import Callable, Optional
 
 import numpy as np
-from numba import float64, guvectorize, int64, jit, vectorize
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calculate_eulerian_strain
@@ -109,7 +108,6 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     return f
 
 
-@jit(nopython=True, nogil=True, cache=True)
 def find_nearest(array: Vector, value: Scalar) -> int:
     """
     Given an *array* , and given a *value* , returns an index ``j`` such that *value* is between ``array[j]``
@@ -152,7 +150,6 @@ def find_nearest(array: Vector, value: Scalar) -> int:
     return j_low
 
 
-@guvectorize([(float64[:], float64[:], int64[:])], "(m),(n)->(n)")
 def vectorized_find_nearest(array: Vector, values: Vector, result: Vector):
     """
     A vectorized version of function ``find_nearest``.
