@@ -17,8 +17,16 @@ from qha.grid_interpolation import calculate_eulerian_strain
 from qha.type_aliases import Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
-__all__ = ['find_nearest', 'vectorized_find_nearest', 'lagrange3', 'lagrange4', 'is_monotonic_decreasing',
-           'is_monotonic_increasing', 'arange', 'calibrate_energy_on_reference']
+__all__ = [
+    "find_nearest",
+    "vectorized_find_nearest",
+    "lagrange3",
+    "lagrange4",
+    "is_monotonic_decreasing",
+    "is_monotonic_increasing",
+    "arange",
+    "calibrate_energy_on_reference",
+]
 
 
 def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
@@ -33,12 +41,12 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
         :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
     """
     if not len(xs) == len(ys) == 4:
-        raise ValueError('The *xs* and *ys* must both have length 4!')
+        raise ValueError("The *xs* and *ys* must both have length 4!")
 
     x0, x1, x2, x3 = xs
     y0, y1, y2, y3 = ys
 
-    @vectorize(["float64(float64)"], target='parallel')
+    @vectorize(["float64(float64)"], target="parallel")
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.
@@ -46,10 +54,12 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
         :param x: The variable on which the Lagrange polynomial is going to be applied.
         :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
         """
-        return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
-               (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
-               (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
-               (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
+        return (
+            (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0
+            + (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1
+            + (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2
+            + (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
+        )
 
     return f
 
@@ -74,15 +84,15 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
         :math:`[\\text{min}(xs), \\text{max}(xs)]`, where :math:`xs` denotes the argument *xs*.
     """
     if not len(xs) == len(ys) == 3:
-        raise ValueError('The *xs* and *ys* must both have length 3!')
+        raise ValueError("The *xs* and *ys* must both have length 3!")
 
     if len(set(xs)) < 3:  # The ``set`` will remove duplicated items.
-        raise ValueError('Some elements of *xs* are duplicated!')
+        raise ValueError("Some elements of *xs* are duplicated!")
 
     x0, x1, x2 = xs
     y0, y1, y2 = ys
 
-    @vectorize(["float64(float64)"], target='parallel')
+    @vectorize(["float64(float64)"], target="parallel")
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.
@@ -90,9 +100,11 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
         :param x: The variable on which the Lagrange polynomial is going to be applied.
         :return: The value of the Lagrange polynomial on :math:`x`, i.e., :math:`L(x)`.
         """
-        return (x - x1) * (x - x2) / (x0 - x1) / (x0 - x2) * y0 + \
-               (x - x0) * (x - x2) / (x1 - x0) / (x1 - x2) * y1 + \
-               (x - x0) * (x - x1) / (x2 - x0) / (x2 - x1) * y2
+        return (
+            (x - x1) * (x - x2) / (x0 - x1) / (x0 - x2) * y0
+            + (x - x0) * (x - x2) / (x1 - x0) / (x1 - x2) * y1
+            + (x - x0) * (x - x1) / (x2 - x0) / (x2 - x1) * y2
+        )
 
     return f
 
@@ -140,7 +152,7 @@ def find_nearest(array: Vector, value: Scalar) -> int:
     return j_low
 
 
-@guvectorize([(float64[:], float64[:], int64[:])], '(m),(n)->(n)')
+@guvectorize([(float64[:], float64[:], int64[:])], "(m),(n)->(n)")
 def vectorized_find_nearest(array: Vector, values: Vector, result: Vector):
     """
     A vectorized version of function ``find_nearest``.
@@ -153,10 +165,9 @@ def vectorized_find_nearest(array: Vector, values: Vector, result: Vector):
     n: int = len(array)
 
     if len(values) != len(result):
-        raise ValueError('The *values* and *result* arguments should have same length!')
+        raise ValueError("The *values* and *result* arguments should have same length!")
 
     for i in range(len(values)):
-
         if values[i] <= array[0]:
             result[i] = 0
         elif values[i] >= array[-1]:
@@ -230,8 +241,11 @@ def is_monotonic_increasing(array: Vector) -> bool:
     return np.all(dx >= 0)
 
 
-def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_before_calibration: Matrix,
-                                  order: Optional[int] = 3):
+def calibrate_energy_on_reference(
+    volumes_before_calibration: Matrix,
+    energies_before_calibration: Matrix,
+    order: Optional[int] = 3,
+):
     """
     In multi-configuration system calculation, the volume set of each calculation may vary a little,
     This function would make the volume set of the first configuration (normally, the most populated configuration)
@@ -248,17 +262,22 @@ def calibrate_energy_on_reference(volumes_before_calibration: Matrix, energies_b
 
     energies_after_calibration = np.empty(volumes_before_calibration.shape)
     for i in range(configurations_amount):
-        strains_before_calibration = calculate_eulerian_strain(volumes_before_calibration[i, 0],
-                                                               volumes_before_calibration[i])
-        strains_after_calibration = calculate_eulerian_strain(volumes_before_calibration[i, 0], volumes_for_reference)
-        _, energies_after_calibration[i, :] = polynomial_least_square_fitting(strains_before_calibration,
-                                                                              energies_before_calibration[i],
-                                                                              strains_after_calibration,
-                                                                              order=order)
+        strains_before_calibration = calculate_eulerian_strain(
+            volumes_before_calibration[i, 0], volumes_before_calibration[i]
+        )
+        strains_after_calibration = calculate_eulerian_strain(
+            volumes_before_calibration[i, 0], volumes_for_reference
+        )
+        _, energies_after_calibration[i, :] = polynomial_least_square_fitting(
+            strains_before_calibration,
+            energies_before_calibration[i],
+            strains_after_calibration,
+            order=order,
+        )
     return energies_after_calibration
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
 
     doctest.testmod()

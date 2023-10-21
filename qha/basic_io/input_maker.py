@@ -25,7 +25,7 @@ except ImportError:
     from yaml import Loader
 
 # ===================== What can be exported? =====================
-__all__ = ['FromQEOutput']
+__all__ = ["FromQEOutput"]
 
 
 class FromQEOutput:
@@ -68,12 +68,12 @@ class FromQEOutput:
         """
         Read all the files' names for frequency files given by Quantum ESPRESSO program ``matdyn.x``.
         """
-        with open(self._inp_file_list, 'r') as f:
+        with open(self._inp_file_list, "r") as f:
             d = load(f, Loader=Loader)
 
-        self.formula_unit_number = int(d['formula_unit_number'])
-        self.comment: str = d['comment']
-        self._frequency_files: List[str] = d['frequency_files']
+        self.formula_unit_number = int(d["formula_unit_number"])
+        self.comment: str = d["comment"]
+        self._frequency_files: List[str] = d["frequency_files"]
 
     def read_static(self) -> None:
         """
@@ -84,16 +84,22 @@ class FromQEOutput:
         volumes = []
         energies = []
 
-        with open(self._inp_static, 'r') as f:
+        with open(self._inp_static, "r") as f:
             print(
-                "Reading static data: emtpy lines or lines starting with '#' will be ignored!")
+                "Reading static data: emtpy lines or lines starting with '#' will be ignored!"
+            )
 
             for line in f:
-                if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
+                if not line.strip() or line.startswith(
+                    "#"
+                ):  # Ignore empty line or comment line
                     continue
 
-                match = re.match(r"p\s*=\s*(-?\d*\.?\d*)\s*v\s*=\s*(-?\d*\.?\d*)\s*e\s*=\s*(-?\d*\.?\d*)", line,
-                                 flags=re.IGNORECASE)
+                match = re.match(
+                    r"p\s*=\s*(-?\d*\.?\d*)\s*v\s*=\s*(-?\d*\.?\d*)\s*e\s*=\s*(-?\d*\.?\d*)",
+                    line,
+                    flags=re.IGNORECASE,
+                )
                 if match is None:
                     continue
 
@@ -113,29 +119,35 @@ class FromQEOutput:
         q_coordinates = []
         q_weights = []
 
-        with open(self._inp_q_points, 'r') as f:
+        with open(self._inp_q_points, "r") as f:
             print(
-                "Reading q-points file: emtpy lines or lines starting with '#' will be ignored!")
+                "Reading q-points file: emtpy lines or lines starting with '#' will be ignored!"
+            )
 
             regex = re.compile(
-                r"\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)")
+                r"\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)\s*(-?\d*\.?\d*)"
+            )
 
             for line in f:
-                if not line.strip() or line.startswith('#'):  # Ignore empty line or comment line
+                if not line.strip() or line.startswith(
+                    "#"
+                ):  # Ignore empty line or comment line
                     continue
 
                 match = regex.match(line)
                 if not regex.match(line):
                     raise RuntimeError(
-                        "Unknown line! Should be 3 coordinates and 1 weight, other lines should be commented with '#'.")
+                        "Unknown line! Should be 3 coordinates and 1 weight, other lines should be commented with '#'."
+                    )
                 else:
                     g = match.groups()
                     q_coordinates.append(g[0:3])
                     # TODO: Check possible bug, what if the regex match fails
                     q_weights.append(g[3])
 
-        self.q_coordinates = np.array(q_coordinates,
-                                      dtype=float)  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
+        self.q_coordinates = np.array(
+            q_coordinates, dtype=float
+        )  # TODO: Possible bug, ``np.array([])`` is regarded as ``False``
         self.q_weights = np.array(q_weights, dtype=float)
 
     @staticmethod
@@ -165,15 +177,17 @@ class FromQEOutput:
             if not line.strip():
                 continue
 
-            if 'nbnd' or 'nks' in line:
+            if "nbnd" or "nks" in line:
                 match = regex.search(line)
 
                 if not match:
                     raise RuntimeError(
-                        "The head line '{0}' is not complete! Here 'nbnd' and 'nks' are not found!".format(line))
+                        "The head line '{0}' is not complete! Here 'nbnd' and 'nks' are not found!".format(
+                            line
+                        )
+                    )
                 else:
-                    bands_amount, q_points_amount = strings_to_integers(
-                        match.groups())
+                    bands_amount, q_points_amount = strings_to_integers(match.groups())
                     break
 
         gen: Iterator[str] = text_stream.generator_starts_from(offset)
@@ -192,7 +206,7 @@ class FromQEOutput:
                 # Sometimes QE prints negative numbers that coalesce with the previous one,
                 # so we need to split not only spaces but also minus signs
                 # Regex from https://stackoverflow.com/a/30858977/3260253
-                freqs = list(filter(lambda s: s, re.split(r'\s+|(?<!\s)(?=-)', line)))
+                freqs = list(filter(lambda s: s, re.split(r"\s+|(?<!\s)(?=-)", line)))
                 x = np.hstack((x, freqs))
 
             frequencies.append(x)
@@ -203,12 +217,16 @@ class FromQEOutput:
         if q_coordinates.shape[0] != q_points_amount:
             raise RuntimeError(
                 "The number of q-points detected, {0}, is not the same as what specified in head line!".format(
-                    q_coordinates.shape[0]))
+                    q_coordinates.shape[0]
+                )
+            )
 
         if frequencies.shape != (q_points_amount, bands_amount):
             raise RuntimeError(
                 "The frequencies array shape '{0}' is not the same as '{1}'!".format(
-                    frequencies.shape, (q_points_amount, bands_amount)))
+                    frequencies.shape, (q_points_amount, bands_amount)
+                )
+            )
 
         return q_coordinates, frequencies
 
@@ -219,25 +237,30 @@ class FromQEOutput:
         """
         frequencies_for_all_files = []
 
-        if any(_ is None for _ in (self.q_coordinates, self.q_weights)):  # If any of them is ``None``
+        if any(
+            _ is None for _ in (self.q_coordinates, self.q_weights)
+        ):  # If any of them is ``None``
             self.read_q_points()  # Fill these 2 properties
 
         for i in range(len(self._frequency_files)):
             q_coordinates, frequencies = self.read_frequency_file(
-                self._frequency_files[i])
+                self._frequency_files[i]
+            )
 
             # Here I use `allclose` rather than `array_equal` since they may have very little
             # differences even they are supposed to be the same, because of the digits QE gave.
             if not np.allclose(q_coordinates, self.q_coordinates):
-                warnings.warn("The q-points' coordinates are different from what specified in the q-point file!",
-                              stacklevel=1)
+                warnings.warn(
+                    "The q-points' coordinates are different from what specified in the q-point file!",
+                    stacklevel=1,
+                )
 
             frequencies_for_all_files.append(frequencies)
 
         # Shape: (# volumes, # q-points, # bands on each point)
         self.frequencies = np.array(frequencies_for_all_files)
 
-    def write_to_file(self, outfile='input') -> None:
+    def write_to_file(self, outfile="input") -> None:
         """
         Write all data to a file *outfile*, which will be regarded as standard input file for ``qha``.
 
@@ -246,31 +269,47 @@ class FromQEOutput:
         path = pathlib.Path(outfile)
         if path.is_file():
             print(
-                "Old '{0}' file found, I will backup it before continue.".format(outfile))
-            path.rename(outfile + '.backup')
+                "Old '{0}' file found, I will backup it before continue.".format(
+                    outfile
+                )
+            )
+            path.rename(outfile + ".backup")
 
-        with open(outfile, 'w') as f:
+        with open(outfile, "w") as f:
             f.write("# {0}\n".format(self.comment))
-            f.write('# The file contains frequencies and weights at the END!\n')
+            f.write("# The file contains frequencies and weights at the END!\n")
             f.write(
-                '# Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n')
+                "# Number of volumes (nv), q-vectors (nq), normal mode (np), formula units(nm)\n"
+            )
             # TODO: Possible bug introduced in formatting
-            f.write("{0} {1} {2} {3}\n\n".format(len(self.volumes), len(self.q_weights),
-                                                 self.frequencies.shape[-1], self.formula_unit_number))
+            f.write(
+                "{0} {1} {2} {3}\n\n".format(
+                    len(self.volumes),
+                    len(self.q_weights),
+                    self.frequencies.shape[-1],
+                    self.formula_unit_number,
+                )
+            )
 
             for i in range(len(self.volumes)):
-                f.write("P={0:20.10f} V={1:20.10f} E={2:20.10f}\n".format(self.pressures[i], self.volumes[i],
-                                                                          self.static_energies[i]))
+                f.write(
+                    "P={0:20.10f} V={1:20.10f} E={2:20.10f}\n".format(
+                        self.pressures[i], self.volumes[i], self.static_energies[i]
+                    )
+                )
 
                 for j in range(len(self.q_weights)):
-                    f.write("{0:12.8f} {1:12.8f} {2:12.8f}\n".format(
-                        *self.q_coordinates[j]))
+                    f.write(
+                        "{0:12.8f} {1:12.8f} {2:12.8f}\n".format(*self.q_coordinates[j])
+                    )
 
                     for k in range(self.frequencies.shape[-1]):
-                        f.write("{0:20.10f}\n".format(
-                            self.frequencies[i, j, k]))
+                        f.write("{0:20.10f}\n".format(self.frequencies[i, j, k]))
 
-            f.write('\nweight\n')
+            f.write("\nweight\n")
             for j in range(len(self.q_weights)):
-                f.write("{0:12.8f} {1:12.8f} {2:12.8f} {3:12.8f}\n".format(
-                    *self.q_coordinates[j], self.q_weights[j]))
+                f.write(
+                    "{0:12.8f} {1:12.8f} {2:12.8f} {3:12.8f}\n".format(
+                        *self.q_coordinates[j], self.q_weights[j]
+                    )
+                )

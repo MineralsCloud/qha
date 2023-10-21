@@ -14,5 +14,5 @@ class TestSingleConfiguration(unittest.TestCase):
         self.assertAlmostEqual(ho_free_energy(100, 1000), 0.0045562989049199466)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

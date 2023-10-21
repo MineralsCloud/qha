@@ -16,9 +16,9 @@ class QHAConverter(QHACommandHandler):
 
     def init_parser(self, parser):
         super().init_parser(parser)
-        parser.add_argument('inp_file_list', type=str)
-        parser.add_argument('inp_static', type=str)
-        parser.add_argument('inp_q_points', type=str)
+        parser.add_argument("inp_file_list", type=str)
+        parser.add_argument("inp_static", type=str)
+        parser.add_argument("inp_q_points", type=str)
 
     def run(self, namespace):
         inp_file_list = namespace.inp_file_list

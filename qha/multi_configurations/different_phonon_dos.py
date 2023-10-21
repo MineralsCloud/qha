@@ -19,12 +19,15 @@ from qha.tools import calibrate_energy_on_reference
 from qha.type_aliases import Array4D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
-__all__ = ['PartitionFunction']
+__all__ = ["PartitionFunction"]
 
-K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
-     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
-     'ev': pc['Boltzmann constant in eV/K'][0],
-     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
+K = {
+    "ha": pc["Boltzmann constant in eV/K"][0] / pc["Hartree energy in eV"][0],
+    "ry": pc["Boltzmann constant in eV/K"][0]
+    / pc["Rydberg constant times hc in eV"][0],
+    "ev": pc["Boltzmann constant in eV/K"][0],
+    "SI": pc["Boltzmann constant"][0],
+}[qha.settings.energy_unit]
 
 
 class PartitionFunction:
@@ -55,14 +58,24 @@ class PartitionFunction:
     :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.
     """
 
-    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Matrix, static_energies: Matrix,
-                 volumes: Matrix, frequencies: Array4D, static_only: Optional[bool] = False,
-                 precision: Optional[int] = 500, order: Optional[int] = 3):
+    def __init__(
+        self,
+        temperature: Scalar,
+        degeneracies: Vector,
+        q_weights: Matrix,
+        static_energies: Matrix,
+        volumes: Matrix,
+        frequencies: Array4D,
+        static_only: Optional[bool] = False,
+        precision: Optional[int] = 500,
+        order: Optional[int] = 3,
+    ):
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be greater equal than 0!')
-        if not np.all(np.greater_equal(
-                q_weights, 0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
-            raise ValueError('Weights should all be greater equal than 0!')
+            raise ValueError("Degeneracies should all be greater equal than 0!")
+        if not np.all(
+            np.greater_equal(q_weights, 0)
+        ):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
+            raise ValueError("Weights should all be greater equal than 0!")
 
         self.frequencies = np.array(frequencies)
         if self.frequencies.ndim != 4:
@@ -93,8 +106,18 @@ class PartitionFunction:
         :return: A matrix, the "raw" free energy of each configuration of each volume.
         """
         configurations_amount, _ = self.volumes.shape
-        return np.array([free_energy(self.temperature, self.q_weights[i], self.static_energies[i], self.frequencies[i],
-                                     self.static_only) for i in range(configurations_amount)])
+        return np.array(
+            [
+                free_energy(
+                    self.temperature,
+                    self.q_weights[i],
+                    self.static_energies[i],
+                    self.frequencies[i],
+                    self.static_only,
+                )
+                for i in range(configurations_amount)
+            ]
+        )
 
     @LazyProperty
     def aligned_free_energies_for_each_configuration(self):
@@ -103,8 +126,11 @@ class PartitionFunction:
 
         :return: A matrix, the aligned free energy of each configuration of each volume.
         """
-        return calibrate_energy_on_reference(self.volumes, self.unaligned_free_energies_for_each_configuration,
-                                             self.order)
+        return calibrate_energy_on_reference(
+            self.volumes,
+            self.unaligned_free_energies_for_each_configuration,
+            self.order,
+        )
 
     @LazyProperty
     def partition_functions_for_each_configuration(self):
@@ -120,12 +146,19 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError(
+                "Install ``mpmath`` package to use {0} object!".format(
+                    self.__class__.__name__
+                )
+            )
 
         with mpmath.workprec(self.precision):
             # shape = (# of configurations, # of volumes for each configuration)
             exp = np.vectorize(mpmath.exp)
-            return exp(-self.aligned_free_energies_for_each_configuration / (K * self.temperature))
+            return exp(
+                -self.aligned_free_energies_for_each_configuration
+                / (K * self.temperature)
+            )
 
     @LazyProperty
     def partition_functions_for_all_configurations(self):
@@ -141,13 +174,25 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError(
+                "Install ``mpmath`` package to use {0} object!".format(
+                    self.__class__.__name__
+                )
+            )
 
         with mpmath.workprec(self.precision):
             # shape = (# of volumes,)
-            return np.array([mpmath.exp(d) for d in
-                             logsumexp(-self.aligned_free_energies_for_each_configuration.T / (K * self.temperature),
-                                       axis=1, b=self.degeneracies)])
+            return np.array(
+                [
+                    mpmath.exp(d)
+                    for d in logsumexp(
+                        -self.aligned_free_energies_for_each_configuration.T
+                        / (K * self.temperature),
+                        axis=1,
+                        b=self.degeneracies,
+                    )
+                ]
+            )
 
     def get_free_energies(self):
         """
@@ -162,8 +207,18 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError(
+                "Install ``mpmath`` package to use {0} object!".format(
+                    self.__class__.__name__
+                )
+            )
 
         with mpmath.workprec(self.precision):
-            log_z = np.array([mpmath.log(d) for d in self.partition_functions_for_all_configurations], dtype=float)
+            log_z = np.array(
+                [
+                    mpmath.log(d)
+                    for d in self.partition_functions_for_all_configurations
+                ],
+                dtype=float,
+            )
         return -K * self.temperature * log_z

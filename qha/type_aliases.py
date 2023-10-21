@@ -17,7 +17,7 @@
 from numba import float64
 
 # ===================== What can be exported? =====================
-__all__ = ['Scalar', 'Vector', 'Matrix', 'Array3D', 'Array4D']
+__all__ = ["Scalar", "Vector", "Matrix", "Array3D", "Array4D"]
 
 Scalar = float64  # 0-dimensional float
 Vector = float64[:]  # 1-dimensional floats

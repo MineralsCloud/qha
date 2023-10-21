@@ -14,7 +14,7 @@ from numpy.linalg import inv
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================
-__all__ = ['polynomial_least_square_fitting', 'apply_finite_strain_fitting']
+__all__ = ["polynomial_least_square_fitting", "apply_finite_strain_fitting"]
 
 
 def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
@@ -30,14 +30,20 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     :return: A tuple, the polynomial-fitting coefficients and the new vector of y-coordinates.
     """
     order += 1  # The definition of order in ``numpy.vander`` is different from the order in finite strain by one.
-    xx = np.vander(xs, order, increasing=True)  # This will make a Vandermonde matrix that will be used in EoS fitting.
+    xx = np.vander(
+        xs, order, increasing=True
+    )  # This will make a Vandermonde matrix that will be used in EoS fitting.
     a, _, _, _ = np.linalg.lstsq(xx, ys, rcond=None)
     new_y = np.vander(new_xs, order, increasing=True) @ a
     return a, new_y
 
 
-def apply_finite_strain_fitting(strains_sparse: Vector, free_energies: Matrix, strains_dense: Vector,
-                                order: Optional[int] = 3):
+def apply_finite_strain_fitting(
+    strains_sparse: Vector,
+    free_energies: Matrix,
+    strains_dense: Vector,
+    order: Optional[int] = 3,
+):
     """
     Calculate the free energies :math:`F(T, V)` for some strains (*strains_dense*), with the
     free energies (*free_energies*) on some other strains (*strains_sparse*) known already.
@@ -53,9 +59,13 @@ def apply_finite_strain_fitting(strains_sparse: Vector, free_energies: Matrix, s
     """
     temperature_amount, _ = free_energies.shape
     dense_volume_amount = len(strains_dense)
-    f_v_t = np.empty((temperature_amount, dense_volume_amount))  # Initialize the F(T,V) array
+    f_v_t = np.empty(
+        (temperature_amount, dense_volume_amount)
+    )  # Initialize the F(T,V) array
 
     for i in range(temperature_amount):
-        _, f_i = polynomial_least_square_fitting(strains_sparse, free_energies[i], strains_dense, order)
+        _, f_i = polynomial_least_square_fitting(
+            strains_sparse, free_energies[i], strains_dense, order
+        )
         f_v_t[i] = f_i
     return f_v_t

@@ -26,23 +26,46 @@ from qha.basic_io import read_input
 from qha.single_configuration import free_energy
 from qha.thermodynamics import *
 from qha.type_aliases import Vector
-from qha.unit_conversion import gpa_to_ry_b3, ry_b3_to_gpa, b3_to_a3, ry_to_j_mol, ry_to_ev, ry_to_j
+from qha.unit_conversion import (
+    gpa_to_ry_b3,
+    ry_b3_to_gpa,
+    b3_to_a3,
+    ry_to_j_mol,
+    ry_to_ev,
+    ry_to_j,
+)
 from qha.v2p import v2p
 
 # ===================== What can be exported? =====================
-__all__ = ['Calculator', 'SamePhDOSCalculator', 'DifferentPhDOSCalculator']
+__all__ = ["Calculator", "SamePhDOSCalculator", "DifferentPhDOSCalculator"]
 
 
 class Calculator:
     def __init__(self, user_settings: Dict[str, Any]):
         runtime_settings = dict()
 
-        allowed_keys = ('input', 'calculation',
-                        'thermodynamic_properties', 'static_only', 'energy_unit',
-                        'T_MIN', 'NT', 'DT', 'DT_SAMPLE',
-                        'P_MIN', 'NTV', 'DELTA_P', 'DELTA_P_SAMPLE',
-                        'volume_ratio', 'order', 'p_min_modifier',
-                        'T4FV', 'output_directory', 'high_verbosity', 'qha_output')
+        allowed_keys = (
+            "input",
+            "calculation",
+            "thermodynamic_properties",
+            "static_only",
+            "energy_unit",
+            "T_MIN",
+            "NT",
+            "DT",
+            "DT_SAMPLE",
+            "P_MIN",
+            "NTV",
+            "DELTA_P",
+            "DELTA_P_SAMPLE",
+            "volume_ratio",
+            "order",
+            "p_min_modifier",
+            "T4FV",
+            "output_directory",
+            "high_verbosity",
+            "qha_output",
+        )
 
         for key in allowed_keys:
             try:
@@ -107,15 +130,20 @@ class Calculator:
 
     def read_input(self):
         try:
-            formula_unit_number, volumes, static_energies, frequencies, q_weights = read_input(
-                self.settings['input'])
+            (
+                formula_unit_number,
+                volumes,
+                static_energies,
+                frequencies,
+                q_weights,
+            ) = read_input(self.settings["input"])
         except KeyError:
-            raise KeyError(
-                "The 'input' option must be given in your settings!")
+            raise KeyError("The 'input' option must be given in your settings!")
 
         if not qha.tools.is_monotonic_decreasing(volumes):
             raise RuntimeError(
-                "Check the input file to make sure the volume decreases!")
+                "Check the input file to make sure the volume decreases!"
+            )
 
         self._formula_unit_number: int = formula_unit_number
         self._volumes = volumes
@@ -149,35 +177,49 @@ class Calculator:
         """
         # Normally, the last 2 temperature points in Cp are not accurate.
         # Here 4 more points are added for calculation, but they will be removed at the output files.
-        minimum_temperature = self.settings['T_MIN']
+        minimum_temperature = self.settings["T_MIN"]
         if minimum_temperature < 0:
             raise ValueError("Minimum temperature should be no less than 0!")
 
-        return qha.tools.arange(minimum_temperature, self.settings['NT'] + 4, self.settings['DT'])
+        return qha.tools.arange(
+            minimum_temperature, self.settings["NT"] + 4, self.settings["DT"]
+        )
 
     def refine_grid(self):
         d = self.settings
 
         try:
-            p_min, p_min_modifier, ntv, order = d['P_MIN'], d['p_min_modifier'], d['NTV'], d['order']
+            p_min, p_min_modifier, ntv, order = (
+                d["P_MIN"],
+                d["p_min_modifier"],
+                d["NTV"],
+                d["order"],
+            )
         except KeyError:
             raise KeyError(
-                "All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!")
+                "All the 'P_MIN', 'p_min_modifier', 'NTV', 'order' options must be given in your settings!"
+            )
 
         r = FinerGrid(p_min - p_min_modifier, ntv, order=order)
 
-        if 'volume_ratio' in d:
-            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(self.volumes, self.vib_ry,
-                                                                                    ratio=d['volume_ratio'])
+        if "volume_ratio" in d:
+            self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
+                self.volumes, self.vib_ry, ratio=d["volume_ratio"]
+            )
         else:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
-                self.volumes, self.vib_ry)
+                self.volumes, self.vib_ry
+            )
 
     @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.q_weights, self.static_energies, self.frequencies, self.settings[
-            'static_only']
+        args = (
+            self.q_weights,
+            self.static_energies,
+            self.frequencies,
+            self.settings["static_only"],
+        )
 
         mat = np.empty((self.temperature_array.size, self.volumes.size))
         for i, t in enumerate(self.temperature_array):
@@ -187,16 +229,20 @@ class Calculator:
 
     @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
-        return thermodynamic_potentials(self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au)
+        return thermodynamic_potentials(
+            self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au
+        )
 
     @LazyProperty
     def temperature_sample_array(self):
-        return self.temperature_array[0::int(self.settings['DT_SAMPLE'] / self.settings['DT'])]
+        return self.temperature_array[
+            0 :: int(self.settings["DT_SAMPLE"] / self.settings["DT"])
+        ]
 
     @LazyProperty
     def desired_pressures_gpa(self):
         d = self.settings
-        return qha.tools.arange(d['P_MIN'], d['NTV'], d['DELTA_P'])
+        return qha.tools.arange(d["P_MIN"], d["NTV"], d["DELTA_P"])
 
     @LazyProperty
     def desired_pressures(self):
@@ -204,7 +250,9 @@ class Calculator:
 
     @LazyProperty
     def pressure_sample_array(self):
-        return self.desired_pressures_gpa[0::int(self.settings['DELTA_P_SAMPLE'] / self.settings['DELTA_P'])]
+        return self.desired_pressures_gpa[
+            0 :: int(self.settings["DELTA_P_SAMPLE"] / self.settings["DELTA_P"])
+        ]
 
     @LazyProperty
     def finer_volumes_ang3(self):
@@ -221,24 +269,38 @@ class Calculator:
     def desired_pressure_status(self) -> None:
         d = self.settings
 
-        if d['high_verbosity']:
-            save_to_output(d['qha_output'], "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
-                self.p_tv_gpa[:, 0].max(), self.p_tv_gpa[:, -1].min()))
+        if d["high_verbosity"]:
+            save_to_output(
+                d["qha_output"],
+                "The pressure range can be dealt with: [{0:6.2f} to {1:6.2f}] GPa".format(
+                    self.p_tv_gpa[:, 0].max(), self.p_tv_gpa[:, -1].min()
+                ),
+            )
 
         if self.p_tv_gpa[:, -1].min() < self.desired_pressures_gpa.max():
             ntv_max = int(
-                (self.p_tv_gpa[:, -1].min() - self.desired_pressures_gpa.min()) / d['DELTA_P'])
+                (self.p_tv_gpa[:, -1].min() - self.desired_pressures_gpa.min())
+                / d["DELTA_P"]
+            )
 
-            save_to_output(d['qha_output'], textwrap.dedent("""\
+            save_to_output(
+                d["qha_output"],
+                textwrap.dedent(
+                    """\
                            !!!ATTENTION!!!
 
                            DESIRED PRESSURE is too high (NTV is too large)!
                            QHA results might not be right!
                            Please reduce the NTV accordingly, for example, try to set NTV < {:4d}.
-                           """.format(ntv_max)))
+                           """.format(
+                        ntv_max
+                    )
+                ),
+            )
 
             raise ValueError(
-                "DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!")
+                "DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!"
+            )
 
     @LazyProperty
     def p_tv_au(self):
@@ -266,7 +328,7 @@ class Calculator:
 
     @LazyProperty
     def u_tv_ry(self):
-        return self.thermodynamic_potentials['U']
+        return self.thermodynamic_potentials["U"]
 
     @LazyProperty
     def u_tp_ry(self):
@@ -278,7 +340,7 @@ class Calculator:
 
     @LazyProperty
     def h_tv_ry(self):
-        return self.thermodynamic_potentials['H']
+        return self.thermodynamic_potentials["H"]
 
     @LazyProperty
     def h_tp_ry(self):
@@ -290,7 +352,7 @@ class Calculator:
 
     @LazyProperty
     def g_tv_ry(self):
-        return self.thermodynamic_potentials['G']
+        return self.thermodynamic_potentials["G"]
 
     @LazyProperty
     def g_tp_ry(self):
@@ -342,11 +404,15 @@ class Calculator:
 
     @LazyProperty
     def gamma_tp(self):
-        return gruneisen_parameter(self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au)
+        return gruneisen_parameter(
+            self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au
+        )
 
     @LazyProperty
     def bs_tp_au(self):
-        return adiabatic_bulk_modulus(self.bt_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return adiabatic_bulk_modulus(
+            self.bt_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array
+        )
 
     @LazyProperty
     def bs_tp_gpa(self):
@@ -354,11 +420,15 @@ class Calculator:
 
     @LazyProperty
     def cp_tp_au(self):
-        return isobaric_heat_capacity(self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(
+            self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array
+        )
 
     @LazyProperty
     def cp_tp_jmolk(self):
-        return isobaric_heat_capacity(self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array)
+        return isobaric_heat_capacity(
+            self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array
+        )
 
 
 class DifferentPhDOSCalculator(Calculator):
@@ -377,8 +447,8 @@ class DifferentPhDOSCalculator(Calculator):
         return self._volumes[0]
 
     def read_input(self):
-        self._degeneracies = tuple(self.settings['input'].values())
-        input_data_files = tuple(self.settings['input'].keys())
+        self._degeneracies = tuple(self.settings["input"].values())
+        input_data_files = tuple(self.settings["input"].keys())
 
         formula_unit_numbers = []
         volumes = []
@@ -387,15 +457,23 @@ class DifferentPhDOSCalculator(Calculator):
         q_weights = []
 
         for inp in input_data_files:
-            nm_tmp, volumes_tmp, static_energies_tmp, freq_tmp, weights_tmp = read_input(
-                inp)
+            (
+                nm_tmp,
+                volumes_tmp,
+                static_energies_tmp,
+                freq_tmp,
+                weights_tmp,
+            ) = read_input(inp)
 
             if not qha.tools.is_monotonic_decreasing(volumes_tmp):
                 # TODO: Clean this sentence
                 save_to_output(
-                    self.settings['qha_output'], "Check the input file to make sure the volume decreases")
+                    self.settings["qha_output"],
+                    "Check the input file to make sure the volume decreases",
+                )
                 raise ValueError(
-                    "Check the input file to make sure the volumes are monotonic decreasing!")
+                    "Check the input file to make sure the volumes are monotonic decreasing!"
+                )
 
             formula_unit_numbers.append(nm_tmp)
             volumes.append(volumes_tmp)
@@ -411,11 +489,11 @@ class DifferentPhDOSCalculator(Calculator):
 
         if not len(set(formula_unit_numbers)) == 1:
             raise RuntimeError(
-                "All the formula unit number in all inputs should be the same!")
+                "All the formula unit number in all inputs should be the same!"
+            )
 
         if len(volumes.shape) == 1:
-            raise RuntimeError(
-                "All configurations should have same number of volumes!")
+            raise RuntimeError("All configurations should have same number of volumes!")
 
         # Choose any of them since they are all the same
         self._formula_unit_number = formula_unit_numbers[0]
@@ -427,13 +505,20 @@ class DifferentPhDOSCalculator(Calculator):
     @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
-        args = self.degeneracies, self.q_weights, self.static_energies, self._volumes, self.frequencies, \
-            self.settings['static_only']
+        args = (
+            self.degeneracies,
+            self.q_weights,
+            self.static_energies,
+            self._volumes,
+            self.frequencies,
+            self.settings["static_only"],
+        )
 
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
         for i, t in enumerate(self.temperature_array):
             mat[i] = different_phonon_dos.PartitionFunction(
-                t, *(arg for arg in args)).get_free_energies()
+                t, *(arg for arg in args)
+            ).get_free_energies()
 
         return mat
 
@@ -444,11 +529,19 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
 
     @LazyProperty
     def vib_ry(self):
-        args = self.degeneracies, self.q_weights[0], self.static_energies, self._volumes, self.frequencies[0], \
-            self.settings['static_only'], self.settings['order']
+        args = (
+            self.degeneracies,
+            self.q_weights[0],
+            self.static_energies,
+            self._volumes,
+            self.frequencies[0],
+            self.settings["static_only"],
+            self.settings["order"],
+        )
         mat = np.empty((self.temperature_array.size, self._volumes.shape[1]))
 
         for i, t in enumerate(self.temperature_array):
             mat[i] = same_phonon_dos.FreeEnergy(
-                t, *(arg for arg in args)).get_free_energies()
+                t, *(arg for arg in args)
+            ).get_free_energies()
         return mat

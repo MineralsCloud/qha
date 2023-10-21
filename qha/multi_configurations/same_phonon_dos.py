@@ -18,12 +18,15 @@ from qha.tools import calibrate_energy_on_reference
 from qha.type_aliases import Array3D, Scalar, Vector, Matrix
 
 # ===================== What can be exported? =====================
-__all__ = ['PartitionFunction', 'FreeEnergy']
+__all__ = ["PartitionFunction", "FreeEnergy"]
 
-K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
-     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
-     'ev': pc['Boltzmann constant in eV/K'][0],
-     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
+K = {
+    "ha": pc["Boltzmann constant in eV/K"][0] / pc["Hartree energy in eV"][0],
+    "ry": pc["Boltzmann constant in eV/K"][0]
+    / pc["Rydberg constant times hc in eV"][0],
+    "ev": pc["Boltzmann constant in eV/K"][0],
+    "SI": pc["Boltzmann constant"][0],
+}[qha.settings.energy_unit]
 
 
 class PartitionFunction:
@@ -53,14 +56,23 @@ class PartitionFunction:
         value, by default, is ``500``.
     """
 
-    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 frequencies: Array3D, precision: Optional[int] = 500):
-
+    def __init__(
+        self,
+        temperature: Scalar,
+        degeneracies: Vector,
+        q_weights: Vector,
+        static_energies: Matrix,
+        frequencies: Array3D,
+        precision: Optional[int] = 500,
+    ):
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be integers greater equal than 0!')
-        if not np.all(np.greater_equal(q_weights,
-                                       0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
-            raise ValueError('Weights should all be greater equal than 0!')
+            raise ValueError(
+                "Degeneracies should all be integers greater equal than 0!"
+            )
+        if not np.all(
+            np.greater_equal(q_weights, 0)
+        ):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
+            raise ValueError("Weights should all be greater equal than 0!")
 
         self.frequencies = np.array(frequencies)
         if self.frequencies.ndim != 3:
@@ -87,11 +99,22 @@ class PartitionFunction:
             import mpmath
         except ImportError:
             raise ImportError(
-                "You need to install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+                "You need to install ``mpmath`` package to use {0} object!".format(
+                    self.__class__.__name__
+                )
+            )
 
         with mpmath.workprec(self.precision):
-            return np.array([mpmath.exp(d) for d in  # shape = (# of volumes for each configuration, 1)
-                             logsumexp(-self.static_energies / (K * self.temperature), axis=1, b=self.degeneracies)])
+            return np.array(
+                [
+                    mpmath.exp(d)
+                    for d in logsumexp(  # shape = (# of volumes for each configuration, 1)
+                        -self.static_energies / (K * self.temperature),
+                        axis=1,
+                        b=self.degeneracies,
+                    )
+                ]
+            )
 
     @property
     def _harmonic_part(self) -> Vector:
@@ -101,7 +124,10 @@ class PartitionFunction:
         :return: The harmonic contribution on the temperature-volume grid.
         """
         log_product_modes: Matrix = np.sum(
-            log_subsystem_partition_function(self.temperature, self.frequencies), axis=2, dtype=float)
+            log_subsystem_partition_function(self.temperature, self.frequencies),
+            axis=2,
+            dtype=float,
+        )
         return np.exp(np.dot(log_product_modes, self._scaled_q_weights))  # (vol, 1)
 
     @LazyProperty
@@ -111,7 +137,9 @@ class PartitionFunction:
 
         :return: The partition function on the temperature-volume grid.
         """
-        return np.multiply(self._static_part, self._harmonic_part)  # (vol, 1), product element-wise
+        return np.multiply(
+            self._static_part, self._harmonic_part
+        )  # (vol, 1), product element-wise
 
     def get_free_energies(self):
         """
@@ -126,7 +154,11 @@ class PartitionFunction:
         try:
             import mpmath
         except ImportError:
-            raise ImportError("Install ``mpmath`` package to use {0} object!".format(self.__class__.__name__))
+            raise ImportError(
+                "Install ``mpmath`` package to use {0} object!".format(
+                    self.__class__.__name__
+                )
+            )
 
         with mpmath.workprec(self.precision):
             log_z = np.array([mpmath.log(d) for d in self.total], dtype=float)
@@ -162,13 +194,25 @@ class FreeEnergy:
     :param order: The order of Birch--Murnaghan equation of state fitting, by default, is ``3``.
     """
 
-    def __init__(self, temperature: Scalar, degeneracies: Vector, q_weights: Vector, static_energies: Matrix,
-                 volumes: Matrix, frequencies: Array3D, static_only: Optional[bool] = False, order: Optional[int] = 3):
+    def __init__(
+        self,
+        temperature: Scalar,
+        degeneracies: Vector,
+        q_weights: Vector,
+        static_energies: Matrix,
+        volumes: Matrix,
+        frequencies: Array3D,
+        static_only: Optional[bool] = False,
+        order: Optional[int] = 3,
+    ):
         if not np.all(np.greater_equal(degeneracies, 0)):
-            raise ValueError('Degeneracies should all be integers greater equal than 0!')
-        if not np.all(np.greater_equal(q_weights,
-                                       0)):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
-            raise ValueError('Weights should all be greater equal than 0!')
+            raise ValueError(
+                "Degeneracies should all be integers greater equal than 0!"
+            )
+        if not np.all(
+            np.greater_equal(q_weights, 0)
+        ):  # Weights should all be greater equal than 0, otherwise sum will be wrong.
+            raise ValueError("Weights should all be greater equal than 0!")
 
         self.frequencies = np.array(frequencies)
         if self.frequencies.ndim != 3:
@@ -194,7 +238,9 @@ class FreeEnergy:
 
         :return: A matrix of aligned static energy of each configuration of each volume.
         """
-        return calibrate_energy_on_reference(self.volumes, self.static_energies, self.order)
+        return calibrate_energy_on_reference(
+            self.volumes, self.static_energies, self.order
+        )
 
     @LazyProperty
     def static_part(self) -> Vector:
@@ -204,7 +250,9 @@ class FreeEnergy:
         :return: The static contribution on the temperature-volume grid.
         """
         kt: float = K * self.temperature  # k_B T
-        inside_exp: Matrix = -self.aligned_static_energies_for_each_configuration.T / kt  # exp( E_n(V) / k_B / T )
+        inside_exp: Matrix = (
+            -self.aligned_static_energies_for_each_configuration.T / kt
+        )  # exp( E_n(V) / k_B / T )
         return -kt * logsumexp(inside_exp, axis=1, b=self.degeneracies)
 
     @LazyProperty

@@ -14,7 +14,7 @@ from qha.tools import vectorized_find_nearest
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================
-__all__ = ['v2p']
+__all__ = ["v2p"]
 
 
 @numba.jit(nopython=True, parallel=True)
@@ -34,11 +34,12 @@ def _lagrange4(x: float, x0, x1, x2, x3, y0, y1, y2, y3) -> float:
     :param y3: The y-coordinate of the 4th point.
     :return: The y-coordinate of the point to be evaluated.
     """
-    return (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0 + \
-           (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1 + \
-           (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2 + \
-           (x - x0) * (x - x1) * (x - x2) / \
-        (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
+    return (
+        (x - x1) * (x - x2) * (x - x3) / (x0 - x1) / (x0 - x2) / (x0 - x3) * y0
+        + (x - x0) * (x - x2) * (x - x3) / (x1 - x0) / (x1 - x2) / (x1 - x3) * y1
+        + (x - x0) * (x - x1) * (x - x3) / (x2 - x0) / (x2 - x1) / (x2 - x3) * y2
+        + (x - x0) * (x - x1) * (x - x2) / (x3 - x0) / (x3 - x1) / (x3 - x2) * y3
+    )
 
 
 def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Matrix:
@@ -58,9 +59,15 @@ def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Mat
     result = np.empty((t_amount, desired_pressures_amount))
 
     extended_f = np.hstack(
-        (func_of_t_v[:, 3].reshape(-1, 1), func_of_t_v, func_of_t_v[:, -4].reshape(-1, 1)))
+        (
+            func_of_t_v[:, 3].reshape(-1, 1),
+            func_of_t_v,
+            func_of_t_v[:, -4].reshape(-1, 1),
+        )
+    )
     extended_p = np.hstack(
-        (p_of_t_v[:, 3].reshape(-1, 1), p_of_t_v, p_of_t_v[:, -4].reshape(-1, 1)))
+        (p_of_t_v[:, 3].reshape(-1, 1), p_of_t_v, p_of_t_v[:, -4].reshape(-1, 1))
+    )
 
     for i in range(t_amount):
         rs = np.zeros(desired_pressures_amount)
@@ -69,10 +76,11 @@ def v2p(func_of_t_v: Matrix, p_of_t_v: Matrix, desired_pressures: Vector) -> Mat
         for j in range(desired_pressures_amount):
             k = int(rs[j])
             # Interpolate pressures around desired pressure, x1-x4 in `_lagrange4`
-            x1, x2, x3, x4 = extended_p[i, k - 1:k + 3]
+            x1, x2, x3, x4 = extended_p[i, k - 1 : k + 3]
             # Interpolate func, f1-f4 in `_lagrange4`
-            f1, f2, f3, f4 = extended_f[i, k - 1:k + 3]
+            f1, f2, f3, f4 = extended_f[i, k - 1 : k + 3]
             # Evaluate func at desired pressure
             result[i, j] = _lagrange4(
-                desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4)
+                desired_pressures[j], x1, x2, x3, x4, f1, f2, f3, f4
+            )
     return result

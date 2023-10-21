@@ -16,13 +16,13 @@ def main():
     parser = QHAArgumentParser()
 
     qha_converter = QHAConverter()
-    parser.register_handler('convert', qha_converter, 'conv')
+    parser.register_handler("convert", qha_converter, "conv")
 
     qha_runner = QHARunner()
-    parser.register_handler('run', qha_runner)
+    parser.register_handler("run", qha_runner)
 
     qha_plotter = QHAPlotter()
-    parser.register_handler('plot', qha_plotter)
+    parser.register_handler("plot", qha_plotter)
 
     parser.load_plugins()
 
@@ -30,5 +30,5 @@ def main():
     parser.invoke_handler(namespace)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

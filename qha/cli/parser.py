@@ -31,9 +31,7 @@ class QHAArgumentParser:
     def __init__(self):
         self.parser = argparse.ArgumentParser()
         self.init_parser()
-        self.subparsers = self.parser.add_subparsers(
-            dest='command'
-        )
+        self.subparsers = self.parser.add_subparsers(dest="command")
         self.handlers = dict()
 
     def init_parser(self):
@@ -45,10 +43,11 @@ class QHAArgumentParser:
         2. short version: ``-h``, long version: ``--help``, the help document of ``qha``.
         """
         self.parser.add_argument(
-            '-V', '--version',
-            action='version',
+            "-V",
+            "--version",
+            action="version",
             version="current qha version: {0}".format(__version__),
-            help='The current release version of ``qha``.'
+            help="The current release version of ``qha``.",
         )
 
     def register_handler(self, command: str, handler: QHACommandHandler, *aliases):
@@ -70,7 +69,9 @@ class QHAArgumentParser:
             raise TypeError("Argument *command* should be a string!")
 
         if not isinstance(handler, QHACommandHandler):
-            raise TypeError("Argument *handler* should be a ``QHACommandHandler`` instance!")
+            raise TypeError(
+                "Argument *handler* should be a ``QHACommandHandler`` instance!"
+            )
 
         new_parser = self.subparsers.add_parser(command, aliases=list(aliases))
         self.handlers.update(
@@ -79,7 +80,7 @@ class QHAArgumentParser:
                 SubCommandResolvers(
                     handler=handler,
                     parser=new_parser,
-                )
+                ),
             )
         )
         handler.init_parser(new_parser)
@@ -104,9 +105,11 @@ class QHAArgumentParser:
         :param namespace: The namespace returned by ``parse_args`` method.
         """
         try:
-            command: str = getattr(namespace, 'command')
+            command: str = getattr(namespace, "command")
         except AttributeError:
-            raise AttributeError("Argument *namespace* does not have an ``command`` attribute!")
+            raise AttributeError(
+                "Argument *namespace* does not have an ``command`` attribute!"
+            )
 
         try:
             handler: QHACommandHandler = self.handlers[command].handler
@@ -118,7 +121,7 @@ class QHAArgumentParser:
         """
         Load plugins. Leave for the future plugin system.
         """
-        for plugin in pkg_resources.iter_entry_points(group='qha.plugins'):
+        for plugin in pkg_resources.iter_entry_points(group="qha.plugins"):
             klass = plugin.load()
-            aliases = klass.aliases if 'aliases' in dir(klass) else None
+            aliases = klass.aliases if "aliases" in dir(klass) else None
             self.register_handler(plugin.name, klass(), *aliases)
