@@ -11,7 +11,6 @@
 from typing import Optional, Tuple
 
 import numpy as np
-from numba import vectorize, float64
 
 from qha.fitting import polynomial_least_square_fitting, apply_finite_strain_fitting
 from qha.type_aliases import Vector, Matrix

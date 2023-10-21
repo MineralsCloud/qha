@@ -8,7 +8,6 @@
 
 import numpy as np
 from lazy_property import LazyProperty
-from numba import jit, float64, boolean
 
 from qha.statmech import ho_free_energy
 from qha.type_aliases import Scalar, Vector, Matrix, Array3D
@@ -17,7 +16,6 @@ from qha.type_aliases import Scalar, Vector, Matrix, Array3D
 __all__ = ["free_energy", "HOFreeEnergySampler"]
 
 
-@jit(float64[:](float64, float64[:], float64[:], float64[:, :, :], boolean), cache=True)
 def free_energy(
     temperature: Scalar,
     q_weights: Vector,
