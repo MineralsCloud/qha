@@ -13,21 +13,35 @@ from scipy.constants import physical_constants as pc
 import qha.settings
 
 # ===================== What can be exported? =====================
-__all__ = ['ho_free_energy', 'subsystem_partition_function', 'log_subsystem_partition_function']
+__all__ = [
+    "ho_free_energy",
+    "subsystem_partition_function",
+    "log_subsystem_partition_function",
+]
 
-K = {'ha': pc['Boltzmann constant in eV/K'][0] / pc['Hartree energy in eV'][0],
-     'ry': pc['Boltzmann constant in eV/K'][0] / pc['Rydberg constant times hc in eV'][0],
-     'ev': pc['Boltzmann constant in eV/K'][0],
-     'SI': pc['Boltzmann constant'][0]}[qha.settings.energy_unit]
+K = {
+    "ha": pc["Boltzmann constant in eV/K"][0] / pc["Hartree energy in eV"][0],
+    "ry": pc["Boltzmann constant in eV/K"][0]
+    / pc["Rydberg constant times hc in eV"][0],
+    "ev": pc["Boltzmann constant in eV/K"][0],
+    "SI": pc["Boltzmann constant"][0],
+}[qha.settings.energy_unit]
 
-HBAR = {'ha': 100 / pc['electron volt-inverse meter relationship'][0] / pc['Hartree energy in eV'][0],
-        'ry': 100 / pc['electron volt-inverse meter relationship'][0] / pc['Rydberg constant times hc in eV'][0],
-        'ev': 100 / pc['electron volt-inverse meter relationship'][0],
-        'SI': 100 / pc['electron volt-inverse meter relationship'][0] / pc['joule-electron volt relationship'][0]}[
-    qha.settings.energy_unit]
+HBAR = {
+    "ha": 100
+    / pc["electron volt-inverse meter relationship"][0]
+    / pc["Hartree energy in eV"][0],
+    "ry": 100
+    / pc["electron volt-inverse meter relationship"][0]
+    / pc["Rydberg constant times hc in eV"][0],
+    "ev": 100 / pc["electron volt-inverse meter relationship"][0],
+    "SI": 100
+    / pc["electron volt-inverse meter relationship"][0]
+    / pc["joule-electron volt relationship"][0],
+}[qha.settings.energy_unit]
 
 
-@vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
+@np.vectorize
 def ho_free_energy(temperature, frequency):
     """
     Calculate Helmholtz free energy of a single harmonic oscillator at a specific temperature.
@@ -46,7 +60,7 @@ def ho_free_energy(temperature, frequency):
     return 1 / 2 * hw + kt * np.log(1 - np.exp(-hw / kt))
 
 
-@vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
+@np.vectorize
 def subsystem_partition_function(temperature, frequency):
     """
     Calculate the subsystem partition function of a single harmonic oscillator at a specific temperature.
@@ -64,7 +78,7 @@ def subsystem_partition_function(temperature, frequency):
     return np.exp(x / 2) / (1 - np.exp(x))
 
 
-@vectorize([float64(float64, float64)], nopython=True, target='parallel', cache=True)
+@np.vectorize
 def log_subsystem_partition_function(temperature, frequency):
     """
     Calculate the natural logarithm of the subsystem partition function of a single harmonic oscillator

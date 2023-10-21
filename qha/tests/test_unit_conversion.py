@@ -13,8 +13,8 @@ from qha.unit_conversion import *
 
 class TestUnitConversion(unittest.TestCase):
     def test_j_to_ev(self):
-        self.assertEqual(j_to_ev(1), 6.241509125883258e+18)
-        self.assertEqual(j_to_ev(900), 5.617358213294932e+21)
+        self.assertEqual(j_to_ev(1), 6.241509125883258e18)
+        self.assertEqual(j_to_ev(900), 5.617358213294932e21)
 
     def test_gpa_to_megabar(self):
         self.assertEqual(gpa_to_megabar(1), 0.01)
@@ -69,11 +69,13 @@ class TestUnitConversion(unittest.TestCase):
                 return True
             return False
 
-        all_ufuncs: List[np.ufunc] = [obj[1] for obj in getmembers(qha.unit_conversion, isufunc)]
+        all_ufuncs: List[np.ufunc] = [
+            obj[1] for obj in getmembers(qha.unit_conversion, isufunc)
+        ]
         for ufunc in all_ufuncs:
             self.assertEqual(ufunc(vector).size, 50)
             self.assertEqual(ufunc(grid).shape, (3, 3))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

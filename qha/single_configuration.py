@@ -14,12 +14,17 @@ from qha.statmech import ho_free_energy
 from qha.type_aliases import Scalar, Vector, Matrix, Array3D
 
 # ===================== What can be exported? =====================
-__all__ = ['free_energy', 'HOFreeEnergySampler']
+__all__ = ["free_energy", "HOFreeEnergySampler"]
 
 
 @jit(float64[:](float64, float64[:], float64[:], float64[:, :, :], boolean), cache=True)
-def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector, frequencies: Array3D,
-                static_only: bool = False) -> Vector:
+def free_energy(
+    temperature: Scalar,
+    q_weights: Vector,
+    static_energies: Vector,
+    frequencies: Array3D,
+    static_only: bool = False,
+) -> Vector:
     """
     The total free energy at a certain temperature.
 
@@ -36,13 +41,15 @@ def free_energy(temperature: Scalar, q_weights: Vector, static_energies: Vector,
         volumes. The default unit is the same as in function ``ho_free_energy``.
     """
     if not np.all(np.greater_equal(q_weights, 0)):
-        raise ValueError('Weights should all be greater equal than 0!')
+        raise ValueError("Weights should all be greater equal than 0!")
 
     if static_only:
         return static_energies
 
     scaled_q_weights: Vector = q_weights / np.sum(q_weights)
-    vibrational_energies: Vector = np.dot(ho_free_energy(temperature, frequencies).sum(axis=2), scaled_q_weights)
+    vibrational_energies: Vector = np.dot(
+        ho_free_energy(temperature, frequencies).sum(axis=2), scaled_q_weights
+    )
     return static_energies + vibrational_energies
 
 
@@ -65,11 +72,13 @@ class HOFreeEnergySampler:
     """
 
     def __init__(self, temperature: float, q_weights: Vector, frequencies: Array3D):
-        self.temperature = temperature  # Fix temperature and volume, just sample q-points and bands
+        self.temperature = (
+            temperature  # Fix temperature and volume, just sample q-points and bands
+        )
         self.q_weights = np.array(q_weights, dtype=float)
         self.omegas = np.array(frequencies, dtype=float)
         if not np.all(np.greater_equal(q_weights, 0)):
-            raise ValueError('Weights should all be greater equal than 0!')
+            raise ValueError("Weights should all be greater equal than 0!")
         else:
             self._scaled_q_weights = q_weights / np.sum(q_weights)
 
@@ -98,7 +107,10 @@ class HOFreeEnergySampler:
         :param i: An integer labeling :math:`i` th volume.
         :return: The accumulated free energy on the :math:`i` th volume.
         """
-        return np.vdot(ho_free_energy(self.temperature, self.omegas[i]).sum(axis=1), self._scaled_q_weights)
+        return np.vdot(
+            ho_free_energy(self.temperature, self.omegas[i]).sum(axis=1),
+            self._scaled_q_weights,
+        )
 
     @LazyProperty
     def on_all_volumes(self) -> Vector:
@@ -110,4 +122,7 @@ class HOFreeEnergySampler:
         """
         # First calculate free energies on a 3D array, then sum along the third axis (bands),
         # at last contract weights and free energies on all q-points.
-        return np.dot(ho_free_energy(self.temperature, self.omegas).sum(axis=2), self._scaled_q_weights)
+        return np.dot(
+            ho_free_energy(self.temperature, self.omegas).sum(axis=2),
+            self._scaled_q_weights,
+        )

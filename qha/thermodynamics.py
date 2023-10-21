@@ -14,17 +14,17 @@ from qha.v2p import v2p
 
 # ===================== What can be exported? =====================
 __all__ = [
-    'pressure',
-    'entropy',
-    'thermodynamic_potentials',
-    'volume',
-    'thermal_expansion_coefficient',
-    'gruneisen_parameter',
-    'isothermal_bulk_modulus',
-    'adiabatic_bulk_modulus',
-    'bulk_modulus_derivative',
-    'isobaric_heat_capacity',
-    'volumetric_heat_capacity'
+    "pressure",
+    "entropy",
+    "thermodynamic_potentials",
+    "volume",
+    "thermal_expansion_coefficient",
+    "gruneisen_parameter",
+    "isothermal_bulk_modulus",
+    "adiabatic_bulk_modulus",
+    "bulk_modulus_derivative",
+    "isobaric_heat_capacity",
+    "volumetric_heat_capacity",
 ]
 
 
@@ -37,7 +37,9 @@ def calculate_derivatives(xs: Vector, fs: Matrix) -> Matrix:
     :return: A matrix, with shape :math:`(N_x, _)`.
     """
     if xs.ndim > 1 or fs.ndim < 2:
-        raise ValueError('The argument *xs* should be a 1D array and *ys* should be a 2D array!')
+        raise ValueError(
+            "The argument *xs* should be a 1D array and *ys* should be a 2D array!"
+        )
 
     return np.gradient(fs, axis=0) / np.gradient(xs)[:, None]  # df(x)/dx.
 
@@ -72,7 +74,9 @@ def entropy(temperature: Vector, free_energies: Matrix) -> Matrix:
     return -calculate_derivatives(temperature, free_energies)
 
 
-def thermodynamic_potentials(temperature: Vector, vs: Vector, free_energies: Matrix, ps: Matrix):
+def thermodynamic_potentials(
+    temperature: Vector, vs: Vector, free_energies: Matrix, ps: Matrix
+):
     """
     Calculate the enthalpy :math:`H(T, V)`, the internal energy :math:`U(T, V)`,
     and the Gibbs free energy :math:`G` on a :math:`(T, V)` grid from Helmholtz free energy :math:`F(T, V)` by
@@ -93,11 +97,15 @@ def thermodynamic_potentials(temperature: Vector, vs: Vector, free_energies: Mat
     """
     g: Matrix = free_energies + ps * vs  # G(T,V) = F(T,V) + V * P(T,V)
 
-    u: Matrix = free_energies + entropy(temperature, free_energies) * temperature.reshape(-1, 1)  # U(T,V) = F(T,V) + T * S(T,V)
+    u: Matrix = free_energies + entropy(
+        temperature, free_energies
+    ) * temperature.reshape(
+        -1, 1
+    )  # U(T,V) = F(T,V) + T * S(T,V)
 
     h: Matrix = u + ps * vs  # H(T,V) = U(T,V) + V * P(T,V)
 
-    return {'U': u, 'H': h, 'G': g}
+    return {"U": u, "H": h, "G": g}
 
 
 def volume(vs: Vector, desired_ps: Vector, ps: Matrix) -> Matrix:
@@ -171,7 +179,9 @@ def isothermal_bulk_modulus(vs: Vector, ps: Matrix) -> Matrix:
     return -np.gradient(ps, axis=1) / np.gradient(vs) * vs
 
 
-def adiabatic_bulk_modulus(bt: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector) -> Matrix:
+def adiabatic_bulk_modulus(
+    bt: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector
+) -> Matrix:
     """
     Calculate the adiabatic bulk modulus by
 
@@ -209,7 +219,9 @@ def bulk_modulus_derivative(ps: Vector, bt: Matrix) -> Matrix:
     return calculate_derivatives(ps, bt.T).T
 
 
-def isobaric_heat_capacity(cv: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector) -> Matrix:
+def isobaric_heat_capacity(
+    cv: Matrix, alpha: Matrix, gamma: Matrix, temperature: Vector
+) -> Matrix:
     """
     Calculate the isobaric heat capacity by
 
