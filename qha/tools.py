@@ -46,7 +46,7 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2, x3 = xs
     y0, y1, y2, y3 = ys
 
-    @vectorize(["float64(float64)"], target="parallel")
+    @np.vectorize
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.
@@ -92,7 +92,7 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2 = xs
     y0, y1, y2 = ys
 
-    @vectorize(["float64(float64)"], target="parallel")
+    @np.vectorize
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.

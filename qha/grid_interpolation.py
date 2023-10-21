@@ -26,7 +26,7 @@ __all__ = [
 ]
 
 
-@vectorize([float64(float64, float64)], nopython=True)
+@np.vectorize
 def calculate_eulerian_strain(v0, vs):
     """
     Calculate the Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*,
@@ -43,7 +43,7 @@ def calculate_eulerian_strain(v0, vs):
     return 1 / 2 * ((v0 / vs) ** (2 / 3) - 1)
 
 
-@vectorize([float64(float64, float64)], nopython=True)
+@np.vectorize
 def from_eulerian_strain(v0, fs):
     """
     Calculate the corresponding volumes :math:`V`s from a vector of given Eulerian strains (*fs*)
