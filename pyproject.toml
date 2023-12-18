@@ -1,0 +1,27 @@
+[project]
+name = "qha"
+version = "1.1.0"
+description = "A powerful tool for quasi-harmonic approximation"
+authors = [
+    {name = "Qi Zhang", email = "singularitti@outlook.com"},
+]
+dependencies = [
+    "lazy-property>=0.0.1",
+    "mpmath>=1.3.0",
+    "pandas>=2.1.4",
+    "scientific-string>=0.1.0",
+    "scipy>=1.11.4",
+    "text-stream>=0.2.0",
+    "pyyaml>=6.0.1",
+    "matplotlib>=3.8.2",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "GNU General Public License 3"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+package-type = "library"
