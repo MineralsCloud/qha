@@ -1,0 +1,18 @@
+[project]
+name = "qha"
+version = "1.1.0"
+description = "A powerful tool for quasi-harmonic approximation"
+authors = [
+    {name = "Qi Zhang", email = "singularitti@outlook.com"},
+]
+dependencies = []
+requires-python = ">=3.6"
+readme = "README.md"
+license = {text = "GNU General Public License 3"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+package-type = "library"
