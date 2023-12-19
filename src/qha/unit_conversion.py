@@ -6,6 +6,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+from numba import float64, vectorize
 from numpy import vectorize
 
 from scipy.constants import physical_constants, electron_volt, angstrom, Avogadro
@@ -73,7 +74,7 @@ _target = DEFAULT_SETTINGS["target"]
 
 
 # ===================== Functions =====================
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_ev(value):
     """
     Convert the *value* in unit joule to electronvolt.
@@ -84,7 +85,7 @@ def j_to_ev(value):
     return value / electron_volt
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_j(value):
     """
     Convert the *value* in unit electronvolt to joule.
@@ -95,7 +96,7 @@ def ev_to_j(value):
     return value * electron_volt
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_megabar(value):
     """
     Convert the *value* in unit gigapascal to megabar.
@@ -106,7 +107,7 @@ def gpa_to_megabar(value):
     return value * 0.01
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def megabar_to_gpa(value):
     """
     Convert the *value* in unit megabar to gigapascal.
@@ -117,7 +118,7 @@ def megabar_to_gpa(value):
     return value / 0.01
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def b3_to_a3(value):
     """
     Convert the *value* in unit cubic bohr radius to what in cubic angstrom.
@@ -128,7 +129,7 @@ def b3_to_a3(value):
     return value * (BOHR / angstrom) ** 3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def a3_to_b3(value):
     """
     Convert the *value* in unit cubic angstrom to what in cubic bohr radius.
@@ -139,7 +140,7 @@ def a3_to_b3(value):
     return value * (angstrom / BOHR) ** 3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_ev(value):
     """
     Convert the *value* in unit hartree to electronvolt.
@@ -150,7 +151,7 @@ def eh_to_ev(value):
     return value * EH_EV
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_eh(value):
     """
     Convert the *value* in unit electronvolt to hartree.
@@ -161,7 +162,7 @@ def ev_to_eh(value):
     return value / EH_EV
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_ev(value):
     """
     Convert the *value* in unit rydberg to electronvolt.
@@ -172,7 +173,7 @@ def ry_to_ev(value):
     return value * RY_EV
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_ry(value):
     """
     Convert the *value* in unit electronvolt to rydberg.
@@ -183,7 +184,7 @@ def ev_to_ry(value):
     return value / RY_EV
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_eh(value):
     """
     Convert the *value* in unit joule to hartree.
@@ -194,7 +195,7 @@ def j_to_eh(value):
     return value / EH_J
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_j(value):
     """
     Convert the *value* in unit hartree to joule.
@@ -205,7 +206,7 @@ def eh_to_j(value):
     return value * EH_J
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_hz(value):
     """
     Convert the *value* in unit hartree to hertz.
@@ -216,7 +217,7 @@ def eh_to_hz(value):
     return value * EH_HZ
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def hz_to_eh(value):
     """
     Convert the *value* in unit hertz to hartree.
@@ -227,7 +228,7 @@ def hz_to_eh(value):
     return value / EH_HZ
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_k(value):
     """
     Convert the *value* in unit hartree to kelvin.
@@ -238,7 +239,7 @@ def eh_to_k(value):
     return value * EH_K
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def k_to_eh(value):
     """
     Convert the *value* in unit kelvin to hartree.
@@ -249,7 +250,7 @@ def k_to_eh(value):
     return value / EH_K
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_m_inverse(value):
     """
     Convert the *value* in unit hartree to :math:`\\text{m}^{-1}`.
@@ -260,7 +261,7 @@ def eh_to_m_inverse(value):
     return value * EH_M_INVERSE
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def m_inverse_to_eh(value):
     """
     Convert the *value* in unit :math:`\\text{m}^{-1}` to hartree.
@@ -271,7 +272,7 @@ def m_inverse_to_eh(value):
     return value / EH_M_INVERSE
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def eh_to_cm_inverse(value):
     """
     Convert the *value* in unit hartree to :math:`\\text{cm}^{-1}`.
@@ -282,7 +283,7 @@ def eh_to_cm_inverse(value):
     return value * EH_M_INVERSE / 100
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def cm_inverse_to_eh(value):
     """
     Convert the *value* in unit :math:`\\text{cm}^{-1}` to hartree.
@@ -293,7 +294,7 @@ def cm_inverse_to_eh(value):
     return value / EH_M_INVERSE * 100
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_m_inverse(value):
     """
     Convert the *value* in unit electronvolt to :math:`\\text{m}^{-1}`.
@@ -304,7 +305,7 @@ def ev_to_m_inverse(value):
     return value * EV_M_INVERSE
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def m_inverse_to_ev(value):
     """
     Convert the *value* in unit :math:`\\text{m}^{-1}` to electronvolt.
@@ -315,7 +316,7 @@ def m_inverse_to_ev(value):
     return value / EV_M_INVERSE
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_cm_inverse(value):
     """
     Convert the *value* in unit electronvolt to :math:`\\text{cm}^{-1}`.
@@ -326,7 +327,7 @@ def ev_to_cm_inverse(value):
     return value * EV_M_INVERSE / 100
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def cm_inverse_to_ev(value):
     """
     Convert the *value* in unit :math:`\\text{cm}^{-1}` to electronvolt.
@@ -337,7 +338,7 @@ def cm_inverse_to_ev(value):
     return value / EV_M_INVERSE * 100
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_to_k(value):
     """
     Convert the *value* in unit electronvolt to kelvin.
@@ -348,7 +349,7 @@ def ev_to_k(value):
     return value * EV_K
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def k_to_ev(value):
     """
     Convert the *value* in unit kelvin to electronvolt.
@@ -359,7 +360,7 @@ def k_to_ev(value):
     return value / EV_K
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_j(value):
     """
     Convert the *value* in unit rydberg to joule.
@@ -370,7 +371,7 @@ def ry_to_j(value):
     return value * RY_J
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def j_to_ry(value):
     """
     Convert the *value* in unit joule to rydberg.
@@ -381,7 +382,7 @@ def j_to_ry(value):
     return value / RY_J
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ev_a3(value):
     """
     Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }`.
@@ -392,7 +393,7 @@ def gpa_to_ev_a3(value):
     return value * 1e9 / electron_volt * angstrom**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_a3_to_gpa(value):
     """
     Convert the *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{angstrom}^3 }` to gigapascal.
@@ -403,7 +404,7 @@ def ev_a3_to_gpa(value):
     return value / 1e9 * electron_volt / angstrom**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ev_b3(value):
     """
     Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }`.
@@ -414,7 +415,7 @@ def gpa_to_ev_b3(value):
     return value * 1e9 / electron_volt * BOHR**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ev_b3_to_gpa(value):
     """
     Convert the *value* in unit :math:`\\frac{ \\text{electronvolt} }{ \\text{bohr radius}^3 }` to gigapascal.
@@ -425,7 +426,7 @@ def ev_b3_to_gpa(value):
     return value / 1e9 * electron_volt / BOHR**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ry_b3(value):
     """
     Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }`.
@@ -436,7 +437,7 @@ def gpa_to_ry_b3(value):
     return value * 1e9 / RY_J * BOHR**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_b3_to_gpa(value):
     """
     Convert the *value* in unit :math:`\\frac{ \\text{rydberg} }{ \\text{bohr radius}^3 }` to gigapascal.
@@ -447,7 +448,7 @@ def ry_b3_to_gpa(value):
     return value / 1e9 * RY_J / BOHR**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def gpa_to_ha_b3(value):
     """
     Convert the *value* in unit gigapascal to :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }`.
@@ -458,7 +459,7 @@ def gpa_to_ha_b3(value):
     return value * 1e9 / RY_J * BOHR**3 / 2
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ha_b3_to_gpa(value):
     """
     Convert the *value* in unit :math:`\\frac{ \\text{hartree} }{ \\text{bohr radius}^3 }` to gigapascal.
@@ -469,7 +470,7 @@ def ha_b3_to_gpa(value):
     return 2 * value / 1e9 * RY_J / BOHR**3
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_b_to_ev_a(value):
     """
     The atomic force.
@@ -482,7 +483,7 @@ def ry_b_to_ev_a(value):
     return value * RY_EV / (BOHR / angstrom)
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ha_b_to_ev_a(value):
     """
     The atomic force.
@@ -495,7 +496,7 @@ def ha_b_to_ev_a(value):
     return value * EH_EV / (BOHR / angstrom)
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_kj_mol(value):
     """
     Convert the *value* is in unit Rydberg, the converted value is in unit
@@ -507,7 +508,7 @@ def ry_to_kj_mol(value):
     return value * Avogadro * RY_J / 1000
 
 
-@vectorize
+@vectorize([float64(float64)], nopython=True, cache=True, target=_target)
 def ry_to_j_mol(value):
     """
     Convert the *value* is in unit Rydberg, the converted value is in unit
