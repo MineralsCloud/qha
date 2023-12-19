@@ -41,7 +41,7 @@ HBAR = {
 }[qha.settings.energy_unit]
 
 
-@vectorize([float64(float64, float64)], nopython=True, target="parallel", cache=True)
+@vectorize([float64(float64, float64)], nopython=True, cache=True)
 def ho_free_energy(temperature, frequency):
     """
     Calculate Helmholtz free energy of a single harmonic oscillator at a specific temperature.
@@ -60,7 +60,7 @@ def ho_free_energy(temperature, frequency):
     return 1 / 2 * hw + kt * np.log(1 - np.exp(-hw / kt))
 
 
-@vectorize([float64(float64, float64)], nopython=True, target="parallel", cache=True)
+@vectorize([float64(float64, float64)], nopython=True, cache=True)
 def subsystem_partition_function(temperature, frequency):
     """
     Calculate the subsystem partition function of a single harmonic oscillator at a specific temperature.
@@ -78,7 +78,7 @@ def subsystem_partition_function(temperature, frequency):
     return np.exp(x / 2) / (1 - np.exp(x))
 
 
-@vectorize([float64(float64, float64)], nopython=True, target="parallel", cache=True)
+@vectorize([float64(float64, float64)], nopython=True, cache=True)
 def log_subsystem_partition_function(temperature, frequency):
     """
     Calculate the natural logarithm of the subsystem partition function of a single harmonic oscillator
