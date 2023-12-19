@@ -7,7 +7,6 @@
 """
 
 from numba import float64, vectorize
-from numpy import vectorize
 from scipy.constants import Avogadro, angstrom, electron_volt, physical_constants
 
 from qha.settings import DEFAULT_SETTINGS
