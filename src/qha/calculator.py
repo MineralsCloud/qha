@@ -163,7 +163,6 @@ class Calculator:
         self._frequencies = frequencies
         self._q_weights = q_weights
 
-    @LazyProperty
     def where_negative_frequencies(self) -> Optional[Vector]:
         """
         The indices of negative frequencies are indicated.
@@ -180,7 +179,6 @@ class Calculator:
 
             return _
 
-    @LazyProperty
     def temperature_array(self) -> Vector:
         """
         The temperature calculated to derive free energy at that temperature.
@@ -216,14 +214,13 @@ class Calculator:
 
         if "volume_ratio" in d:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
-                self.volumes, self.vib_ry, ratio=d["volume_ratio"]
+                self.volumes, self.vib_ry(), ratio=d["volume_ratio"]
             )
         else:
             self._finer_volumes_bohr3, self._f_tv_ry, self._v_ratio = r.refine_grid(
-                self.volumes, self.vib_ry
+                self.volumes, self.vib_ry()
             )
 
-    @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = (
@@ -233,48 +230,40 @@ class Calculator:
             self.settings["static_only"],
         )
 
-        mat = np.empty((self.temperature_array.size, self.volumes.size))
-        for i, t in enumerate(self.temperature_array):
+        mat = np.empty((self.temperature_array().size, self.volumes.size))
+        for i, t in enumerate(self.temperature_array()):
             mat[i] = free_energy(t, *(arg for arg in args))
 
         return mat
 
-    @LazyProperty
     def thermodynamic_potentials(self) -> Dict[str, Any]:
         return thermodynamic_potentials(
-            self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au
+            self.temperature_array(), self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au()
         )
 
-    @LazyProperty
     def temperature_sample_array(self):
-        return self.temperature_array[
+        return self.temperature_array()[
             0 :: int(self.settings["DT_SAMPLE"] / self.settings["DT"])
         ]
 
-    @LazyProperty
     def desired_pressures_gpa(self):
         d = self.settings
         return qha.tools.arange(d["P_MIN"], d["NTV"], d["DELTA_P"])
 
-    @LazyProperty
     def desired_pressures(self):
-        return gpa_to_ry_b3(self.desired_pressures_gpa)
+        return gpa_to_ry_b3(self.desired_pressures_gpa())
 
-    @LazyProperty
     def pressure_sample_array(self):
-        return self.desired_pressures_gpa[
+        return self.desired_pressures_gpa()[
             0 :: int(self.settings["DELTA_P_SAMPLE"] / self.settings["DELTA_P"])
         ]
 
-    @LazyProperty
     def finer_volumes_ang3(self):
         return b3_to_a3(self.finer_volumes_bohr3)
 
-    @LazyProperty
     def vib_ev(self):
-        return ry_to_ev(self.vib_ry)
+        return ry_to_ev(self.vib_ry())
 
-    @LazyProperty
     def volumes_ang3(self):
         return b3_to_a3(self.volumes)
 
@@ -312,132 +301,102 @@ class Calculator:
                 "DESIRED PRESSURE is too high (NTV is too large), qha results might not be right!"
             )
 
-    @LazyProperty
     def p_tv_au(self):
         return pressure(self.finer_volumes_bohr3, self.f_tv_ry)
 
-    @LazyProperty
     def s_tv_j(self):
-        return ry_to_j(entropy(self.temperature_array, self.f_tv_ry))
+        return ry_to_j(entropy(self.temperature_array(), self.f_tv_ry))
 
-    @LazyProperty
     def f_tv_ev(self):
         return ry_to_ev(self.f_tv_ry)
 
-    @LazyProperty
     def p_tv_gpa(self):
-        return ry_b3_to_gpa(self.p_tv_au)
+        return ry_b3_to_gpa(self.p_tv_au())
 
-    @LazyProperty
     def f_tp_ry(self):
-        return v2p(self.f_tv_ry, self.p_tv_au, self.desired_pressures)
+        return v2p(self.f_tv_ry, self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def f_tp_ev(self):
-        return ry_to_ev(self.f_tp_ry)
+        return ry_to_ev(self.f_tp_ry())
 
-    @LazyProperty
     def u_tv_ry(self):
-        return self.thermodynamic_potentials["U"]
+        return self.thermodynamic_potentials()["U"]
 
-    @LazyProperty
     def u_tp_ry(self):
-        return v2p(self.u_tv_ry, self.p_tv_au, self.desired_pressures)
+        return v2p(self.u_tv_ry(), self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def u_tp_ev(self):
-        return ry_to_ev(self.u_tp_ry)
+        return ry_to_ev(self.u_tp_ry())
 
-    @LazyProperty
     def h_tv_ry(self):
-        return self.thermodynamic_potentials["H"]
+        return self.thermodynamic_potentials()["H"]
 
-    @LazyProperty
     def h_tp_ry(self):
-        return v2p(self.h_tv_ry, self.p_tv_au, self.desired_pressures)
+        return v2p(self.h_tv_ry(), self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def h_tp_ev(self):
-        return ry_to_ev(self.h_tp_ry)
+        return ry_to_ev(self.h_tp_ry())
 
-    @LazyProperty
     def g_tv_ry(self):
-        return self.thermodynamic_potentials["G"]
+        return self.thermodynamic_potentials()["G"]
 
-    @LazyProperty
     def g_tp_ry(self):
-        return v2p(self.g_tv_ry, self.p_tv_au, self.desired_pressures)
+        return v2p(self.g_tv_ry(), self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def g_tp_ev(self):
-        return ry_to_ev(self.g_tp_ry)
+        return ry_to_ev(self.g_tp_ry())
 
-    @LazyProperty
     def bt_tv_au(self):
-        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv_au)
+        return isothermal_bulk_modulus(self.finer_volumes_bohr3, self.p_tv_au())
 
-    @LazyProperty
     def bt_tp_au(self):
-        return v2p(self.bt_tv_au, self.p_tv_au, self.desired_pressures)
+        return v2p(self.bt_tv_au(), self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def bt_tp_gpa(self):
-        return ry_b3_to_gpa(self.bt_tp_au)
+        return ry_b3_to_gpa(self.bt_tp_au())
 
-    @LazyProperty
     def btp_tp(self):
-        return bulk_modulus_derivative(self.desired_pressures, self.bt_tp_au)
+        return bulk_modulus_derivative(self.desired_pressures(), self.bt_tp_au())
 
-    @LazyProperty
     def v_tp_bohr3(self):
-        return volume(self.finer_volumes_bohr3, self.desired_pressures, self.p_tv_au)
+        return volume(self.finer_volumes_bohr3, self.desired_pressures(), self.p_tv_au())
 
-    @LazyProperty
     def v_tp_ang3(self):
-        return b3_to_a3(self.v_tp_bohr3)
+        return b3_to_a3(self.v_tp_bohr3())
 
-    @LazyProperty
     def alpha_tp(self):
-        return thermal_expansion_coefficient(self.temperature_array, self.v_tp_bohr3)
+        return thermal_expansion_coefficient(self.temperature_array(), self.v_tp_bohr3())
 
-    @LazyProperty
     def cv_tv_au(self):
-        return volumetric_heat_capacity(self.temperature_array, self.u_tv_ry)
+        return volumetric_heat_capacity(self.temperature_array(), self.u_tv_ry())
 
-    @LazyProperty
     def cv_tp_au(self):
-        return v2p(self.cv_tv_au, self.p_tv_au, self.desired_pressures)
+        return v2p(self.cv_tv_au(), self.p_tv_au(), self.desired_pressures())
 
-    @LazyProperty
     def cv_tp_jmolk(self):
-        return ry_to_j_mol(self.cv_tp_au) / self.formula_unit_number
+        return ry_to_j_mol(self.cv_tp_au()) / self.formula_unit_number
 
-    @LazyProperty
     def gamma_tp(self):
         return gruneisen_parameter(
-            self.v_tp_bohr3, self.bt_tp_au, self.alpha_tp, self.cv_tp_au
+            self.v_tp_bohr3(), self.bt_tp_au(), self.alpha_tp(), self.cv_tp_au()
         )
 
-    @LazyProperty
     def bs_tp_au(self):
         return adiabatic_bulk_modulus(
-            self.bt_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array
+            self.bt_tp_au(), self.alpha_tp(), self.gamma_tp(), self.temperature_array()
         )
 
-    @LazyProperty
     def bs_tp_gpa(self):
-        return ry_b3_to_gpa(self.bs_tp_au)
+        return ry_b3_to_gpa(self.bs_tp_au())
 
-    @LazyProperty
     def cp_tp_au(self):
         return isobaric_heat_capacity(
-            self.cv_tp_au, self.alpha_tp, self.gamma_tp, self.temperature_array
+            self.cv_tp_au(), self.alpha_tp(), self.gamma_tp(), self.temperature_array()
         )
 
-    @LazyProperty
     def cp_tp_jmolk(self):
         return isobaric_heat_capacity(
-            self.cv_tp_jmolk, self.alpha_tp, self.gamma_tp, self.temperature_array
+            self.cv_tp_jmolk(), self.alpha_tp(), self.gamma_tp(), self.temperature_array()
         )
 
 
@@ -512,7 +471,6 @@ class DifferentPhDOSCalculator(Calculator):
         self._frequencies = frequencies
         self._q_weights = q_weights
 
-    @LazyProperty
     def vib_ry(self):
         # We grep all the arguments once since they are being invoked for thousands of times, and will be an overhead.
         args = (
@@ -537,7 +495,6 @@ class SamePhDOSCalculator(DifferentPhDOSCalculator):
     def __init__(self, user_settings):
         super().__init__(user_settings)
 
-    @LazyProperty
     def vib_ry(self):
         args = (
             self.degeneracies,
