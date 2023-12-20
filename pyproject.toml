@@ -26,3 +26,6 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 package-type = "library"
+
+[project.scripts]
+qha = "qha.cli:main"
