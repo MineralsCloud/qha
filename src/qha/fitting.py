@@ -17,7 +17,10 @@ from qha.type_aliases import Matrix, Vector
 __all__ = ["polynomial_least_square_fitting", "apply_finite_strain_fitting"]
 
 
-def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
+@jit(float64[:](float64[:], float64[:], float64[:], int64), nopython=True, cache=True)
+def polynomial_least_square_fitting(
+    xs: Vector, ys: Vector, new_xs: Vector, order: Optional[int] = 3
+):
     """
     The algorithm is referenced from the
     `Wolfram MathWorld <http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html>`_.
@@ -33,9 +36,9 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     xx = np.vander(
         xs, order, increasing=True
     )  # This will make a Vandermonde matrix that will be used in EoS fitting.
-    a, _, _, _ = np.linalg.lstsq(xx, ys, rcond=None)
+    a, _, _, _ = np.linalg.lstsq(xx, ys)  # See https://stackoverflow.com/a/64224087
     new_y = np.vander(new_xs, order, increasing=True) @ a
-    return a, new_y
+    return new_y
 
 
 @jit(
@@ -69,8 +72,7 @@ def apply_finite_strain_fitting(
     )  # Initialize the F(T,V) array
 
     for i in range(temperature_amount):
-        _, f_i = polynomial_least_square_fitting(
+        f_v_t[i] = polynomial_least_square_fitting(
             strains_sparse, free_energies[i], strains_dense, order
         )
-        f_v_t[i] = f_i
     return f_v_t

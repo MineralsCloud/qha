@@ -122,7 +122,7 @@ def calibrate_energy_on_reference(
         strains_after_calibration = calculate_eulerian_strain(
             volumes_before_calibration[i, 0], volumes_for_reference
         )
-        _, energies_after_calibration[i, :] = polynomial_least_square_fitting(
+        energies_after_calibration[i, :] = polynomial_least_square_fitting(
             strains_before_calibration,
             energies_before_calibration[i],
             strains_after_calibration,
