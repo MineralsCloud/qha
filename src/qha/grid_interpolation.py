@@ -203,7 +203,7 @@ class FinerGrid:
         vr.interpolate_volumes()
         strains, finer_volumes = vr.strains, vr.out_volumes
         eulerian_strain = calculate_eulerian_strain(volumes[0], volumes)
-        _, f_v_tmax = polynomial_least_square_fitting(
+        f_v_tmax = polynomial_least_square_fitting(
             eulerian_strain, free_energies, strains, self.option
         )
         p_v_tmax = -np.gradient(f_v_tmax) / np.gradient(finer_volumes)
