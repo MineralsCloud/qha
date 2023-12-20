@@ -10,7 +10,7 @@
 from typing import Optional
 
 import numpy as np
-from numpy.linalg import inv
+from numba import float64, int64, jit
 from qha.type_aliases import Matrix, Vector
 
 # ===================== What can be exported? =====================
@@ -38,6 +38,11 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     return a, new_y
 
 
+@jit(
+    float64[:, :](float64[:], float64[:, :], float64[:], int64),
+    nopython=True,
+    cache=True,
+)
 def apply_finite_strain_fitting(
     strains_sparse: Vector,
     free_energies: Matrix,

@@ -8,14 +8,20 @@
 
 import numpy as np
 from lazy_property import LazyProperty
+from numba import boolean, float64, jit
 
 from qha.statmech import ho_free_energy
-from qha.type_aliases import Scalar, Vector, Matrix, Array3D
+from qha.type_aliases import Array3D, Matrix, Scalar, Vector
 
 # ===================== What can be exported? =====================
 __all__ = ["free_energy", "HOFreeEnergySampler"]
 
 
+@jit(
+    float64[:](float64, float64[:], float64[:], float64[:, :, :], boolean),
+    nopython=True,
+    cache=True,
+)
 def free_energy(
     temperature: Scalar,
     q_weights: Vector,

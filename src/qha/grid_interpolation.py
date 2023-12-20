@@ -11,9 +11,10 @@
 from typing import Optional, Tuple
 
 import numpy as np
+from numba import float64, vectorize
 
-from qha.fitting import polynomial_least_square_fitting, apply_finite_strain_fitting
-from qha.type_aliases import Vector, Matrix
+from qha.fitting import apply_finite_strain_fitting, polynomial_least_square_fitting
+from qha.type_aliases import Matrix, Vector
 from qha.unit_conversion import gpa_to_ry_b3
 
 # ===================== What can be exported? =====================
@@ -25,7 +26,7 @@ __all__ = [
 ]
 
 
-@np.vectorize
+@vectorize([float64(float64, float64)], nopython=True, cache=True)
 def calculate_eulerian_strain(v0, vs):
     """
     Calculate the Eulerian strain (:math:`f`s) of a given volume vector *vs* with respect to a reference volume *v0*,
@@ -42,7 +43,7 @@ def calculate_eulerian_strain(v0, vs):
     return 1 / 2 * ((v0 / vs) ** (2 / 3) - 1)
 
 
-@np.vectorize
+@vectorize([float64(float64, float64)], nopython=True, cache=True)
 def from_eulerian_strain(v0, fs):
     """
     Calculate the corresponding volumes :math:`V`s from a vector of given Eulerian strains (*fs*)
@@ -157,9 +158,10 @@ class VolumeExpander:
         # r = v_upper / v_max = v_min / v_lower
         v_lower, v_upper = v_min / self._ratio, v_max * self._ratio
         # The *v_max* is a reference value here.
-        s_upper, s_lower = calculate_eulerian_strain(
-            v_max, v_lower
-        ), calculate_eulerian_strain(v_max, v_upper)
+        s_upper, s_lower = (
+            calculate_eulerian_strain(v_max, v_lower),
+            calculate_eulerian_strain(v_max, v_upper),
+        )
         self._strains = np.linspace(s_lower, s_upper, self._out_volumes_num)
         self._out_volumes = from_eulerian_strain(v_max, self._strains)
 
