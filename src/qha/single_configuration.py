@@ -86,7 +86,7 @@ class HOFreeEnergySampler:
         else:
             self._scaled_q_weights = q_weights / np.sum(q_weights)
 
-    def on_q_point(self, i: int) -> Matrix:  # E1(i,m)
+    def on_q(self, i: int) -> Matrix:  # E1(i,m)
         """
         Sample free energy on the :math:`i` th q-point.
 
