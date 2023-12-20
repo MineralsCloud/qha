@@ -33,7 +33,7 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     xx = np.vander(
         xs, order, increasing=True
     )  # This will make a Vandermonde matrix that will be used in EoS fitting.
-    a, _, _, _ = np.linalg.lstsq(xx, ys, rcond=None)
+    a, _, _, _ = np.linalg.lstsq(xx, ys)
     new_y = np.vander(new_xs, order, increasing=True) @ a
     return a, new_y
 
