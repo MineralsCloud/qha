@@ -10,6 +10,7 @@
 from typing import Callable, Optional
 
 import numpy as np
+from numba import float64, int64, void, vectorize, guvectorize, jit
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calculate_eulerian_strain
@@ -45,7 +46,7 @@ def lagrange4(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2, x3 = xs
     y0, y1, y2, y3 = ys
 
-    @np.vectorize
+    @vectorize([float64(float64)], nopython=True, cache=True)
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.
@@ -91,7 +92,7 @@ def lagrange3(xs: Vector, ys: Vector) -> Callable[[float], float]:
     x0, x1, x2 = xs
     y0, y1, y2 = ys
 
-    @np.vectorize
+    @vectorize([float64(float64)], nopython=True, cache=True)
     def f(x: float) -> float:
         """
         A helper function that only does the evaluation.
