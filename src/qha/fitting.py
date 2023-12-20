@@ -35,7 +35,7 @@ def polynomial_least_square_fitting(xs, ys, new_xs, order: Optional[int] = 3):
     )  # This will make a Vandermonde matrix that will be used in EoS fitting.
     a, _, _, _ = np.linalg.lstsq(xx, ys)
     new_y = np.vander(new_xs, order, increasing=True) @ a
-    return a, new_y
+    return new_y
 
 
 @jit(
@@ -69,8 +69,7 @@ def apply_finite_strain_fitting(
     )  # Initialize the F(T,V) array
 
     for i in range(temperature_amount):
-        _, f_i = polynomial_least_square_fitting(
+        f_v_t[i] = polynomial_least_square_fitting(
             strains_sparse, free_energies[i], strains_dense, order
         )
-        f_v_t[i] = f_i
     return f_v_t
