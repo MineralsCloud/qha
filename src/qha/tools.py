@@ -23,7 +23,6 @@ __all__ = [
     "lagrange3",
     "lagrange4",
     "is_monotonic_decreasing",
-    "is_monotonic_increasing",
     "arange",
     "calibrate_energy_on_reference",
 ]
@@ -220,27 +219,6 @@ def is_monotonic_decreasing(array: Vector) -> bool:
     """
     dx = np.diff(array)
     return np.all(dx <= 0)
-
-
-def is_monotonic_increasing(array: Vector) -> bool:
-    """
-    Check whether the *array* is monotonic increasing or not.
-    For example, in QHA calculation, the volumes should be listed as decreasing array,
-    and the pressures should be monotonic increasing.
-    This function can be used to check whether the pressures are in the right order.
-
-    .. doctest::
-
-        >>> is_monotonic_increasing([1, 2, 4, 5, 9])
-        True
-        >>> is_monotonic_increasing([2, -5, -10, -20])
-        False
-
-    :param array: The array to be evaluated.
-    :return: ``True`` if the argument *array* is monotonic increasing, otherwise ``False``.
-    """
-    dx = np.diff(array)
-    return np.all(dx >= 0)
 
 
 def calibrate_energy_on_reference(
