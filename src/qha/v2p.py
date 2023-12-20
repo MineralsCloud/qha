@@ -18,19 +18,17 @@ __all__ = ["v2p"]
 
 
 @jit(
-    [
-        float64(
-            float64,
-            float64,
-            float64,
-            float64,
-            float64,
-            float64,
-            float64,
-            float64,
-            float64,
-        )
-    ],
+    float64(
+        float64,
+        float64,
+        float64,
+        float64,
+        float64,
+        float64,
+        float64,
+        float64,
+        float64,
+    ),
     nopython=True,
     cache=True,
 )
