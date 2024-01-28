@@ -216,6 +216,6 @@ This folder conations an example to perform the single-configuration calculation
 
 The official documentation is hosted on our [GitHub page](https://mineralscloud.github.io/qha/).
 
-## Star History
+## Stargazers over time
 
-[![Star History Chart](https://api.star-history.com/svg?repos=MineralsCloud/qha&type=Date)](https://star-history.com/#MineralsCloud/qha&Date)
+[![Stargazers over time](https://starchart.cc/MineralsCloud/qha.svg?variant=adaptive)](https://starchart.cc/MineralsCloud/qha)
