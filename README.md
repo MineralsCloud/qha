@@ -6,14 +6,6 @@
 [![Build Status](https://travis-ci.com/MineralsCloud/qha.svg?branch=master)](https://travis-ci.com/MineralsCloud/qha)
 [![PyPI Downloads](https://static.pepy.tech/badge/qha)](https://pepy.tech/projects/qha)
 
-| category        | percent | downloads |
-| --------------- | ------- | --------- |
-| with_mirrors    | 100.00% | 2,801     |
-| without_mirrors | 20.67%  | 579       |
-| Total           |         | 2,801     |
-
-Date range: 2023-04-20 - 2023-10-17
-
 ## Contributors
 
 This repository is now maintained by [Qi Zhang](mailto:qz2280@columbia.edu). Thanks to the contribution from [Chenxing Luo](https://github.com/chazeon).
