@@ -7,17 +7,17 @@ authors = [
 ]
 dependencies = [
     "lazy-property>=0.0.1",
-    "mpmath>=1.3.0",
-    "pandas>=2.1.4",
+    "mpmath>=1",
+    "pandas>=2",
     "scientific-string>=0.1.0",
-    "scipy>=1.11.4",
+    "scipy>=1",
     "text-stream>=0.2.0",
-    "pyyaml>=6.0.1",
-    "matplotlib>=3.8.2",
-    "numba>=0.58.1",
-    "jax>=0.4.24",
+    "pyyaml>=6",
+    "matplotlib>=3",
+    "numba>=0.58",
+    "jax>=0.4",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 readme = "README.md"
 license = {text = "GNU General Public License 3"}
 
