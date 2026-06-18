@@ -7,8 +7,7 @@
 """
 
 import argparse
-
-import pkg_resources
+from importlib import metadata as importlib_metadata
 
 from qha import __version__
 from qha.cli.handler import QHACommandHandler
@@ -121,7 +120,13 @@ class QHAArgumentParser:
         """
         Load plugins. Leave for the future plugin system.
         """
-        for plugin in pkg_resources.iter_entry_points(group="qha.plugins"):
+        entry_points = importlib_metadata.entry_points()
+        if hasattr(entry_points, "select"):
+            plugins = entry_points.select(group="qha.plugins")
+        else:
+            plugins = entry_points.get("qha.plugins", [])
+
+        for plugin in plugins:
             klass = plugin.load()
             aliases = klass.aliases if "aliases" in dir(klass) else None
             self.register_handler(plugin.name, klass(), *aliases)

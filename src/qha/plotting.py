@@ -201,7 +201,8 @@ class Plotter:
             f_min.append(volume_vt.loc[:, volume_vt.columns == t].min().values)
             v_f_min.append(volume_vt.loc[:, volume_vt.columns == t].idxmin().values)
 
-        f_min, v_f_min = np.asfarray(f_min), np.asfarray(v_f_min)
+        f_min = np.asarray(f_min, dtype=float)
+        v_f_min = np.asarray(v_f_min, dtype=float)
 
         self.plot_to_file()
 
