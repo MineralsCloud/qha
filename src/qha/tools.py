@@ -7,10 +7,10 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Callable, Optional
+from typing import Optional
 
 import numpy as np
-from numba import float64, int64, void, vectorize, guvectorize, jit
+from numba import float64, int64, void, guvectorize
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calculate_eulerian_strain
