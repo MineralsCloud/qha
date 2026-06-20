@@ -9,8 +9,10 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
+from __future__ import annotations
+
 import collections
-from typing import Any, Dict, Tuple, Union
+from typing import Any
 
 from yaml import load
 
@@ -23,7 +25,7 @@ except ImportError:
 # ===================== What can be exported? =====================
 __all__ = ["DEFAULT_SETTINGS", "Settings", "from_yaml"]
 
-DEFAULT_SETTINGS: Dict[str, Any] = {
+DEFAULT_SETTINGS: dict[str, Any] = {
     "energy_unit": "ry",
     "length_unit": "angstrom",
     "order": 3,  # BM fitting order, can be 3, 4 or 5, normally, 3rd order is sufficient.
@@ -69,7 +71,7 @@ class Settings(collections.ChainMap):
     """
 
     def __init__(
-        self, *user_settings: Union[Dict[str, Any], Tuple[Dict[str, Any], ...]]
+        self, *user_settings: dict[str, Any] | tuple[dict[str, Any], ...]
     ):
         super().__init__(*user_settings, DEFAULT_SETTINGS)
 

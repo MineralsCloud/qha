@@ -7,9 +7,10 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
+from __future__ import annotations
+
 import pathlib
 import re
-from typing import Iterator, Union, Tuple
 
 import numpy as np
 from scientific_string import strings_to_integers
@@ -22,8 +23,8 @@ __all__ = ["read_input"]
 
 
 def read_input(
-    inp: Union[str, pathlib.PurePath]
-) -> Tuple[int, Vector, Vector, Array3D, Vector]:
+    inp: str | pathlib.PurePath,
+) -> tuple[int, Vector, Vector, Array3D, Vector]:
     """
     Read the standard "input" file for ``qha``.
 
@@ -37,7 +38,7 @@ def read_input(
         - a vector of weights of each q-point, respectively.
     """
     text_stream = TextStream(pathlib.Path(inp))
-    gen: Iterator[str] = text_stream.generator_telling_position()
+    gen = text_stream.generator_telling_position()
 
     volumes_amount = None
     q_points_amount = None
