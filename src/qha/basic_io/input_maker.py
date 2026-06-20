@@ -7,10 +7,11 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
+from __future__ import annotations
+
 import pathlib
 import re
 import warnings
-from typing import Iterator, List, Optional, Tuple
 
 import numpy as np
 from scientific_string import strings_to_integers
@@ -53,10 +54,10 @@ class FromQEOutput:
         self._inp_file_list = inp_file_list
         self._inp_static = inp_static
         self._inp_q_points = inp_q_points
-        self._frequency_files: Optional[List[str]] = None
+        self._frequency_files: list[str] | None = None
 
-        self.formula_unit_number: Optional[int] = None
-        self.comment: Optional[str] = None
+        self.formula_unit_number: int | None = None
+        self.comment: str | None = None
         self.pressures = None
         self.volumes = None
         self.static_energies = None
@@ -73,7 +74,7 @@ class FromQEOutput:
 
         self.formula_unit_number = int(d["formula_unit_number"])
         self.comment: str = d["comment"]
-        self._frequency_files: List[str] = d["frequency_files"]
+        self._frequency_files: list[str] = d["frequency_files"]
 
     def read_static(self) -> None:
         """
@@ -151,7 +152,7 @@ class FromQEOutput:
         self.q_weights = np.array(q_weights, dtype=float)
 
     @staticmethod
-    def read_frequency_file(inp: str) -> Tuple[Vector, Matrix]:
+    def read_frequency_file(inp: str) -> tuple[Vector, Matrix]:
         """
         Read Quantum ESPRESSO's output for phonon frequencies. This method is provided for reading only
         one file.
@@ -162,7 +163,7 @@ class FromQEOutput:
         """
         text_stream = TextStream(pathlib.Path(inp))
 
-        gen: Iterator[str] = text_stream.generator_telling_position()
+        gen = text_stream.generator_telling_position()
 
         q_coordinates = []
         frequencies = []
@@ -190,7 +191,7 @@ class FromQEOutput:
                     bands_amount, q_points_amount = strings_to_integers(match.groups())
                     break
 
-        gen: Iterator[str] = text_stream.generator_starts_from(offset)
+        gen = text_stream.generator_starts_from(offset)
 
         quotient = bands_amount // 6  # QE splits branches into 6 columns per line
 

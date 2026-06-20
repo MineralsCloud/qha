@@ -11,8 +11,10 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
+from __future__ import annotations
+
 import textwrap
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 from lazy_property import LazyProperty
@@ -53,7 +55,7 @@ __all__ = ["Calculator", "SamePhDOSCalculator", "DifferentPhDOSCalculator"]
 
 
 class Calculator:
-    def __init__(self, user_settings: Dict[str, Any]):
+    def __init__(self, user_settings: dict[str, Any]):
         runtime_settings = dict()
 
         allowed_keys = (
@@ -99,7 +101,7 @@ class Calculator:
         self._v_ratio = None
 
     @property
-    def settings(self) -> Dict[str, Any]:
+    def settings(self) -> dict[str, Any]:
         """
         This is a read-only property.
 
@@ -109,7 +111,7 @@ class Calculator:
         return self._settings
 
     @property
-    def formula_unit_number(self) -> Optional[int]:
+    def formula_unit_number(self) -> int | None:
         return self._formula_unit_number
 
     @property
@@ -137,7 +139,7 @@ class Calculator:
         return self._f_tv_ry
 
     @property
-    def v_ratio(self) -> Optional[float]:
+    def v_ratio(self) -> float | None:
         return self._v_ratio
 
     def read_input(self):
@@ -164,7 +166,7 @@ class Calculator:
         self._q_weights = q_weights
 
     @LazyProperty
-    def where_negative_frequencies(self) -> Optional[Vector]:
+    def where_negative_frequencies(self) -> Vector | None:
         """
         The indices of negative frequencies are indicated.
 
@@ -240,7 +242,7 @@ class Calculator:
         return mat
 
     @LazyProperty
-    def thermodynamic_potentials(self) -> Dict[str, Any]:
+    def thermodynamic_potentials(self) -> dict[str, Any]:
         return thermodynamic_potentials(
             self.temperature_array, self.finer_volumes_bohr3, self.f_tv_ry, self.p_tv_au
         )
@@ -442,7 +444,7 @@ class Calculator:
 
 
 class DifferentPhDOSCalculator(Calculator):
-    def __init__(self, user_settings: Dict[str, Any]):
+    def __init__(self, user_settings: dict[str, Any]):
         super().__init__(user_settings)
 
         self._degeneracies = None

@@ -5,7 +5,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-from typing import Optional
+from __future__ import annotations
 
 import numpy as np
 from lazy_property import LazyProperty
@@ -63,7 +63,7 @@ class PartitionFunction:
         q_weights: Vector,
         static_energies: Matrix,
         frequencies: Array3D,
-        precision: Optional[int] = 500,
+        precision: int | None = 500,
     ):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError(
@@ -202,8 +202,8 @@ class FreeEnergy:
         static_energies: Matrix,
         volumes: Matrix,
         frequencies: Array3D,
-        static_only: Optional[bool] = False,
-        order: Optional[int] = 3,
+        static_only: bool | None = False,
+        order: int | None = 3,
     ):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError(

@@ -6,7 +6,7 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Optional
+from __future__ import annotations
 
 import numpy as np
 from lazy_property import LazyProperty
@@ -66,9 +66,9 @@ class PartitionFunction:
         static_energies: Matrix,
         volumes: Matrix,
         frequencies: Array4D,
-        static_only: Optional[bool] = False,
-        precision: Optional[int] = 500,
-        order: Optional[int] = 3,
+        static_only: bool | None = False,
+        precision: int | None = 500,
+        order: int | None = 3,
     ):
         if not np.all(np.greater_equal(degeneracies, 0)):
             raise ValueError("Degeneracies should all be greater equal than 0!")

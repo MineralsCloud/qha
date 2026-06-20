@@ -7,7 +7,7 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Optional
+from __future__ import annotations
 
 import numpy as np
 from numba import float64, int64, jit
@@ -19,7 +19,7 @@ __all__ = ["polynomial_least_square_fitting", "apply_finite_strain_fitting"]
 
 @jit(float64[:](float64[:], float64[:], float64[:], int64), nopython=True, cache=True)
 def polynomial_least_square_fitting(
-    xs: Vector, ys: Vector, new_xs: Vector, order: Optional[int] = 3
+    xs: Vector, ys: Vector, new_xs: Vector, order: int | None = 3
 ):
     """
     The algorithm is referenced from the
@@ -50,7 +50,7 @@ def apply_finite_strain_fitting(
     strains_sparse: Vector,
     free_energies: Matrix,
     strains_dense: Vector,
-    order: Optional[int] = 3,
+    order: int | None = 3,
 ):
     """
     Calculate the free energies :math:`F(T, V)` for some strains (*strains_dense*), with the

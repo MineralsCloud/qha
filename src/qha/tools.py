@@ -7,10 +7,10 @@
 .. moduleauthor:: Tian Qin <qinxx197@umn.edu>
 """
 
-from typing import Callable, Optional
+from __future__ import annotations
 
 import numpy as np
-from numba import float64, int64, void, vectorize, guvectorize, jit
+from numba import float64, int64, void, guvectorize
 
 from qha.fitting import polynomial_least_square_fitting
 from qha.grid_interpolation import calculate_eulerian_strain
@@ -98,7 +98,7 @@ def is_monotonic_decreasing(array: Vector) -> bool:
 def calibrate_energy_on_reference(
     volumes_before_calibration: Matrix,
     energies_before_calibration: Matrix,
-    order: Optional[int] = 3,
+    order: int | None = 3,
 ):
     """
     In multi-configuration system calculation, the volume set of each calculation may vary a little,

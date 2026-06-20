@@ -8,7 +8,7 @@
 .. moduleauthor:: Qi Zhang <qz2280@columbia.edu>
 """
 
-from typing import Optional, Tuple
+from __future__ import annotations
 
 import numpy as np
 from numba import float64, vectorize
@@ -129,7 +129,7 @@ class VolumeExpander:
         self._out_volumes_num = value
 
     @property
-    def strains(self) -> Optional[Vector]:
+    def strains(self) -> Vector | None:
         """
         An arithmetic sequence starting from the lower bound to the upper bound of the expanded strain,
         the number of elements in it is specified by ``out_volumes_num`` attribute.
@@ -140,7 +140,7 @@ class VolumeExpander:
         return self._strains
 
     @property
-    def out_volumes(self) -> Optional[Vector]:
+    def out_volumes(self) -> Vector | None:
         """
         The volumes interpolated by the algorithm described above.
 
@@ -177,7 +177,7 @@ class FinerGrid:
     """
 
     def __init__(
-        self, desired_p_min: float, dense_volumes_amount: int, order: Optional[int] = 3
+        self, desired_p_min: float, dense_volumes_amount: int, order: int | None = 3
     ):
         self.desired_p_min = float(desired_p_min)
         self.dense_volumes_amount = int(dense_volumes_amount)
@@ -214,8 +214,8 @@ class FinerGrid:
         return final_ratio
 
     def refine_grid(
-        self, volumes: Vector, free_energies: Matrix, ratio: Optional[float] = None
-    ) -> Tuple[Vector, Matrix, float]:
+        self, volumes: Vector, free_energies: Matrix, ratio: float | None = None
+    ) -> tuple[Vector, Matrix, float]:
         """
         Get the appropriate volume grid for interpolation.
         Avoid to use a too large volume grid to obtain data, which might lose accuracy.
