@@ -28,6 +28,12 @@ except ImportError:
 # ===================== What can be exported? =====================
 __all__ = ["FromQEOutput"]
 
+_NUMBER = re.compile(r"[+-]?(?:(?:\d+\.\d*)|(?:\.\d+)|(?:\d+))(?:[Ee][+-]?\d+)?")
+
+
+def _numbers_from_line(line: str) -> list[str]:  # See https://github.com/MineralsCloud/qha/issues/86
+    return _NUMBER.findall(line)
+
 
 class FromQEOutput:
     """
@@ -204,10 +210,7 @@ class FromQEOutput:
             x = np.array([])
             for _ in range(quotient):
                 line = next(gen)  # Start a new line
-                # Sometimes QE prints negative numbers that coalesce with the previous one,
-                # so we need to split not only spaces but also minus signs
-                # Regex from https://stackoverflow.com/a/30858977/3260253
-                freqs = list(filter(lambda s: s, re.split(r"\s+|(?<!\s)(?=-)", line)))
+                freqs = _numbers_from_line(line)
                 x = np.hstack((x, freqs))
 
             frequencies.append(x)
